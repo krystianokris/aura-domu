@@ -1,0 +1,58 @@
+# Aura domu — zakładki Ogrzewanie, Energia, Ochrona, Kosze, F1 (fragment karty custom:aura-domu)
+# Bez tych sekcji Ochrona i Ogrzewanie budują się same z obszarów HA, a Kosze i F1 z integracji.
+
+heating_page:
+  source: climate.salon            # główny termostat: hvac_action „heating” = kocioł grzeje
+  source_name: Termostat
+  boiler_name: Kocioł
+  # boiler: binary_sensor.kociol_pali    # encja samego kotła (on / heating / > 0)
+  # outdoor: sensor.temperatura_zewnatrz
+  comfort: {main: 22, rooms: 21}   # tryb Komfort: główny i pozostałe pokoje
+  eco: {main: 18, rooms: 18}       # tryb Eco (preset „eco” głównego termostatu, jeśli jest)
+  boost: 1                         # tryb Boost: +1° od obecnej zadanej
+  rooms:
+    - {name: Salon, climate: climate.salon, sub: Termostat, humidity: sensor.salon_wilgotnosc, floor_climate: climate.salon_podloga, floor: sensor.salon_podloga_temperatura}
+    - {name: Sypialnia, climate: climate.sypialnia_glowica}
+
+energy_page:
+  power: sensor.dom_moc                     # chwilowy pobór (wykres z 3 godzin)
+  el_today: sensor.prad_dzis
+  el_cost: sensor.prad_koszt_dzis
+  el_rate: sensor.cena_pradu                # cena teraz
+  el_next: sensor.cena_pradu_nastepna
+  gas_today_kwh: sensor.gaz_dzis_kwh
+  gas_today_m3: sensor.gaz_dzis_m3
+  gas_cost: sensor.gaz_koszt_dzis
+  water_yday: sensor.woda_wczoraj
+  water_cost: sensor.woda_koszt_wczoraj
+  devices:
+    - {name: Pralka, today: sensor.pralka_energia_dzis, power: sensor.pralka_moc}
+    - {name: Lodówka, today: sensor.lodowka_energia_dzis}
+
+security_page:
+  guard: select.tryb_ochrony                # select z trybami (np. Eufy, Frigate)
+  guard_options:
+    Home: {name: W domu, desc: czujniki wejścia czuwają}
+    Away: {name: Poza domem, desc: pełna ochrona}
+    Disarmed: {name: Wyłączona, desc: ochrona wyłączona}
+  # alarm: alarm_control_panel.dom
+  windows: [{entity: binary_sensor.kuchnia_okno, name: Okno · kuchnia}]
+  leaks: [{entity: binary_sensor.kuchnia_zalanie, name: Pod zlewem}]
+  co: [{entity: binary_sensor.czujnik_czadu, name: Czujnik czadu}]
+  motion: [{entity: binary_sensor.korytarz_ruch, name: Korytarz}]
+  cameras:
+    - {name: Wejście, motion: binary_sensor.kamera_ruch, person: binary_sensor.kamera_osoba, ring: binary_sensor.dzwonek, enabled: switch.kamera}
+  batteries: [{entity: sensor.kuchnia_okno_bateria, name: Okno · kuchnia}]
+  # battery_low: 20                         # próg ostrzeżenia w %
+
+bins:                                       # Waste Collection Schedule — wykrywany sam
+  # calendar: calendar.waste_collection_schedule
+  types:                                    # co jest w koszu danego koloru u Ciebie
+    czarny: odpady zmieszane
+    zielony: recykling
+    brązowy: bio
+
+f1:                                         # F1 Sensor — encje wykrywane same
+  led: automation.flagi_f1_na_led           # opcjonalnie: automatyzacja pokazywana w trakcie wyścigu
+
+hidden_tabs: []                             # np. [f1, bins] — albo przełączniki w Ustawieniach

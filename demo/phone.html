@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Aura domu — demo na telefonie</title>
+<style>
+  html,body{margin:0;height:100%;background:#dfe3e8;display:grid;place-items:center}
+  .phone{border-radius:46px;padding:10px;background:#1b1e24;box-shadow:0 30px 60px -20px #0006}
+  iframe{width:390px;height:844px;border:0;border-radius:36px;display:block}
+</style>
+</head>
+<body>
+<div class="phone"><iframe id="f" title="Aura domu"></iframe></div>
+<script>
+  const q = new URLSearchParams(location.search);
+  document.getElementById('f').src = `./?theme=${q.get('theme') || 'light'}${location.hash}`;
+</script>
+</body>
+</html>

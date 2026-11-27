@@ -1,0 +1,10 @@
+# Aura domu — najprostszy start (zero konfiguracji)
+# Karta sama zbuduje pokoje, Ochronę i Ogrzewanie z obszarów Home Assistanta.
+# Potem: zakładka Ustawienia → Gotowa konfiguracja → Kopiuj albo Zapisz w pulpicie.
+
+views:
+  - title: Dom
+    path: dom
+    type: panel          # karta na cały widok
+    cards:
+      - type: custom:aura-domu

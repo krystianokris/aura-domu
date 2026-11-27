@@ -1,0 +1,77 @@
+# Aura domu — pokoje i urządzenia (fragment karty custom:aura-domu)
+# Każdy pokój ma sekcje: lights, climate, media, sensors, devices. Wszystkie są opcjonalne.
+
+rooms:
+  - id: salon                      # używane w adresie: #pokoje/salon
+    name: Salon
+    subtitle: Ciepłe światło. Dobry odpoczynek.
+    temperature: sensor.salon_temperatura    # albo climate.salon (bierze current_temperature)
+    humidity: sensor.salon_wilgotnosc
+    lights:
+      - {entity: light.salon_sufit, name: Sufit}          # light.* z jasnością dostaje suwak
+      - {entity: switch.salon_lampa, name: Lampa}
+      - {entity: switch.salon_wentylator, name: Wentylator, type: fan}   # pokazany, ale nieliczony jako światło
+    climate:
+      - {entity: climate.salon, name: Termostat}
+      - {entity: climate.salon_klima, name: Klimatyzacja, note: "Zmiany z pilota nie są widoczne w HA."}
+    media:
+      - {entity: media_player.salon_tv, name: Telewizor, volume_entity: media_player.salon_soundbar}
+      - {entity: media_player.salon_glosnik, name: Głośnik, speaker: true}
+    sensors:                       # type: window, leak, motion, co, battery, pm, aq
+      - {entity: binary_sensor.salon_okno, name: Okno, type: window}
+      - {entity: sensor.salon_pm25, name: Pyły PM2.5, type: pm}
+    devices:
+      - {type: purifier, name: Oczyszczacz, entity: fan.oczyszczacz, pm25: sensor.salon_pm25, filter: sensor.oczyszczacz_filtr}
+
+  - id: pralnia
+    name: Pralnia
+    devices:
+      # status = duży napis; pozostałe pola z encjami pokazują się jako wiersze
+      - type: washer
+        name: Pralka
+        status: sensor.pralka_status
+        remaining: sensor.pralka_pozostaly_czas
+        temperature: select.pralka_temperatura
+      - type: dryer
+        name: Suszarka
+        status: sensor.suszarka_faza
+        remaining: sensor.suszarka_pozostaly_czas
+        water_full: binary_sensor.suszarka_zbiornik     # binary_sensor → „Pełny” / „OK”
+        filter: binary_sensor.suszarka_filtr
+
+  - id: warsztat
+    name: Warsztat
+    devices:
+      - type: printer
+        name: Drukarka 3D
+        status: sensor.drukarka_status
+        progress: sensor.drukarka_postep
+        remaining: sensor.drukarka_pozostaly_czas
+        layer: sensor.drukarka_warstwa
+        total_layers: sensor.drukarka_warstwy
+        nozzle: sensor.drukarka_dysza
+        bed: sensor.drukarka_stol
+        light: light.drukarka_swiatlo       # przyciski: light / power → przełącznik
+        pause: button.drukarka_pauza        # button.* → przycisk „Wstrzymaj”
+        resume: button.drukarka_wznow
+        stop: button.drukarka_stop
+
+  - id: kot
+    name: Kocia strefa
+    devices:
+      - type: litter_box
+        name: Kuweta
+        status: sensor.kuweta_status
+        visits: sensor.kuweta_wizyty_dzis
+        weight: sensor.kuweta_waga_kota
+        bin_full: binary_sensor.kuweta_pojemnik
+        clean: button.kuweta_czyszczenie
+        problems: [binary_sensor.kuweta_blad_silnika, binary_sensor.kuweta_blad_czujnika]
+        switches:
+          - {entity: switch.kuweta_tryb_nocny, name: Tryb nocny}
+      - type: pet_feeder
+        name: Karmnik
+        status: sensor.karmnik_status
+        last: sensor.karmnik_ostatnia_porcja
+        battery: sensor.karmnik_bateria
+        feed: button.karmnik_nakarm
