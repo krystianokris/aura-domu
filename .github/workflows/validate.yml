@@ -13,6 +13,8 @@ permissions:
 jobs:
   hacs:
     name: HACS validation
+    # HACS sprawdza tylko publiczne repozytoria; w prywatnym ten krok jest pomijany
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: hacs/action@main
