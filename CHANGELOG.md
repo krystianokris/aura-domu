@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.1 — start bez konfiguracji
+
+- Tryb automatyczny: bez listy `rooms` karta buduje pokoje z obszarów HA (światła, wentylatory, termostaty, multimedia, okna, wycieki, ruch, czad, oczyszczacze, temperatura i wilgotność z czujnika pokojowego); pomija encje diagnostyczne i ukryte.
+- Automatyczna Ochrona (z bateriami czujników) i Ogrzewanie (termostaty grzewcze bez klimatyzatorów, jeden obieg na pokój, podłogówka osobno, główny termostat rozpoznany po integracji).
+- Ustawienia → Gotowa konfiguracja: podgląd YAML, Kopiuj, Zapisz w pulpicie (administrator, potwierdzenie drugim stuknięciem).
+- Temperatura pokoju nie jest brana z czujników drukarek, lodówek, podłogówek itp.
+
 ## 0.9.0 — pierwsze publiczne wydanie (beta)
 
 - Zakładki: Dom, Pokoje, Klimat, Ogrzewanie, Pogoda, Energia, Ochrona, Kosze, F1, Ustawienia.

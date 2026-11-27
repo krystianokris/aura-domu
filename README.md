@@ -2,7 +2,7 @@
 
 **A full-screen Home Assistant dashboard card** — home, rooms, climate, heating, weather, energy, security, bin collection and F1 in one card. Soft neumorphic style, light and dark theme, tiles that rise out of concave dimples when you open a tab.
 
-> Version **0.9.0 (beta)**. The interface is **Polish only** for now — an English translation is planned; feedback and ideas are welcome in [Issues](../../issues).
+> Version **0.9.1 (beta)**. The interface is **Polish only** for now — an English translation is planned; feedback and ideas are welcome in [Issues](../../issues).
 
 [Polski README](README.pl.md)
 
@@ -17,13 +17,13 @@
 - **F1** — from [F1 Sensor](https://github.com/Nicxe/f1_sensor): countdown, weekend schedule in your time zone, podium, standings, circuit facts, race weather and a live mode (track status, positions, race control). No-spoiler mode is respected.
 - **Ustawienia (Settings)** — theme, show / hide tabs (admins, saved in the dashboard config), link to HA settings.
 
-The card shows **only the entities you list in its config**. Tabs without data hide themselves.
+**Zero-config start:** with just `type: custom:aura-domu` the card builds rooms, security and heating from your Home Assistant **areas** (lights, fans, thermostats, media, window / leak / motion / CO sensors, room temperature and humidity; diagnostic and hidden entities are skipped). **Ustawienia → Gotowa konfiguracja** shows that as YAML to copy, or saves it into the dashboard in one go, so you only fine-tune names and add devices. Once you list your own `rooms`, the card shows only those entities. Tabs without data hide themselves.
 
 ## Installation
 
 **HACS:** HACS → ⋮ → Custom repositories → `https://github.com/krystianokris/aura-domu`, category **Dashboard**, then install **Aura domu**.
 
-**Manual:** copy `dist/aura-domu.js` from the [latest release](../../releases) to `/config/www/`, then add the resource `/local/aura-domu.js?v=0.9.0` (JavaScript module). Change `?v=` after every update.
+**Manual:** copy `dist/aura-domu.js` from the [latest release](../../releases) to `/config/www/`, then add the resource `/local/aura-domu.js?v=0.9.1` (JavaScript module). Change `?v=` after every update.
 
 ## Configuration
 

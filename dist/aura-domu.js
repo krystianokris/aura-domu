@@ -1,8 +1,8 @@
-// Aura domu — karta Home Assistanta · v0.9.0
+// Aura domu — karta Home Assistanta · v0.9.1
 // https://github.com/krystianokris/aura-domu · licencja MIT
 // Instalacja: HACS (repozytorium niestandardowe, kategoria Dashboard) albo ręcznie:
 //   1) skopiuj dist/aura-domu.js do /config/www/aura-domu.js
-//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.9.0 (Moduł JavaScript)
+//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.9.1 (Moduł JavaScript)
 //   3) pulpit z widokiem „Panel” i kartą `type: custom:aura-domu`
 // Pełny przykład konfiguracji: examples/aura-domu.yaml i README.
 const AURA_CSS = `
@@ -398,6 +398,8 @@ button.tile:active,.tile:has(> .room-hit:active){transform:scale(.982)}
 @keyframes shake{to{transform:translateY(-1px)}}
 .f1-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
 .f1-grid > .wide,.cards > .wide-tile{grid-column:1 / -1}
+.gen-yaml{width:100%;max-height:360px;overflow:auto;margin:6px 0 0;padding:14px 16px;border-radius:16px;background:var(--concave);box-shadow:var(--sunken-sm);font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink);white-space:pre;user-select:text}
+.mini.arm{outline:2px dashed var(--accent);outline-offset:2px}
 .tab-toggles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;width:100%}
 .tab-toggles .toggle{margin-right:0;width:38px;height:38px}
 .tab-toggles .f1-row.done{opacity:.6}
@@ -660,6 +662,13 @@ const BIN_BY_NAME = [[/recycl|recykl/i,'recykling','#2f8a45'],[/garden|green was
 const BIN_PRESETS = [[/peterborough/i,{czarny:'odpady zmieszane','brązowy':'odpady ogrodowe',zielony:'recykling'}]];
 const W_ACC = {'poniedziałek':'w poniedziałek','wtorek':'we wtorek','środa':'w środę','czwartek':'w czwartek','piątek':'w piątek','sobota':'w sobotę','niedziela':'w niedzielę'};
 const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+/* prosty zapis do YAML (obiekty, listy, teksty, liczby) dla generatora konfiguracji */
+const yamlStr = v => /^[\w.\-\/]+$/.test(v) && !/^(true|false|null|yes|no|on|off|~|-?\d[\d.e+\-]*)$/i.test(v) ? v : JSON.stringify(v);
+const flowOk = o => o && typeof o === 'object' && !Array.isArray(o) && Object.values(o).every(v=>typeof v !== 'object' || v === null) && JSON.stringify(o).length < 110;
+function toYaml(v,ind = '') {
+  if (Array.isArray(v)) return v.map(x=>flowOk(x) ? `${ind}- {${Object.entries(x).map(([k,y])=>`${k}: ${typeof y === 'string' ? yamlStr(y) : y}`).join(', ')}}` : x && typeof x === 'object' ? `${ind}- ${toYaml(x,ind + '  ').trimStart()}` : `${ind}- ${typeof x === 'string' ? yamlStr(x) : x}`).join('\n');
+  return Object.entries(v).filter(([,x])=>x !== undefined && x !== null).map(([k,x])=>Array.isArray(x) ? `${ind}${k}:\n${toYaml(x,ind + '  ')}` : x && typeof x === 'object' ? `${ind}${k}:\n${toYaml(x,ind + '  ')}` : `${ind}${k}: ${typeof x === 'string' ? yamlStr(x) : x}`).join('\n');
+}
 const andList = a => a.length <= 1 ? a.join('') : `${a.slice(0,-1).join(', ')} i ${a.at(-1)}`;
 const binArt = (k,i = 0) => `<svg viewBox="0 0 64 86" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="--bin:${k.col}" aria-hidden="true">
   <path class="lid" d="M7 15h50l-3-7H10z" fill="var(--bin)" fill-opacity=".95"/><path d="M27 8V5h10v3"/>
@@ -902,7 +911,11 @@ class AuraDomu extends HTMLElement {
       return row;
     }).sort((a,b)=>collator.compare(a.name,b.name));
 
-    const configured = Array.isArray(this.config?.rooms) ? this.config.rooms.filter(r=>r && r.id && !r.link && !r.hidden) : null;
+    // bez własnej konfiguracji karta sama dobiera pokoje, ochronę i ogrzewanie z obszarów HA
+    this.auto = this.buildAuto(areas,registry,byId);
+    const own = Array.isArray(this.config?.rooms);
+    const roomsCfg = own ? this.config.rooms : this.auto.rooms;
+    const configured = roomsCfg.length ? roomsCfg.filter(r=>r && r.id && !r.link && !r.hidden) : null;
     let rooms;
     if (configured) {
       this.lightIds = new Set();
@@ -930,8 +943,107 @@ class AuraDomu extends HTMLElement {
       rooms = [...areas.values()].sort((a,b)=>collator.compare(a.name,b.name));
       if (unassigned.rows.length) rooms.push(unassigned);
     }
-    this.model = {rows,rooms,byId,configured:Boolean(configured)};
+    this.model = {rows,rooms,byId,configured:Boolean(configured),roomsCfg:configured || [],autoRooms:!own};
     return this.model;
+  }
+
+  /* ---------- tryb automatyczny: konfiguracja zbudowana z obszarów HA ---------- */
+  buildAuto(areas,registry,byId) {
+    const usable = row => { const e = registry[row.id]; return e && !e.entity_category && !e.hidden && !e.hidden_by && !e.disabled_by; };
+    const short = (row,area) => {
+      const name = String(row.name || row.id), a = fold(area || '');
+      if (!a) return name;
+      const f = fold(name);
+      if (f.startsWith(a + ' ') || f.startsWith(a + ':') || f.startsWith(a + '-')) { const s = name.slice(area.length).replace(/^[\s:·\-–]+/,''); return s ? s.charAt(0).toUpperCase() + s.slice(1) : name; }
+      return name;
+    };
+    const oid = row => row.id.split('.').slice(1).join('.');
+    const isLightName = row => { const t = fold(`${row.name} ${oid(row)}`); return /light|swiatl|oswietl|lamp|(^|[\s_.\-])led([\s_.\-]|$)|sufit|kinkiet|zarowk|bulb|ceiling|zyrandol/.test(t) && !/standby|status|indicator|wskaznik|kontrolk|do not disturb|child lock/.test(t); };
+    const isFanName = row => /(^|[\s_.])fan|wentyl/.test(fold(`${row.name} ${oid(row)}`));
+    const SEC = {window:'window',door:'window',garage_door:'window',opening:'window',moisture:'leak',carbon_monoxide:'co',smoke:'co',gas:'co',motion:'motion',occupancy:'motion',presence:'motion'};
+    const sec = {windows:[],leaks:[],co:[],motion:[],batteries:[]}, secDevices = new Set();
+    const heat = [];
+    const rooms = [];
+    const isAC = row => (row.attrs.hvac_modes || []).some(m=>['cool','dry','fan_only'].includes(m));
+    const list = [...areas.values()].sort((a,b)=>collator.compare(a.name,b.name));
+    const temps = [], hums = [];
+    for (const area of list) {
+      const cfg = {id:area.id,name:area.name,lights:[],climate:[],media:[],sensors:[]};
+      for (const row of area.rows.filter(usable).sort((a,b)=>collator.compare(a.name,b.name))) {
+        const item = {entity:row.id,name:short(row,area.name)};
+        const dc = row.attrs.device_class;
+        if (row.domain === 'light') cfg.lights.push(item);
+        else if (row.domain === 'fan' && isFanName(row)) cfg.lights.push({...item,type:'fan'});
+        else if (row.domain === 'fan' || row.domain === 'humidifier') (cfg.devices ||= []).push({type:/purif|oczysz|air|powietrz|core/.test(fold(`${row.name} ${row.id}`)) ? 'purifier' : 'fan',name:item.name,entity:row.id});
+        else if (row.domain === 'switch' && isLightName(row)) cfg.lights.push(item);
+        else if (row.domain === 'switch' && isFanName(row)) cfg.lights.push({...item,type:'fan'});
+        else if (row.domain === 'climate') {
+          cfg.climate.push(item);
+          if ((row.attrs.hvac_modes || []).includes('heat') && !isAC(row)) heat.push({row,area});
+        }
+        else if (row.domain === 'media_player') cfg.media.push(item);
+        else if (row.domain === 'binary_sensor' && SEC[dc]) {
+          cfg.sensors.push({...item,type:SEC[dc]});
+          const key = {window:'windows',leak:'leaks',co:'co',motion:'motion'}[SEC[dc]];
+          sec[key].push({entity:row.id,name:`${item.name} · ${area.name}`});
+          const dev = registry[row.id]?.device_id; if (dev) secDevices.add(dev);
+        }
+        else if (row.domain === 'sensor' && this.isRoomTemp(row)) temps.push(row);
+        else if (row.domain === 'sensor' && dc === 'humidity' && available(row) && this.isRoomTemp({...row,attrs:{...row.attrs,device_class:'temperature'},state:'20'})) hums.push(row);
+      }
+      // temperatura pokoju: najlepiej z czujnika, który mierzy też wilgotność (prawdziwy czujnik pokojowy)
+      const devOf = row => registry[row.id]?.device_id;
+      const humDevs = new Set(hums.map(devOf).filter(Boolean));
+      const t = temps.find(row=>humDevs.has(devOf(row))) || temps[0];
+      if (t) cfg.temperature = t.id;
+      else { const c = cfg.climate.map(x=>byId.get(x.entity)).find(row=>row?.attrs.current_temperature != null); if (c) cfg.temperature = c.id; }
+      const h = hums.find(row=>t && devOf(row) === devOf(t)) || hums[0];
+      if (h) cfg.humidity = h.id;
+      temps.length = 0; hums.length = 0;
+      for (const key of ['lights','climate','media','sensors']) if (!cfg[key].length) delete cfg[key];
+      if (cfg.lights || cfg.climate || cfg.media || cfg.sensors || cfg.devices || cfg.temperature) rooms.push(cfg);
+    }
+    // baterie czujników ochrony (te encje bywają diagnostyczne, więc bez filtra kategorii)
+    for (const row of byId.values()) {
+      const e = registry[row.id];
+      if (row.domain === 'sensor' && row.attrs.device_class === 'battery' && e?.device_id && secDevices.has(e.device_id) && !e.hidden && !e.disabled_by) sec.batteries.push({entity:row.id,name:row.name});
+    }
+    const alarm = [...byId.values()].find(row=>row.domain === 'alarm_control_panel' && usable(row));
+    const anySec = sec.windows.length || sec.leaks.length || sec.co.length || sec.motion.length || alarm;
+    const security = anySec ? Object.fromEntries(Object.entries({...sec,alarm:alarm?.id}).filter(([,v])=>Array.isArray(v) ? v.length : v)) : null;
+    let heating = null;
+    if (heat.length) {
+      const floor = h => /podlog|floor|ufh/.test(fold(`${h.row.name} ${h.row.id}`));
+      const thermo = h => /termostat|thermostat/.test(fold(`${h.row.name} ${h.row.id}`));
+      // główny termostat: z konfiguracji, albo taki z trybem eco (np. Nest), albo pierwszy niepodłogowy
+      const boilerPlatforms = /^(nest|ecobee|honeywell|evohome|opentherm_gw|ebusd|vaillant|viessmann|bosch|nibe|plugwise|netatmo|tado|google|homematicip_cloud|sensibo)$/;
+      const roomPlatforms = /^(versatile_thermostat|better_thermostat|generic_thermostat|dual_smart_thermostat)$/;
+      const score = h => { const p = registry[h.row.id]?.platform || ''; return (h.row.id === this.config?.climate_entity ? 100 : 0) + (boilerPlatforms.test(p) ? 20 : 0) - (roomPlatforms.test(p) ? 10 : 0) - (floor(h) ? 30 : 0) + ((h.row.attrs.preset_modes || []).includes('eco') ? 2 : 0); };
+      const pick = [...heat].sort((a,b)=>score(b) - score(a))[0];
+      // jeden obieg na pokój: termostat (albo głowica), podłogówka osobno
+      const byArea = new Map();
+      for (const h of heat) { if (!byArea.has(h.area.id)) byArea.set(h.area.id,[]); byArea.get(h.area.id).push(h); }
+      const hRooms = [...byArea.values()].map(list=>{
+        const area = list[0].area, floors = list.filter(floor), others = list.filter(h=>!floor(h));
+        const main = others.find(h=>h.row.id === pick.row.id) || others.find(thermo) || others[0] || floors[0];
+        const fl = floors.find(h=>h !== main);
+        const room = rooms.find(r=>r.id === area.id);
+        return {name:area.name,climate:main.row.id,sub:short(main.row,area.name),...(fl ? {floor_climate:fl.row.id} : {}),...(room?.humidity ? {humidity:room.humidity} : {})};
+      });
+      heating = {source:pick.row.id,source_name:short(pick.row,pick.area.name),rooms:hRooms};
+    }
+    return {rooms,security_page:security,heating_page:heating};
+  }
+
+  // konfiguracja, która faktycznie działa: własna albo dobrana automatycznie
+  effective() {
+    const m = this.getModel(), a = this.auto || {};
+    const out = {rooms:m.roomsCfg};
+    const sec = this.config?.security_page || this.config?.security || a.security_page;
+    const heat = this.config?.heating_page || a.heating_page;
+    if (sec) out.security_page = sec;
+    if (heat) out.heating_page = heat;
+    return out;
   }
 
   row(id) { return id ? this.getModel().byId.get(id) : undefined; }
@@ -948,7 +1060,7 @@ class AuraDomu extends HTMLElement {
   isRoomTemp(row) {
     if (row.domain !== 'sensor' || row.attrs.device_class !== 'temperature' || !available(row)) return false;
     if (this._hass?.entities?.[row.id]?.entity_category) return false;
-    if (/battery|bateria|cpu|mcu|soc|process|nozzle|dysz|bed temp|stolu|floor temp|podlog|ema|slope|forecast|light|switch|plug|socket|fan|radiator|_in_|_out_/.test(row.search)) return false;
+    if (/battery|bateria|cpu|mcu|soc|process|nozzle|dysz|bed temp|stolu|floor temp|podlog|ema|slope|forecast|light|switch|plug|socket|fan|radiator|_in_|_out_|floor|ams|printer|drukark|chamber|komor|fridge|lodow|freezer|zamraz|oven|piekarn|water|woda|boiler|kociol|outdoor|zewn|outside/.test(row.search)) return false;
     const value = Number(row.state);
     return Number.isFinite(value) && value > -30 && value < 45;
   }
@@ -979,7 +1091,7 @@ class AuraDomu extends HTMLElement {
     return /gbp|£|eur|€/i.test(row.attrs.unit_of_measurement || '') ? value * 100 : value;
   }
 
-  securityConfig() { return this.config?.security_page || this.config?.security || null; }
+  securityConfig() { return this.config?.security_page || this.config?.security || (this.getModel() && this.auto?.security_page) || null; }
 
   securityRows(rows) {
     const cfg = this.securityConfig();
@@ -1128,7 +1240,7 @@ class AuraDomu extends HTMLElement {
     if (!this.nameMap) {
       this.nameMap = new Map();
       const put = list => listOf(list).forEach(item=>{ if (item.name && !this.nameMap.has(item.entity)) this.nameMap.set(item.entity,item.name); });
-      for (const room of this.config?.rooms || []) for (const key of ['lights','climate','media','sensors']) put(room[key]);
+      for (const room of this.getModel().roomsCfg) for (const key of ['lights','climate','media','sensors']) put(room[key]);
       const sec = this.securityConfig() || {};
       for (const key of ['windows','motion','leaks','co','batteries']) put(sec[key]);
       put(this.config?.climate);
@@ -1595,7 +1707,7 @@ class AuraDomu extends HTMLElement {
       const rows = asList(this.row(E.positions)?.attrs.drivers).map(p=>{ const rn = String(p.racing_number ?? (String(p._k || '').match(/\d+/) || [''])[0]).trim(), d = D.get(rn) || {}; const pos = parseInt(p.current_position ?? p.position ?? d.position,10); const c = String(d.team_color || p.team_color || '').replace(/^#?/,'#');
         return {pos:Number.isNaN(pos) ? null : pos,tla:p.tla || d.tla || rn,name:d.last_name || d.full_name || '',team:d.team || d.team_name || '',col:/^#[0-9a-f]{6}$/i.test(c) ? c : '',gap:pos === 1 ? 'lider' : String(p.gap_to_leader ?? p.interval ?? '').replace('.',',')}; }).filter(r=>r.pos != null).sort((a,b)=>a.pos - b.pos);
       const rc = this.row(E.rc), msgs = available(rc) ? (Array.isArray(rc.attrs.history) && rc.attrs.history.length ? rc.attrs.history.slice(-4).reverse() : [{message:rc.attrs.message || rc.state,utc:rc.attrs.utc}]) : [];
-      const led = this.row(E.led), tvRoom = (this.config?.rooms || []).find(r=>listOf(r.media).length);
+      const led = this.row(E.led), tvRoom = this.getModel().roomsCfg.find(r=>listOf(r.media).length);
       top = `<div class="f1-grid">
         ${tile('flag','Stan na torze',A.race_name || '',`<div class="flag-ring" style="--fc:${col}"><svg viewBox="0 0 300 300"><circle class="r0" cx="150" cy="150" r="140"/><circle class="r1" cx="150" cy="150" r="118"/><circle class="r0" cx="150" cy="150" r="98"/></svg><div><small>Stan toru</small><b>${escapeHTML(tk[1])}</b><small>${escapeHTML(tk[2])}</small></div></div>
           <div class="device-rows">${available(lap) ? `<div><span>Okrążenie</span><b>${escapeHTML(lap.state)}${tot ? ` / ${escapeHTML(tot)}` : ''}</b></div>` : ''}${remTxt ? `<div><span>Do końca</span><b>${escapeHTML(remTxt)}</b></div>` : ''}${air != null ? `<div><span>Na torze</span><b>${format(air,'°C')}${trk != null ? ` · tor ${format(trk,'°')}` : ''}</b></div>` : ''}</div>`,'active')}
@@ -1797,7 +1909,7 @@ class AuraDomu extends HTMLElement {
   }
 
   /* ---------- zakładka Ogrzewanie (jak w Home Pulse: kocioł, obiegi, tryby, czas pracy) ---------- */
-  heatCfg() { const p = this.config?.heating_page; return p && p.source ? p : null; }
+  heatCfg() { const p = this.config?.heating_page || (this.getModel() && this.auto?.heating_page); return p && p.source ? p : null; }
   heatRooms() { return Array.isArray(this.heatCfg()?.rooms) ? this.heatCfg().rooms : []; }
   heatBoilerId() { const p = this.heatCfg(); return p.boiler && this.row(p.boiler) ? p.boiler : p.source; }
   heatOnState(domain,state,attrs = {}) {
@@ -1940,12 +2052,46 @@ class AuraDomu extends HTMLElement {
         <button class="toggle" data-act="tab-toggle" data-tab="${key}" aria-pressed="${on}" aria-label="${on ? 'Ukryj' : 'Pokaż'} zakładkę ${escapeHTML(name)}" ${!admin || !avail || this.savingTabs ? 'disabled' : ''}>${icon('power')}</button></div>`;
     }).join('');
     const tabs = `<article class="tile wide-tile"><span class="label">${icon('rooms')}Zakładki w menu</span><div class="card-body"><p class="note-line">${admin ? 'Wybierz, które zakładki mają być widoczne. Zmiana zapisuje się w konfiguracji pulpitu i obowiązuje na wszystkich urządzeniach. Dom i Ustawienia są zawsze widoczne.' : 'Zakładki może zmieniać tylko administrator.'}</p><div class="tab-toggles">${toggles}</div></div></article>`;
-    this.setHTML('#settings-body',`<div class="cards">${screen}${dash}${ha}${tabs}</div>`);
+    // gotowa konfiguracja: to, co karta teraz pokazuje, jako YAML do skopiowania albo zapisania w pulpicie
+    const eff = this.effective(), m = this.getModel();
+    const yaml = `type: custom:aura-domu\n${toYaml(eff)}`;
+    const autoParts = [m.autoRooms && 'pokoje', !this.config?.security_page && !this.config?.security && eff.security_page && 'ochrona', !this.config?.heating_page && eff.heating_page && 'ogrzewanie'].filter(Boolean);
+    const count = eff.rooms.reduce((n,r)=>n + ['lights','climate','media','sensors'].reduce((k,key)=>k + listOf(r[key]).length,0),0);
+    const gen = `<article class="tile wide-tile"><span class="label">${icon('spark')}Gotowa konfiguracja</span><div class="card-body">
+      <p class="note-line">${autoParts.length ? `Karta sama dobrała z obszarów Home Assistanta: ${escapeHTML(andList(autoParts))} (${plN(eff.rooms.length,'pokój','pokoje','pokoi')}, ${plN(count,'encja','encje','encji')}). Skopiuj YAML, popraw nazwy i dopisz urządzenia albo zapisz go w pulpicie jednym przyciskiem.` : 'Pulpit używa Twojej konfiguracji. Poniżej to, co karta z niej odczytała.'}</p>
+      <div class="device-actions"><button class="mini" data-act="gen-toggle" aria-pressed="${Boolean(this.showGen)}">${icon('arrow')}${this.showGen ? 'Ukryj YAML' : 'Pokaż YAML'}</button><button class="mini" data-act="gen-copy">${icon('spark')}Kopiuj</button>${admin && autoParts.length ? `<button class="mini${this.genArm ? ' arm' : ''}" data-act="gen-save" ${this.savingTabs ? 'disabled' : ''}>${icon('power')}${this.genArm ? 'Stuknij ponownie, aby zapisać' : 'Zapisz w pulpicie'}</button>` : ''}</div>
+      ${this.showGen ? `<pre class="gen-yaml">${escapeHTML(yaml)}</pre>` : ''}</div></article>`;
+    this.genYaml = yaml;
+    this.setHTML('#settings-body',`<div class="cards">${screen}${dash}${ha}${tabs}${gen}</div>`);
+  }
+
+  async copyText(text) {
+    try { await navigator.clipboard.writeText(text); this.toast('Skopiowano YAML do schowka'); }
+    catch {
+      // http bez HTTPS: schowek bywa zablokowany, wtedy pokazujemy YAML do zaznaczenia
+      this.showGen = true; this.queue();
+      this.toast('Przeglądarka nie pozwala na schowek. Zaznacz YAML poniżej i skopiuj ręcznie.');
+    }
+  }
+
+  // zapis dobranej automatycznie konfiguracji do karty w pulpicie (tylko brakujące sekcje)
+  saveGenerated() {
+    const eff = this.effective(), add = {};
+    if (this.getModel().autoRooms) add.rooms = eff.rooms;
+    if (!this.config?.security_page && !this.config?.security && eff.security_page) add.security_page = eff.security_page;
+    if (!this.config?.heating_page && eff.heating_page) add.heating_page = eff.heating_page;
+    this.saveCardConfig(add,'Zapisano konfigurację w pulpicie. Możesz ją teraz poprawiać w edytorze YAML.');
   }
 
   // ukryte zakładki zapisywane w konfiguracji pulpitu (karta custom:aura-domu), jak hidden_tabs w Home Pulse
-  saveHiddenTabs(list) {
-    this.config = {...this.config,hidden_tabs:list};
+  saveHiddenTabs(list) { this.saveCardConfig({hidden_tabs:list.length ? list : undefined},'Zapisano w konfiguracji pulpitu'); }
+
+  // zmiana kluczy karty custom:aura-domu w konfiguracji pulpitu (undefined = usuń klucz); tylko administrator
+  saveCardConfig(patch,okMsg) {
+    const next = {...this.config};
+    for (const [k,v] of Object.entries(patch)) { if (v === undefined) delete next[k]; else next[k] = v; }
+    this.config = next;
+    this.invalidate();
     this.queue();
     this.saveChain = (this.saveChain || Promise.resolve()).then(async ()=>{
       this.savingTabs = true; this.queue();
@@ -1953,11 +2099,12 @@ class AuraDomu extends HTMLElement {
         const path = location.pathname.split('/')[1], urlPath = path === 'lovelace' ? null : path;
         const cfg = await this._hass.callWS({type:'lovelace/config',url_path:urlPath});
         let found = false;
-        const walk = cards => (cards || []).forEach(c=>{ if (found || !c) return; if (c.type === 'custom:aura-domu') { if (list.length) c.hidden_tabs = list; else delete c.hidden_tabs; found = true; return; } walk(c.cards); });
+        const apply = c => { for (const [k,v] of Object.entries(patch)) { if (v === undefined) delete c[k]; else c[k] = JSON.parse(JSON.stringify(v)); } };
+        const walk = cards => (cards || []).forEach(c=>{ if (found || !c) return; if (c.type === 'custom:aura-domu') { apply(c); found = true; return; } walk(c.cards); });
         (cfg.views || []).forEach(v=>{ walk(v.cards); (v.sections || []).forEach(s=>walk(s.cards)); });
         if (!found) throw new Error('no card');
         await this._hass.callWS({type:'lovelace/config/save',url_path:urlPath,config:cfg});
-        this.toast('Zapisano w konfiguracji pulpitu');
+        this.toast(okMsg);
       } catch { this.toast('Nie udało się zapisać. Zmiana wymaga konta administratora.'); }
       this.savingTabs = false; this.queue();
     });
@@ -2013,6 +2160,12 @@ class AuraDomu extends HTMLElement {
     }
     if (act === 'ha-nav') this.haNav(button.dataset.to);
     if (act === 'heat-mode') void this.heatMode(button.dataset.mode);
+    if (act === 'gen-toggle') { this.showGen = !this.showGen; this.queue(); }
+    if (act === 'gen-copy') void this.copyText(this.genYaml);
+    if (act === 'gen-save') {
+      if (!this.genArm) { this.genArm = true; clearTimeout(this.genArmTimer); this.genArmTimer = setTimeout(()=>{ this.genArm = false; this.queue(); },6000); this.queue(); }
+      else { this.genArm = false; clearTimeout(this.genArmTimer); this.saveGenerated(); }
+    }
     if (act === 'tab-toggle') { const k = button.dataset.tab, h = this.hiddenTabs(); this.saveHiddenTabs(h.includes(k) ? h.filter(x=>x !== k) : [...h,k]); }
     if (act === 'orb') this.ui.event ? this.showEvent(null) : this.showEvent(this.events[0] || {title:'Stan domu',text:this.snapshot.brief,kind:'status'});
     if (act === 'power' && this.snapshot.power) this.showEvent({text:'Chwilowy pobór mocy domu',kind:'energy',livePower:true});
@@ -2151,7 +2304,7 @@ class AuraDomu extends HTMLElement {
   }
 }
 
-console.info('%c AURA-DOMU %c v0.9.0 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
+console.info('%c AURA-DOMU %c v0.9.1 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
 if (!customElements.get('aura-domu')) {
   customElements.define('aura-domu',AuraDomu);
   window.customCards = window.customCards || [];

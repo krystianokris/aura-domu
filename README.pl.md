@@ -2,7 +2,7 @@
 
 **Pulpit na cały ekran dla Home Assistanta** — dom, pokoje, klimat, ogrzewanie, pogoda, energia, ochrona, kosze i F1 w jednej karcie. Miękki, „wypukły” styl (neumorfizm), jasny i ciemny motyw, kafelki wyłaniające się z wklęsłych dołków przy wejściu na zakładkę.
 
-> Wersja **0.9.0 (beta)** — czekam na opinie i propozycje w [Issues](../../issues). Interfejs jest na razie po polsku.
+> Wersja **0.9.1 (beta)** — czekam na opinie i propozycje w [Issues](../../issues). Interfejs jest na razie po polsku.
 
 [English README](README.md)
 
@@ -21,7 +21,18 @@
 | **F1** | Z integracji [F1 Sensor](https://github.com/Nicxe/f1_sensor): odliczanie, plan weekendu w Twoim czasie, podium, klasyfikacje, tor, pogoda na wyścig i tryb na żywo (stan toru, pozycje, dyrekcja wyścigu). Tryb bez spoilerów. |
 | **Ustawienia** | Motyw (jasny / ciemny / jak w systemie), włączanie i wyłączanie zakładek (dla administratora, zapis w konfiguracji pulpitu), wejście do ustawień HA. |
 
-Karta pokazuje **tylko encje, które wpiszesz w konfiguracji** — nie zaciąga tysięcy encji z obszarów. Zakładka bez danych sama znika z menu.
+## Start bez konfiguracji
+
+Wystarczy `type: custom:aura-domu`. Karta sama buduje pulpit z **obszarów Home Assistanta**:
+
+- **Pokoje** — w każdym obszarze: światła (także przełączniki z „światło / lamp / LED” w nazwie), wentylatory, termostaty, multimedia, okna i drzwi, czujniki zalania, ruchu i czadu, oczyszczacze; temperatura i wilgotność pokoju z czujnika pokojowego. Pomija encje diagnostyczne i ukryte.
+- **Ochrona** — okna, wycieki, czad, ruch, alarm i baterie tych czujników.
+- **Ogrzewanie** — termostaty grzewcze (bez klimatyzatorów), jeden obieg na pokój, podłogówka osobno; główny termostat rozpoznaje po integracji (np. Nest, Ecobee, Tado).
+- **Pogoda**, **Kosze** i **F1** — gdy masz encję pogody, Waste Collection Schedule albo F1 Sensor.
+
+Potem w **Ustawienia → Gotowa konfiguracja** zobaczysz to wszystko jako YAML: **Kopiuj** (do edytora pulpitu) albo **Zapisz w pulpicie** (dwa stuknięcia, tylko administrator). Od tej chwili karta korzysta z Twojej konfiguracji — poprawiasz nazwy, dopisujesz urządzenia (pralka, drukarka, kuweta…), usuwasz, czego nie chcesz.
+
+Gdy wpiszesz własną listę `rooms`, karta pokazuje **tylko te encje**. Zakładka bez danych sama znika z menu.
 
 ## Instalacja
 
@@ -31,7 +42,7 @@ Karta pokazuje **tylko encje, które wpiszesz w konfiguracji** — nie zaciąga 
 
 ### Ręcznie
 1. Pobierz `dist/aura-domu.js` z [najnowszego wydania](../../releases) i skopiuj do `/config/www/aura-domu.js`.
-2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj**: `/local/aura-domu.js?v=0.9.0`, typ **Moduł JavaScript**.
+2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj**: `/local/aura-domu.js?v=0.9.1`, typ **Moduł JavaScript**.
 3. Po każdej aktualizacji zmień `?v=` — przeglądarka trzyma pliki z `/local` przez 31 dni.
 
 ## Konfiguracja
@@ -64,7 +75,7 @@ Do ustawień HA wchodzisz wtedy z zakładki **Ustawienia** w karcie. Edycja pulp
 
 | Opcja | Opis |
 |---|---|
-| `rooms` | Lista pokoi: `id`, `name`, `subtitle`, `temperature`, `humidity`, `lights`, `climate`, `media`, `sensors`, `devices`. Bez tej listy karta bierze pokoje z obszarów HA (tylko światła i klimat). |
+| `rooms` | Lista pokoi: `id`, `name`, `subtitle`, `temperature`, `humidity`, `lights`, `climate`, `media`, `sensors`, `devices`. Bez tej listy karta dobiera pokoje sama z obszarów HA (patrz „Start bez konfiguracji”). |
 | `lights[].type: fan` | Przełącznik pokazany w Światłach, ale nieliczony jako światło. |
 | `sensors[].type` | `window`, `leak`, `motion`, `co`, `battery`, `pm`, `aq` — ikona i ostrzeżenia. |
 | `devices[]` | `type` (`washer`, `dryer`, `printer`, `purifier`, `pet_feeder`, `litter_box`), `name`, `status` i dowolne pola z encjami (np. `remaining`, `progress`), `switches`, przyciski (`pause`, `feed`, `clean`…). |
