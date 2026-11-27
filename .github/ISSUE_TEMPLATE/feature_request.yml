@@ -1,0 +1,21 @@
+name: Propozycja / Feature request
+description: Pomysł na nową zakładkę, urządzenie albo zmianę wyglądu
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Co by się przydało? / What would help?
+      description: Opisz pomysł. Jeśli dotyczy konkretnej integracji lub urządzenia, napisz której.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Do czego tego użyjesz?
+  - type: textarea
+    id: entities
+    attributes:
+      label: Przykładowe encje (opcjonalnie)
+      description: Np. stan i atrybuty z Narzędzi deweloperskich → Stany, bez danych prywatnych.
+      render: yaml

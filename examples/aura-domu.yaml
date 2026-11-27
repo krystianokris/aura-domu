@@ -1,0 +1,108 @@
+# Aura domu — przykładowa konfiguracja pulpitu (tryb YAML pulpitu → wklej całość)
+# Encje są przykładowe: podmień je na swoje (Narzędzia deweloperskie → Stany).
+# Każda sekcja jest opcjonalna. Zakładka bez danych sama znika z menu.
+
+kiosk_mode:            # opcjonalnie: pulpit na cały ekran (wymaga kiosk-mode z HACS)
+  kiosk: true
+views:
+  - title: Dom
+    path: dom
+    type: panel
+    cards:
+      - type: custom:aura-domu
+        title: Aura domu                     # nazwa w lewym górnym rogu
+        weather_entity: weather.home
+        climate_entity: climate.salon        # termostat na kafelku „Klimat” na stronie Dom
+        power_entity: sensor.dom_moc         # chwilowy pobór mocy (W lub kW)
+        price_entity: sensor.cena_pradu      # cena prądu (opcjonalnie)
+        # price_cheap: 15                    # progi ceny (p/kWh, gr/kWh…) dla kolorów „tanio/średnio/drogo”
+        # price_expensive: 25
+        # scenes: [scene.wieczor, scene.film]
+        # hidden_tabs: [f1, bins]           # ukryte zakładki (można też w Ustawieniach na pulpicie)
+
+        rooms:
+          - id: salon
+            name: Salon
+            subtitle: Ciepłe światło. Dobry odpoczynek.
+            temperature: sensor.salon_temperatura   # sensor albo climate.* (bierze current_temperature)
+            humidity: sensor.salon_wilgotnosc
+            lights:
+              - {entity: light.salon_sufit, name: Sufit}
+              - {entity: switch.salon_lampa, name: Lampa}
+            climate:
+              - {entity: climate.salon, name: Termostat}
+            media:
+              - {entity: media_player.salon_tv, name: Telewizor}
+            sensors:
+              - {entity: sensor.salon_pm25, name: Pyły PM2.5, type: pm}
+            devices:
+              - {type: purifier, name: Oczyszczacz, entity: fan.oczyszczacz, pm25: sensor.salon_pm25, filter: sensor.oczyszczacz_filtr}
+
+          - id: kuchnia
+            name: Kuchnia
+            temperature: sensor.kuchnia_temperatura
+            lights:
+              - {entity: switch.kuchnia_swiatlo, name: Światło główne}
+              - {entity: light.kuchnia_led, name: LED}
+            sensors:
+              - {entity: binary_sensor.kuchnia_okno, name: Okno, type: window}
+              - {entity: binary_sensor.kuchnia_zalanie, name: Wyciek pod zlewem, type: leak}
+
+          - id: lazienka
+            name: Łazienka
+            temperature: sensor.lazienka_temperatura
+            humidity: sensor.lazienka_wilgotnosc
+            lights:
+              - {entity: switch.lazienka_swiatlo, name: Światło}
+              - {entity: switch.lazienka_wentylator, name: Wentylator, type: fan}   # type: fan = nie liczy się jako światło
+
+          - id: pralnia
+            name: Pralnia
+            devices:
+              - type: washer
+                name: Pralka
+                status: sensor.pralka_status
+                remaining: sensor.pralka_pozostaly_czas
+
+        climate:                    # dodatkowe termostaty na zakładce Klimat
+          - {entity: climate.salon, name: Salon}
+
+        heating_page:               # zakładka Ogrzewanie
+          source: climate.salon     # główny termostat: hvac_action „heating” = kocioł grzeje
+          source_name: Termostat
+          boiler_name: Kocioł
+          # boiler: binary_sensor.kociol_pali   # opcjonalnie: encja, która mówi, że kocioł pracuje
+          comfort: {main: 22, rooms: 21}
+          eco: {rooms: 18}
+          boost: 1
+          rooms:
+            - {name: Salon, climate: climate.salon, humidity: sensor.salon_wilgotnosc}
+            - {name: Sypialnia, climate: climate.sypialnia_glowica}
+
+        energy_page:                # zakładka Energia (wszystko opcjonalne)
+          power: sensor.dom_moc
+          el_today: sensor.prad_dzis
+          el_cost: sensor.prad_koszt_dzis
+          el_rate: sensor.cena_pradu
+          gas_today_kwh: sensor.gaz_dzis
+          gas_cost: sensor.gaz_koszt_dzis
+          water_yday: sensor.woda_wczoraj
+          devices:
+            - {name: Pralka, today: sensor.pralka_energia_dzis, power: sensor.pralka_moc}
+
+        security_page:              # zakładka Ochrona
+          # guard: select.tryb_ochrony
+          # guard_options: {Home: {name: W domu}, Away: {name: Poza domem}}
+          windows: [{entity: binary_sensor.kuchnia_okno, name: Okno · kuchnia}]
+          leaks: [{entity: binary_sensor.kuchnia_zalanie, name: Pod zlewem}]
+          co: [{entity: binary_sensor.czujnik_czadu, name: Czujnik czadu}]
+          motion: [{entity: binary_sensor.korytarz_ruch, name: Korytarz}]
+          batteries: [{entity: sensor.kuchnia_okno_bateria, name: Okno · kuchnia}]
+          # cameras: [{name: Wejście, motion: binary_sensor.kamera_ruch, person: binary_sensor.kamera_osoba}]
+
+        # bins:                     # zakładka Kosze — sama znajduje kalendarz Waste Collection Schedule
+        #   calendar: calendar.waste_collection_schedule
+        #   types: {czarny: odpady zmieszane, zielony: recykling}
+
+        # f1:                       # zakładka F1 — sama znajduje encje integracji F1 Sensor
+        #   led: automation.flagi_f1_na_led   # opcjonalnie: automatyzacja pokazywana w trakcie wyścigu

@@ -1,0 +1,34 @@
+name: Błąd / Bug report
+description: Coś nie działa albo wygląda źle
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Co się dzieje? / What happens?
+      description: Opisz problem i co powinno się stać. Zrzut ekranu bardzo pomaga.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Wersja Aura domu
+      placeholder: "0.9.0 (widać w konsoli przeglądarki: AURA-DOMU v…)"
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Wersja Home Assistant
+      placeholder: "2026.11.3"
+  - type: input
+    id: browser
+    attributes:
+      label: Urządzenie i przeglądarka / aplikacja
+      placeholder: "np. tablet Android, aplikacja HA; Chrome na PC"
+  - type: textarea
+    id: config
+    attributes:
+      label: Fragment konfiguracji karty
+      description: Bez haseł, tokenów i adresów. Wystarczy część, której dotyczy problem.
+      render: yaml
