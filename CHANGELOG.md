@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.2 — dokumentacja i demo
+
+- README po polsku i angielsku ze zrzutami każdej zakładki, opisem wszystkich opcji i FAQ.
+- Demo w przeglądarce: https://krystianokris.github.io/aura-domu/demo/
+- Nowe przykłady: `minimal.yaml`, `rooms-and-devices.yaml`, `tabs.yaml`.
+- Walidacja HACS i sprawdzanie karty w GitHub Actions.
+
 ## 0.9.1 — start bez konfiguracji
 
 - Tryb automatyczny: bez listy `rooms` karta buduje pokoje z obszarów HA (światła, wentylatory, termostaty, multimedia, okna, wycieki, ruch, czad, oczyszczacze, temperatura i wilgotność z czujnika pokojowego); pomija encje diagnostyczne i ukryte.

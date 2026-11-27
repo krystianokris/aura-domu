@@ -75,7 +75,7 @@ Theme (light, dark, system), **show / hide tabs**, a **ready-made configuration*
 
 ### Manual
 1. Download `aura-domu.js` from the [latest release](../../releases/latest) to `/config/www/aura-domu.js`.
-2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.9.1`, type **JavaScript module**.
+2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.9.2`, type **JavaScript module**.
 3. Change `?v=` after every update — browsers cache `/local` files for up to 31 days.
 
 ### Add the dashboard

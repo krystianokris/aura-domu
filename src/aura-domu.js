@@ -1,8 +1,8 @@
-// Aura domu — karta Home Assistanta · v0.9.1
+// Aura domu — karta Home Assistanta · v0.9.2
 // https://github.com/krystianokris/aura-domu · licencja MIT
 // Instalacja: HACS (repozytorium niestandardowe, kategoria Dashboard) albo ręcznie:
 //   1) skopiuj dist/aura-domu.js do /config/www/aura-domu.js
-//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.9.1 (Moduł JavaScript)
+//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.9.2 (Moduł JavaScript)
 //   3) pulpit z widokiem „Panel” i kartą `type: custom:aura-domu`
 // Pełny przykład konfiguracji: examples/aura-domu.yaml i README.
 const AURA_CSS = `
@@ -2304,7 +2304,7 @@ class AuraDomu extends HTMLElement {
   }
 }
 
-console.info('%c AURA-DOMU %c v0.9.1 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
+console.info('%c AURA-DOMU %c v0.9.2 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
 if (!customElements.get('aura-domu')) {
   customElements.define('aura-domu',AuraDomu);
   window.customCards = window.customCards || [];
