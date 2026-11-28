@@ -14,7 +14,7 @@
 
 Miękki, „wypukły” wygląd (neumorfizm), jasny i ciemny motyw, rysowane sceny zamiast zdjęć i kafelki, które przy wejściu na zakładkę wyłaniają się z wklęsłych dołków. Działa na komputerze, tablecie na ścianie i telefonie.
 
-> **Wersja 0.9 (beta).** Czekam na opinie i pomysły — [zgłoś błąd albo zaproponuj zmianę](../../issues/new/choose). Interfejs jest na razie po polsku.
+> **Wersja 0.10 (beta).** Czekam na opinie i pomysły — [zgłoś błąd albo zaproponuj zmianę](../../issues/new/choose). Interfejs jest po polsku i po angielsku: karta bierze język z profilu użytkownika HA (polski → polski, każdy inny → angielski), a `language: pl` albo `en` wymusza język.
 
 ## Spis treści
 [Co potrafi](#co-potrafi) · [Instalacja](#instalacja) · [Start bez konfiguracji](#start-bez-konfiguracji) · [Konfiguracja](#konfiguracja) · [Opcje](#wszystkie-opcje) · [Pełny ekran](#pulpit-na-cały-ekran) · [FAQ](#faq)
@@ -77,7 +77,7 @@ HACS sam doda zasób i będzie informował o nowych wersjach.
 
 ### Ręcznie
 1. Pobierz `aura-domu.js` z [najnowszego wydania](../../releases/latest) i skopiuj do `/config/www/aura-domu.js`.
-2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.9.3`, typ **Moduł JavaScript**.
+2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.10.0`, typ **Moduł JavaScript**.
 3. Przy każdej aktualizacji zmień `?v=` na nowy numer — przeglądarka trzyma pliki z `/local` nawet 31 dni.
 
 ### Dodanie pulpitu
@@ -168,6 +168,7 @@ Więcej przykładów:
 | `f1` | Nadpisanie encji F1 Sensor, np. `{led: automation.flagi_f1}`. |
 | `hidden_tabs` | Ukryte zakładki: `rooms`, `climate`, `heating`, `weather`, `energy`, `security`, `bins`, `f1`. |
 | `event_entities` | Własne zdarzenia na kuli: `{sensor.x: {to: "done", title: "…", text: "…"}}`. |
+| `language` | `pl` albo `en`. Domyślnie język z profilu użytkownika HA (polski → `pl`, każdy inny → `en`). |
 | `load_font` | `false` wyłącza font Inter Tight z Google Fonts. |
 
 ### Pokój (`rooms[]`)

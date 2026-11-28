@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0 — English / po angielsku
+
+- Interfejs po angielsku i po polsku. Karta bierze język z profilu użytkownika Home Assistanta (polski → polski, każdy inny → angielski); opcja `language: en` albo `pl` wymusza język. Daty, godziny i liczby w formacie wybranego języka.
+- The card is now available in English. It follows the language of your Home Assistant profile (Polish → Polish, anything else → English); set `language: en` or `pl` to force one.
+- Demo: `?lang=en` albo `?lang=pl` w adresie.
+- Poprawne liczby mnogie („1 słaba bateria”, „22 światła”).
+
 ## 0.9.3 — poprawki z przeglądu HACS
 
 - Karta nie zapisuje już konfiguracji pulpitu: zniknął przycisk „Zapisz w pulpicie”. Gotową konfigurację kopiujesz przyciskiem **Kopiuj** i wklejasz w edytorze pulpitu.

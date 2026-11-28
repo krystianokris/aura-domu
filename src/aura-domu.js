@@ -1,8 +1,8 @@
-// Aura domu — karta Home Assistanta · v0.9.3
+// Aura domu — karta Home Assistanta · v0.10.0
 // https://github.com/krystianokris/aura-domu · licencja MIT
 // Instalacja: HACS (repozytorium niestandardowe, kategoria Dashboard) albo ręcznie:
 //   1) skopiuj dist/aura-domu.js do /config/www/aura-domu.js
-//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.9.3 (Moduł JavaScript)
+//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.10.0 (Moduł JavaScript)
 //   3) pulpit z widokiem „Panel” i kartą `type: custom:aura-domu`
 // Pełny przykład konfiguracji: examples/aura-domu.yaml i README.
 const AURA_CSS = `
@@ -603,6 +603,106 @@ const signalScenes = `
   <svg class="scene-energy" viewBox="0 0 340 220"><g fill="none" stroke="currentColor"><circle cx="170" cy="110" r="64" opacity=".55" stroke-width=".75"/><path class="beam" pathLength="1" d="m177 71-29 42h21l-6 35 32-48h-22z" stroke-width="1.5" stroke-linejoin="round"/><path class="current" d="M27 110h79m128 0h79M111 58l-20-21m138 21 20-21M111 162l-20 21m138-21 20 21" stroke-width=".8"/><circle cx="27" cy="110" r="4"/><circle cx="313" cy="110" r="4"/></g></svg>
   <svg class="scene-alert" viewBox="0 0 340 220"><g fill="none" stroke="currentColor"><circle class="bell-wave" cx="170" cy="108" r="94" stroke-width=".7"/><circle cx="170" cy="108" r="64" stroke-width=".7" opacity=".6"/><path class="beam" pathLength="1" d="m170 72 34 64h-68z M170 94v20" stroke-width="1.5" stroke-linejoin="round"/></g><circle cx="170" cy="125" r="1.9" fill="currentColor"/></svg>
   <svg class="scene-status" viewBox="0 0 340 220"><g fill="none" stroke="currentColor"><path class="beam" pathLength="1" d="m170 27 114 61v53l-114 56-114-56V88z M56 88l114 57 114-57 M170 145v52 M113 57l114 61v50 M227 57l-114 61v50 M56 113l114 57 114-57" stroke-width="1"/><path d="M170 15v11M38 141h17m230 0h17m-132 57v10" stroke-width=".7" opacity=".65"/></g><circle class="status-dot" cx="170" cy="145" r="4" fill="currentColor"/><circle class="status-dot" cx="227" cy="118" r="3" fill="currentColor"/></svg>`;
+/* ---------- język: polski (teksty w kodzie) albo angielski (słownik EN, klucz = polski tekst) ---------- */
+let LANG = 'pl';
+const EN = {
+  // menu i ekran główny
+  'Widoki dashboardu':'Dashboard views','Dom':'Home','Pokoje':'Rooms','Klimat':'Climate','Ogrzewanie':'Heating','Pogoda':'Weather','Energia':'Energy','Ochrona':'Security','Kosze':'Bins','Ustawienia':'Settings','Formuła 1':'Formula 1',
+  'Status domu':'Home status','Aktualny czas':'Current time','Pokaż zdarzenie lub stan domu':'Show event or home status','Pobór prądu':'Power draw','Zamknij podgląd':'Close preview','Zamknij podgląd zdarzenia':'Close event preview',
+  'Sceny':'Scenes','Teraz':'Now','Wszystkie pokoje':'All rooms','Ostatnie zdarzenia':'Recent events','Przełącz pokój':'Switch room','Zamknij':'Close',
+  'Spokojnej nocy':'Good night','Dzień dobry':'Good morning','Miłego popołudnia':'Good afternoon','Dobry wieczór':'Good evening','Bez pokoju':'No room',
+  'Wykryto alarm':'Alarm detected','wł.':'on','grzeje':'heating','Kosze dziś':'Bins today','Kosze jutro':'Bins tomorrow','Światła':'Lights','Ogrzewanie pracuje':'Heating is on','Stan urządzeń i pomieszczeń':'Devices and rooms',
+  'Uwaga':'Attention','Dom odpoczywa':'Home is resting','Dom pracuje':'Home is busy','Spokojnie':'All calm',
+  '{n} w pokojach':'{n} in rooms','światło':'light','światła':'lights','świateł':'lights','Zgaś wszystkie':'Turn all off','Zapal wszystkie':'Turn all on','tanio':'cheap','średnio':'average','drogo':'expensive','Brak czujnika mocy':'No power sensor',
+  'czujnik':'sensor','czujniki':'sensors','czujników':'sensors','Okna zamknięte':'Windows closed','Pozostałe okna zamknięte':'Other windows closed','Brak odczytu okien':'No window readings','Brak odczytu':'No reading','i {n} więcej':'and {n} more',
+  'Pokaż':'Show','Brak termostatu':'No thermostat','wyłączone':'off','cel':'target','Obniż temperaturę':'Lower temperature','Podwyższ temperaturę':'Raise temperature',
+  'Zgaszone':'All off','Brak urządzeń':'No devices','encja':'entity','encje':'entities','encji':'entities','Otwórz':'Open','Zgaś światła':'Turn off lights','Zapal światła':'Turn on lights',
+  'Brak pomieszczeń. Dodaj listę „rooms” w konfiguracji karty.':'No rooms. Add a “rooms” list to the card configuration.',
+  'Dane demonstracyjne':'Demo data','Połączono z HA':'Connected to HA','Brak połączenia':'Offline','Włącz jasny motyw':'Switch to light theme','Włącz ciemny motyw':'Switch to dark theme',
+  'pomieszczenie':'room','pomieszczenia':'rooms','pomieszczeń':'rooms','pomieszczeniu':'room','pomieszczeniach':'rooms','{n} wł. świateł':'{n} lights on','wszystkie światła zgaszone':'all lights off',
+  'Brak połączenia z Home Assistantem':'No connection to Home Assistant','Zdarzenie':'Event','Energia · na żywo':'Energy · live','Stan domu':'Home status','Chwilowy pobór mocy domu':'Current power draw of the house',
+  // stany encji
+  'Brak encji':'No entity','Brak encji w HA':'Entity not found in HA','O':'At','Ostatnio':'Last','Wykryto':'Detected','Wykryto obecność':'Presence detected','Brak wykrycia':'Clear','Brak stanu':'No state',
+  'Niedostępne':'Unavailable','Nieznany stan':'Unknown','Wł.':'On','Wył.':'Off','Grzanie':'Heat','Chłodzenie':'Cool','Grzanie i chłodzenie':'Heat/cool','Bezczynne':'Idle','Grzeje':'Heating','Chłodzi':'Cooling','Osuszanie':'Dry','Nawiew':'Fan only',
+  'Otwarte':'Open','Zamknięte':'Closed','Zamknięty':'Locked','Odblokowany':'Unlocked','Rozbrojony':'Disarmed','Uzbrojony w domu':'Armed home','Uzbrojony poza domem':'Armed away','Tryb nocny':'Armed night','Odtwarzanie':'Playing','Wstrzymane':'Paused',
+  'W domu':'Home','Poza domem':'Away','W stacji':'Docked','Sprząta':'Cleaning','Wraca':'Returning','Aktywne':'Active','Zakończone':'Finished','Czuwanie':'Standby','Doskonała':'Excellent','Dobra':'Good','Umiarkowana':'Moderate','Słaba':'Poor','Bardzo słaba':'Very poor',
+  'Zakończony':'Finished','Błąd':'Error','Pracuje':'Running','Drukuje':'Printing','Przygotowanie':'Preparing','Pauza':'Paused','Gotowe':'Ready',
+  'Noc':'Night','Urlop':'Vacation','Uzbrojony':'Armed','Uzbrajanie':'Arming','Oczekuje':'Pending',
+  'Pochmurno':'Cloudy','Częściowe zachmurzenie':'Partly cloudy','Deszcz':'Rain','Ulewa':'Pouring','Słonecznie':'Sunny','Pogodna noc':'Clear night','Śnieg':'Snow','Mgła':'Fog','Wietrznie':'Windy',
+  'Wyjątkowe warunki':'Exceptional','Grad':'Hail','Burza':'Thunderstorm','Burza z deszczem':'Thunderstorm with rain','Deszcz ze śniegiem':'Sleet','Wietrznie, chmury':'Windy and cloudy',
+  // pokój i urządzenia
+  'Zasilanie':'Power','Jasność':'Brightness','{on} z {n} wł.':'{on} of {n} on','Multimedia':'Media','Czujniki':'Sensors','Urządzenia':'Devices','Urządzenie':'Device',
+  'Ten pokój nie ma jeszcze przypisanych urządzeń w konfiguracji karty.':'This room has no devices assigned in the card configuration yet.',
+  'Dodaj listę „rooms” w konfiguracji karty, aby wybrać urządzenia tego pokoju.':'Add a “rooms” list to the card configuration to choose this room’s devices.',
+  'Odtwórz / pauza':'Play / pause','Ciszej':'Volume down','Głośniej':'Volume up','Pełny':'Full','Tak':'Yes','Nie':'No',
+  'Stan':'Status','Etap':'Stage','Pozostało':'Remaining','Postęp':'Progress','Koniec':'Ends','Warstwa':'Layer','Warstw':'Layers','Zadanie':'Job','Dysza':'Nozzle','Dysza · cel':'Nozzle · target','Stół':'Bed','Stół · cel':'Bed · target',
+  'Filtr':'Filter','Porcje':'Portions','Wizyty dziś':'Visits today','Waga kota':'Cat weight','Czas wizyty':'Visit length','Użycia':'Uses','Ostatnia porcja':'Last portion','Bateria':'Battery','Pojemnik':'Bin','Zbiornik wody':'Water tank','Temperatura':'Temperature',
+  'Czyszczenie':'Clean','Nakarm':'Feed','Wstrzymaj':'Pause','Wznów':'Resume','Zatrzymaj':'Stop','Światło':'Light',
+  // klimat i energia
+  'wilgotność':'humidity','okno otwarte':'window open','Średnio {t} w {n}':'Average {t} across {n}','Brak odczytów temperatury':'No temperature readings','Na zewnątrz':'Outside','Pomieszczenia':'Rooms','Termostaty i klimatyzacja':'Thermostats and air conditioning',
+  'Moc teraz':'Power now','Prąd dziś':'Electricity today','Koszt':'Cost','Wczoraj':'Yesterday','Opłata stała':'Standing charge','Cena prądu':'Electricity price','Następna':'Next','Tanie grzanie':'Cheap heating','Gaz dziś':'Gas today','Objętość':'Volume','Stawka':'Rate',
+  'Woda wczoraj':'Water yesterday','Woda':'Water','Ścieki':'Sewerage','Odczyt':'Reading','dziś':'today','Dom pobiera teraz {p}':'The house is drawing {p}','Zużycie i koszty z liczników':'Usage and costs from your meters','Liczniki':'Meters',
+  'Nie znalazłem w Home Assistant encji wpisanych w „energy_page”.':'None of the entities in “energy_page” were found in Home Assistant.','Dodaj sekcję „energy_page” w konfiguracji karty.':'Add an “energy_page” section to the card configuration.',
+  // ochrona
+  'Wszystko w porządku':'All good','{n} bez odczytu':'{n} without a reading','słaba bateria':'low battery','słabe baterie':'low batteries','słabych baterii':'low batteries','Czujniki działają, nie ma alarmów':'Sensors are working, no alarms','Tryb ochrony':'Security mode','Okna':'Windows','Wycieki i czad':'Leaks and CO','Ruch i obecność':'Motion and presence',
+  'Dzwonek':'Doorbell','Osoba':'Person','Ruch':'Motion','Kamera wyłączona':'Camera off','Spokój':'Quiet','Kamery':'Cameras','Baterie czujników':'Sensor batteries','Dodaj sekcję „security_page” w konfiguracji karty.':'Add a “security_page” section to the card configuration.',
+  // F1
+  'stan toru':'track status','za {x}':'in {x}','dzień':'day','dni':'days','za {n} godz.':'in {n} h','za {n} min':'in {n} min','Sesja':'Session','Na żywo':'Live','{s} trwa':'{s} is on','Runda':'Round','z':'of','Tydzień wyścigowy':'Race week',
+  'Pierwszy trening już blisko':'First practice is close','Pierwszy trening za {x}':'First practice in {x}','Lider {n} +{p} pkt':'Leader {n} +{p} pts','Brak danych':'No data','czekam na stan toru':'waiting for track status','lider':'leader',
+  'Stan toru':'Track status','Okrążenie':'Lap','Do końca':'Remaining','Na torze':'At the track','tor':'track','Automatyzacja F1':'F1 automation','automatyzacja włączona':'automation on','automatyzacja wyłączona':'automation off','otwórz pokój z telewizorem':'open the TV room',
+  'Sesja zaraz się zacznie':'Session about to start','trwa':'now','najbliżej':'next','godz.':'hrs','Do wyścigu':'Until the race','Wyścig {d} o {h}':'Race {d} at {h}','{n} okrążeń':'{n} laps','weekend ze sprintem':'sprint weekend','Następny wyścig':'Next race','zakończona':'finished',
+  'runda':'round','po {x}':'after {x}','rundzie':'round','rundach':'rounds','Broni zwycięstwa':'Defending winner','start z':'started','Ostatni zwycięzcy':'Recent winners','Pole position → zwycięstwo':'Pole position → win','w ostatnich wyścigach tutaj':'in recent races here',
+  'Nie dojeżdża do mety':'Did not finish','kierowców w ostatnich latach':'of drivers in recent years','Obrys toru':'Track outline','deszcz':'rain','wiatr':'wind','Kwalifikacje':'Qualifying','Wyścig':'Race','Okrążenia':'Laps','Tryb bez spoilerów':'No-spoiler mode','włączony':'on','wyłączony':'off',
+  'wyścig':'race','wyścigi':'races','wyścigów':'races','Trening 1':'Practice 1','Trening 2':'Practice 2','Trening 3':'Practice 3','Kwalifikacje do sprintu':'Sprint qualifying',
+  'Stan na torze':'On track','Pozycje':'Positions','Dyrekcja wyścigu':'Race control','Dom w trakcie wyścigu':'Home during the race','tylko podgląd':'view only','Plan weekendu':'Weekend schedule','Twój czas':'your time','Ostatni wyścig':'Last race','Kierowcy':'Drivers','Zespoły':'Teams',
+  'O torze':'About the circuit','Pogoda na wyścig':'Race weather','Szybko':'At a glance',
+  'Pozycje pojawią się, gdy sesja ruszy.':'Positions appear once the session starts.','Brak komunikatów.':'No messages.','Brak planu sesji.':'No session schedule.','Brak wyników.':'No results.','Wyniki ukryte, bo tryb bez spoilerów jest włączony.':'Results hidden: no-spoiler mode is on.',
+  'Brak klasyfikacji.':'No standings.','Klasyfikacja ukryta, bo tryb bez spoilerów jest włączony.':'Standings hidden: no-spoiler mode is on.','Brak danych o torze.':'No circuit data.','Prognoza pojawi się bliżej wyścigu.':'The forecast appears closer to the race.',
+  'Nie widzę integracji F1 Sensor w Home Assistant.':'The F1 Sensor integration was not found in Home Assistant.',
+  'Zielona flaga':'Green flag','tor czysty, ścigamy się':'track clear, racing','Żółta flaga':'Yellow flag','uwaga, zdarzenie na torze':'caution, incident on track','Podwójna żółta':'Double yellow','niebezpieczeństwo na torze':'danger on track','Wirtualny SC':'Virtual SC',
+  'neutralizacja na całym torze':'neutralised on the whole track','Koniec VSC':'VSC ending','zaraz wracamy do ścigania':'racing resumes shortly','stawka jedzie za samochodem bezpieczeństwa':'the field is behind the safety car','Czerwona flaga':'Red flag','sesja przerwana':'session stopped',
+  'bezchmurnie':'clear','małe zachmurzenie':'mostly clear','pochmurno':'cloudy','mgła':'fog','mżawka':'drizzle','śnieg':'snow','przelotny deszcz':'showers','burza':'thunderstorm',
+  // kosze
+  'czarny':'black','brązowy':'brown','zielony':'green','niebieski':'blue','szary':'grey','fioletowy':'purple','czerwony':'red','{c} kosz':'{c} bin',
+  'recykling':'recycling','odpady ogrodowe':'garden waste','odpady spożywcze':'food waste','szkło':'glass','papier':'paper','odpady zmieszane':'general waste',
+  'jutro':'tomorrow','za {n} dni':'in {n} days','Najbliższy odbiór {r}':'Next collection {r}','Wczytuję harmonogram odbiorów…':'Loading the collection schedule…','Kalendarz nie ma żadnych przyszłych odbiorów.':'The calendar has no upcoming collections.',
+  'Odbiór jest dziś. Kosze powinny już stać przy drodze.':'Collection is today. The bins should already be out.','Wystaw dziś wieczorem.':'Put them out this evening.','Co wystawić jako następne':'What goes out next',
+  'Kolejne terminy pojawią się, gdy rada je opublikuje.':'More dates will appear once the council publishes them.','Najbliższe terminy dla każdego kosza':'Next date for each bin','Nadchodzące odbiory':'Upcoming collections','Źródło':'Source',
+  // pogoda
+  'z kierunku {d}':'from {d}','wg prognozy na tę godzinę':'from the forecast for this hour','Wiatr':'Wind','Kierunek':'Direction','Wilgotność':'Humidity','Punkt rosy':'Dew point','Ciśnienie':'Pressure','Zachmurzenie':'Cloud cover','Indeks UV':'UV index','Widoczność':'Visibility',
+  'Słońce':'Sun','wschód':'sunrise','zachód':'sunset','Wschód':'Sunrise','Zachód':'Sunset','Dziś':'Today','Jutro':'Tomorrow','Czekam na prognozę z Home Assistant…':'Waiting for the forecast from Home Assistant…','Najbliższe godziny':'Next hours','Kolejne dni':'Next days',
+  'Brak encji pogody w Home Assistant.':'No weather entity in Home Assistant.',
+  // ogrzewanie
+  'brak połączenia':'offline','grzeje – kocioł pracuje':'heating – boiler on','temperatura osiągnięta':'temperature reached','zawór {v}otwarty – grzeje':'valve {v}open – heating','zawór {v}otwarty – czeka na kocioł':'valve {v}open – waiting for the boiler','zawór zamknięty':'valve closed',
+  'Komfort':'Comfort','termostat główny':'main thermostat','Auto: {s} wraca do swojego harmonogramu. Pokoje bez zmian.':'Auto: {s} returns to its own schedule. Rooms unchanged.','Komfort: {s} {a}°, pozostałe pokoje {b}°.':'Comfort: {s} {a}°, other rooms {b}°.',
+  'Eco: {s} oszczędnie, pozostałe pokoje {b}°.':'Eco: {s} economy, other rooms {b}°.','Boost: wszystkie pokoje +{b}° od obecnej zadanej, bez automatycznego powrotu.':'Boost: all rooms +{b}° above their current target, no automatic return.',
+  '{m} ustawiony':'{m} set','Termostat nie przyjął zmiany.':'The thermostat rejected the change.','Termostat':'Thermostat','Wyłączone':'Off','instalacja na żywo':'live system','Kocioł':'Boiler','Czuwa':'Standby','Żądanie ciepła':'Heat demand','TAK – grzeje':'YES – heating','Nie – czuwa':'No – standby',
+  'Aktywne obiegi':'Active circuits','Pompa obiegowa':'Circulation pump','pracuje':'running','stop':'stopped','grzejnik':'radiator','Podłogówka':'Floor heating','włączona':'on','wył.':'off','Dodaj pokoje w „heating_page → rooms”.':'Add rooms under “heating_page → rooms”.',
+  'Stuknij ponownie, aby ustawić.':'Tap again to apply.','Tryb zmienia termostaty dopiero po drugim stuknięciu.':'A mode changes the thermostats only on the second tap.','koszt':'cost','Tryb ogrzewania':'Heating mode','Praca kotła dziś':'Boiler runtime today','według kotła':'from the boiler',
+  'według żądań termostatu':'from thermostat demand','Tryb systemu':'System mode','czuwa':'standby',
+  // ustawienia
+  'Jasny':'Light','Ciemny':'Dark','Jak w systemie':'System','Ten ekran':'This screen','Motyw zapamiętuje to urządzenie. Inne ekrany mają własny wybór.':'The theme is remembered on this device. Other screens keep their own choice.','Pulpit':'Dashboard',
+  'Pokoje i urządzenia zmieniasz w konfiguracji karty (lista „rooms”).':'Rooms and devices are set in the card configuration (the “rooms” list).','Pulpit może zmieniać tylko administrator.':'Only an administrator can change the dashboard.','Edytuj pulpit':'Edit dashboard','Pokaż menu HA':'Show HA menu',
+  'Konto':'Account','administrator':'administrator','użytkownik':'user','Połączenie':'Connection','Połączono':'Connected','Wersja HA':'HA version','Urządzenia, integracje, użytkownicy i pozostałe pulpity ustawia się w Home Assistant.':'Devices, integrations, users and other dashboards are managed in Home Assistant.',
+  'Otwórz ustawienia Home Assistant':'Open Home Assistant settings','widoczna w menu':'shown in the menu','ukryta':'hidden','brak danych w Home Assistant':'no data in Home Assistant','Ukryj zakładkę {n}':'Hide the {n} tab','Pokaż zakładkę {n}':'Show the {n} tab','Zakładki w menu':'Menu tabs',
+  'Wybierz, które zakładki mają być widoczne na tym urządzeniu. Wybór zapamiętuje przeglądarka, jak motyw. Dla wszystkich urządzeń ustawisz to w konfiguracji karty (<code>hidden_tabs</code>). Dom i Ustawienia są zawsze widoczne.':'Choose which tabs are shown on this device. The browser remembers the choice, like the theme. To set it for every device, use <code>hidden_tabs</code> in the card configuration. Home and Settings are always shown.',
+  'pokoje':'rooms','ochrona':'security','ogrzewanie':'heating','pokój':'room','pokoi':'rooms','Gotowa konfiguracja':'Ready-made configuration',
+  'Karta sama dobrała z obszarów Home Assistanta: {parts} ({rooms}, {ents}). Skopiuj YAML, wklej go w edytorze pulpitu (⋮ → Edytuj pulpit → ⋮ → Edytor kodu) w miejsce tej karty, popraw nazwy i dopisz urządzenia.':'The card picked these from your Home Assistant areas: {parts} ({rooms}, {ents}). Copy the YAML and paste it in the dashboard editor (⋮ → Edit dashboard → ⋮ → Raw configuration editor) in place of this card, then rename things and add devices.',
+  'Pulpit używa Twojej konfiguracji. Poniżej to, co karta z niej odczytała.':'The dashboard uses your configuration. Below is what the card read from it.','Ukryj YAML':'Hide YAML','Pokaż YAML':'Show YAML','Kopiuj':'Copy','Skopiowano YAML do schowka':'YAML copied to the clipboard',
+  'Przeglądarka nie pozwala na schowek. Zaznacz YAML poniżej i skopiuj ręcznie.':'The browser blocks the clipboard. Select the YAML below and copy it manually.',
+  // komunikaty i zdarzenia
+  'Urządzenie nie przyjęło polecenia.':'The device rejected the command.','Odtwarzacz nie przyjął polecenia.':'The player rejected the command.','Nie udało się zmienić trybu.':'Could not change the mode.','Home Assistant nie przyjął polecenia.':'Home Assistant rejected the command.',
+  'Nie udało się zmienić jasności.':'Could not change the brightness.','Nie udało się zapalić świateł':'Could not turn on the lights','Nie udało się zgasić świateł':'Could not turn off the lights','Nie udało się zgasić świateł.':'Could not turn off the lights.','Zgaszono {n}':'Turned off {n}',
+  'Termostat nie przyjął temperatury.':'The thermostat rejected the temperature.','Nie udało się włączyć sceny.':'Could not activate the scene.','Suszenie zakończone':'Drying finished','Pranie zakończone':'Washing finished','Dzwonek do drzwi':'Doorbell',
+  'Czujnik wykrył zdarzenie alarmowe':'A sensor detected an alarm event','Zarejestrowano naciśnięcie dzwonka':'The doorbell was pressed','Program dobiegł końca':'The program has finished',
+};
+const T = (text, vars) => {
+  let out = LANG === 'en' && Object.prototype.hasOwnProperty.call(EN,text) ? EN[text] : text;
+  if (vars) out = String(out).replace(/\{(\w+)\}/g,(m,k)=>k in vars ? String(vars[k]) : m);
+  return out;
+};
+const loc = () => LANG === 'en' ? 'en-GB' : 'pl-PL';
+const setLang = lang => { if (lang === LANG) return; LANG = lang; number = new Intl.NumberFormat(loc(),{maximumFractionDigits:1}); };
 const labels = {light:'Światła',switch:'Przełączniki',climate:'Termostaty i klima',sensor:'Czujniki',binary_sensor:'Czujniki dwustanowe',weather:'Pogoda',media_player:'Multimedia',cover:'Rolety i bramy',fan:'Wentylatory',vacuum:'Odkurzacze',camera:'Kamery',lock:'Zamki',alarm_control_panel:'Alarmy',automation:'Automatyzacje',script:'Skrypty',scene:'Sceny',person:'Osoby',device_tracker:'Lokalizacja',update:'Aktualizacje',button:'Przyciski',event:'Zdarzenia',input_boolean:'Przełączniki pomocnicze',number:'Pola liczbowe',select:'Listy wyboru',humidifier:'Nawilżacze',water_heater:'Podgrzewacze wody',calendar:'Kalendarze',timer:'Minutniki',sun:'Słońce',counter:'Liczniki'};
 const glyphFor = {light:'light',switch:'power',climate:'thermo',sensor:'sensor',binary_sensor:'sensor',weather:'weather',fan:'fan',lock:'door',cover:'door',camera:'shield',alarm_control_panel:'shield',automation:'bolt',event:'bell',input_boolean:'power',humidifier:'water',water_heater:'water',update:'arrow',button:'power',sun:'sun',scene:'spark'};
 const stateLabels = {unavailable:'Niedostępne',unknown:'Nieznany stan',on:'Wł.',off:'Wył.',heat:'Grzanie',cool:'Chłodzenie',heat_cool:'Grzanie i chłodzenie',auto:'Auto',idle:'Bezczynne',heating:'Grzeje',cooling:'Chłodzi',dry:'Osuszanie',fan_only:'Nawiew',open:'Otwarte',closed:'Zamknięte',locked:'Zamknięty',unlocked:'Odblokowany',disarmed:'Rozbrojony',armed_home:'Uzbrojony w domu',armed_away:'Uzbrojony poza domem',armed_night:'Tryb nocny',triggered:'Alarm',playing:'Odtwarzanie',paused:'Wstrzymane',home:'W domu',not_home:'Poza domem',cloudy:'Pochmurno',partlycloudy:'Częściowe zachmurzenie',rainy:'Deszcz',pouring:'Ulewa',sunny:'Słonecznie','clear-night':'Pogodna noc',snowy:'Śnieg',fog:'Mgła',windy:'Wietrznie',docked:'W stacji',cleaning:'Sprząta',returning:'Wraca',active:'Aktywne',finished:'Zakończone',standby:'Czuwanie',online:'Online',offline:'Offline',excellent:'Doskonała',good:'Dobra',moderate:'Umiarkowana',fair:'Umiarkowana',poor:'Słaba',very_poor:'Bardzo słaba',finish:'Zakończony',failed:'Błąd',running:'Pracuje',printing:'Drukuje',prepare:'Przygotowanie',pause:'Pauza',ready:'Gotowe'};
@@ -612,7 +712,7 @@ const securityClasses = new Set(['door','window','opening','garage_door','lock',
 const criticalClasses = new Set(['moisture','smoke','gas','carbon_monoxide','safety','tamper']);
 const openingClasses = new Set(['door','window','opening','garage_door']);
 const toggleDomains = new Set(['light','switch','fan','input_boolean']);
-const number = new Intl.NumberFormat('pl-PL',{maximumFractionDigits:1});
+let number = new Intl.NumberFormat('pl-PL',{maximumFractionDigits:1});
 const collator = new Intl.Collator('pl',{numeric:true,sensitivity:'base'});
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch]);
 const icon = key => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="${glyphs[key] || glyphs.device}"/></svg>`;
@@ -654,7 +754,7 @@ const F1_TRACK = {CLEAR:['ok','Zielona flaga','tor czysty, ścigamy się'],GREEN
 const F1_COUNTRY = {Australia:'Australia',China:'Chiny',Japan:'Japonia',Bahrain:'Bahrajn','Saudi Arabia':'Arabia Saudyjska',USA:'USA','United States':'USA',Italy:'Włochy',Monaco:'Monako',Spain:'Hiszpania',Canada:'Kanada',Austria:'Austria',UK:'Wielka Brytania','United Kingdom':'Wielka Brytania',Belgium:'Belgia',Hungary:'Węgry',Netherlands:'Holandia',Azerbaijan:'Azerbejdżan',Singapore:'Singapur',Mexico:'Meksyk',Brazil:'Brazylia',Qatar:'Katar',UAE:'ZEA','Abu Dhabi':'Abu Zabi'};
 const F1_TEAM = {mercedes:'MER',ferrari:'FER',red_bull:'RBR',mclaren:'MCL',rb:'RB',aston_martin:'AMR',alpine:'ALP',williams:'WIL',haas:'HAA',sauber:'SAU',audi:'AUD',cadillac:'CAD'};
 const F1_TEAM_COL = {mercedes:'#27f4d2',ferrari:'#e8002d',red_bull:'#3671c6',mclaren:'#ff8000',rb:'#6692ff',aston_martin:'#229971',alpine:'#ff87bc',williams:'#64c4ff',haas:'#b6babd',sauber:'#52e252',audi:'#c0c0c0',cadillac:'#d4af37'};
-const plN = (n,a,b,c) => `${n} ${n === 1 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c}`;
+const plN = (n,a,b,c) => LANG === 'en' ? `${n} ${T(n === 1 ? a : c)}` : `${n} ${n === 1 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c}`;
 // bolid na stronie F1: statyczny szkic (obrazek od użytkownika), w ciemnym motywie odwracany przez CSS
 const F1_CAR = 'data:image/webp;base64,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';
 const f1Scene = () => `<div class="f1-art"><img src="${F1_CAR}" alt="" draggable="false"></div>`;
@@ -671,14 +771,16 @@ function toYaml(v,ind = '') {
   if (Array.isArray(v)) return v.map(x=>flowOk(x) ? `${ind}- {${Object.entries(x).map(([k,y])=>`${k}: ${typeof y === 'string' ? yamlStr(y) : y}`).join(', ')}}` : x && typeof x === 'object' ? `${ind}- ${toYaml(x,ind + '  ').trimStart()}` : `${ind}- ${typeof x === 'string' ? yamlStr(x) : x}`).join('\n');
   return Object.entries(v).filter(([,x])=>x !== undefined && x !== null).map(([k,x])=>Array.isArray(x) ? `${ind}${k}:\n${toYaml(x,ind + '  ')}` : x && typeof x === 'object' ? `${ind}${k}:\n${toYaml(x,ind + '  ')}` : `${ind}${k}: ${typeof x === 'string' ? yamlStr(x) : x}`).join('\n');
 }
-const andList = a => a.length <= 1 ? a.join('') : `${a.slice(0,-1).join(', ')} i ${a.at(-1)}`;
+const andList = a => a.length <= 1 ? a.join('') : `${a.slice(0,-1).join(', ')} ${LANG === 'en' ? 'and' : 'i'} ${a.at(-1)}`;
 const binArt = (k,i = 0) => `<svg viewBox="0 0 64 86" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="--bin:${k.col}" aria-hidden="true">
   <path class="lid" d="M7 15h50l-3-7H10z" fill="var(--bin)" fill-opacity=".95"/><path d="M27 8V5h10v3"/>
   <path class="bin-body" d="M10 17h44l-4.5 56a4 4 0 0 1-4 3.7H18.5a4 4 0 0 1-4-3.7z"/><path d="M22 28v38M32 28v38M42 28v38" stroke-opacity=".35"/>
   <circle cx="20" cy="79" r="5" fill="var(--base)"/><circle cx="20" cy="79" r="1.4" fill="currentColor"/></svg>`;
 const weatherLabels = {'clear-night':'Pogodna noc',cloudy:'Pochmurno',exceptional:'Wyjątkowe warunki',fog:'Mgła',hail:'Grad',lightning:'Burza','lightning-rainy':'Burza z deszczem',partlycloudy:'Częściowe zachmurzenie',pouring:'Ulewa',rainy:'Deszcz',snowy:'Śnieg','snowy-rainy':'Deszcz ze śniegiem',sunny:'Słonecznie',windy:'Wietrznie','windy-variant':'Wietrznie, chmury'};
 const weatherGlyph = {'clear-night':'moon',cloudy:'weather',exceptional:'spark',fog:'fog',hail:'snow',lightning:'storm','lightning-rainy':'storm',partlycloudy:'partly',pouring:'rain',rainy:'rain',snowy:'snow','snowy-rainy':'snow',sunny:'sun',windy:'wind','windy-variant':'wind'};
-const windDirs = ['Pn','Pn-Wsch','Wsch','Pd-Wsch','Pd','Pd-Zach','Zach','Pn-Zach'];
+const windDirs = ['Pn','Pn-Wsch','Wsch','Pd-Wsch','Pd','Pd-Zach','Zach','Pn-Zach'], windDirsEn = ['N','NE','E','SE','S','SW','W','NW'];
+const stl = state => stateLabels[state] ? T(stateLabels[state]) : state;
+const country = c => LANG === 'en' ? c : F1_COUNTRY[c] || c;
 const rnd = i => { const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
 const cloudPath = 'M-58 24c-14 0-23-10-21-21s13-18 25-16c4-16 20-26 38-24s30 14 32 30c12-4 26 2 30 14s-2 23-17 23z';
 function weatherScene(cond,night,temp) {
@@ -745,6 +847,7 @@ class AuraDomu extends HTMLElement {
 
   setConfig(config) {
     this.config = config || {};
+    this.applyLang();
     this.invalidate();
     this.queue();
   }
@@ -753,12 +856,24 @@ class AuraDomu extends HTMLElement {
     if (!hass) return;
     const old = this._hass;
     this._hass = hass;
+    this.applyLang();
     if (old?.states && old.states !== hass.states && old.connected !== false && hass.connected !== false && this.isConnected) this.observeEvents(old.states, hass.states || {});
     if (old?.states !== hass.states || old?.areas !== hass.areas || old?.devices !== hass.devices || old?.entities !== hass.entities || old?.user?.id !== hass.user?.id) this.invalidate();
     this.queue();
   }
 
   getCardSize() { return 8; }
+
+  // język: `language: en|pl` z konfiguracji, a domyślnie język profilu użytkownika HA (polski → pl, każdy inny → en)
+  applyLang() {
+    const want = String(this.config?.language || 'auto').toLowerCase();
+    const src = want !== 'auto' ? want : this._hass?.locale?.language || this._hass?.language || navigator.language || 'en';
+    const lang = /^pl/.test(String(src).toLowerCase()) ? 'pl' : 'en';
+    if (lang === this.lang) return;
+    this.lang = lang;
+    setLang(lang);
+    if (this.root) { this.mount(); this.signatures = {}; this.visibleEvent = undefined; this.invalidate(); this.queue(); }
+  }
 
   connectedCallback() {
     if (this.config?.load_font !== false && !document.querySelector('link[data-aura-font]')) {
@@ -799,39 +914,39 @@ class AuraDomu extends HTMLElement {
   mount() {
     this.shadowRoot.innerHTML = `<style>${AURA_CSS}</style><main class="aura">
       <header class="top"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><span id="brand">Aura domu</span></div>
-        <nav class="nav" aria-label="Widoki dashboardu"><button data-go="home">Dom</button><button data-go="rooms">Pokoje</button><button data-go="climate">Klimat</button><button data-go="heating" hidden>Ogrzewanie</button><button data-go="weather" hidden>Pogoda</button><button data-go="energy">Energia</button><button data-go="security">Ochrona</button><button data-go="bins" hidden>Kosze</button><button data-go="f1" hidden>F1</button><button data-go="settings">Ustawienia</button></nav>
+        <nav class="nav" aria-label="${T('Widoki dashboardu')}"><button data-go="home">${T('Dom')}</button><button data-go="rooms">${T('Pokoje')}</button><button data-go="climate">${T('Klimat')}</button><button data-go="heating" hidden>${T('Ogrzewanie')}</button><button data-go="weather" hidden>${T('Pogoda')}</button><button data-go="energy">${T('Energia')}</button><button data-go="security">${T('Ochrona')}</button><button data-go="bins" hidden>${T('Kosze')}</button><button data-go="f1" hidden>F1</button><button data-go="settings">${T('Ustawienia')}</button></nav>
         <div class="top-right"><span class="connection" id="connection"></span><button class="theme" data-act="theme"></button></div>
       </header>
-      <section id="home"><div class="stage" aria-label="Status domu"><div class="stage-copy"><span class="date"></span><time class="clock" aria-label="Aktualny czas"></time><h1 class="headline">Dom</h1><p id="summary" aria-live="polite"></p></div>
+      <section id="home"><div class="stage" aria-label="${T('Status domu')}"><div class="stage-copy"><span class="date"></span><time class="clock" aria-label="${T('Aktualny czas')}"></time><h1 class="headline">${T('Dom')}</h1><p id="summary" aria-live="polite"></p></div>
         <div class="orb-zone"><div class="orbit-halo" aria-hidden="true"></div><svg class="orbit" viewBox="0 0 360 360" aria-hidden="true" fill="none" stroke="currentColor" stroke-width=".65">
           <circle cx="180" cy="180" r="97" opacity=".43"/><circle cx="180" cy="180" r="119" opacity=".86"/><circle cx="180" cy="180" r="139" class="track"/><circle cx="180" cy="180" r="153" opacity=".37"/>
           <ellipse cx="180" cy="180" rx="158" ry="75" transform="rotate(-32 180 180)" opacity=".66"/><ellipse cx="180" cy="180" rx="157" ry="86" transform="rotate(33 180 180)" opacity=".32"/>
           <g class="ring-calibration"><circle cx="180" cy="180" r="165" stroke-dasharray="1 10" opacity=".78"/><path d="M180 13v16m0 302v17M13 180h16m302 0h17M62 62l13 13m210 210 13 13M298 62l-13 13M75 285l-13 13" opacity=".55"/></g>
           <path class="trace" pathLength="1" d="M180 61a119 119 0 1 1-119 119"/><circle cx="180" cy="61" r="3.5" class="point"/><circle cx="180" cy="319" r="2.1" class="point secondary"/><g id="room-signals"></g>
-        </svg><div class="orb-contact" aria-hidden="true"></div><div class="scene" aria-hidden="true">${signalScenes}</div><button class="orb" data-act="orb" aria-label="Pokaż zdarzenie lub stan domu" aria-pressed="false"></button><span class="orb-caption"></span></div>
-        <div class="stage-foot"><span id="stage-weather" class="weather"></span><button data-act="power" class="quiet" hidden>Pobór prądu</button><button data-act="close-event" class="quiet" hidden>Zamknij podgląd</button></div><button class="close-x" data-act="close-event" aria-label="Zamknij podgląd zdarzenia">×</button><span class="signal-progress" aria-hidden="true" hidden></span></div>
-        <div class="presets" id="presets" role="group" aria-label="Sceny" hidden></div>
-        <section class="section" aria-labelledby="now-heading"><div class="section-head"><h2 id="now-heading">Teraz</h2></div><div class="overview"></div></section>
-        <section class="section"><div class="section-head"><h2>Pokoje</h2><button class="quiet" data-go="rooms">Wszystkie pokoje</button></div><div class="rooms" id="home-rooms"></div></section>
-        <section class="section" id="activity" hidden><div class="section-head"><h2>Ostatnie zdarzenia</h2></div><div class="activity"></div></section>
+        </svg><div class="orb-contact" aria-hidden="true"></div><div class="scene" aria-hidden="true">${signalScenes}</div><button class="orb" data-act="orb" aria-label="${T('Pokaż zdarzenie lub stan domu')}" aria-pressed="false"></button><span class="orb-caption"></span></div>
+        <div class="stage-foot"><span id="stage-weather" class="weather"></span><button data-act="power" class="quiet" hidden>${T('Pobór prądu')}</button><button data-act="close-event" class="quiet" hidden>${T('Zamknij podgląd')}</button></div><button class="close-x" data-act="close-event" aria-label="${T('Zamknij podgląd zdarzenia')}">×</button><span class="signal-progress" aria-hidden="true" hidden></span></div>
+        <div class="presets" id="presets" role="group" aria-label="${T('Sceny')}" hidden></div>
+        <section class="section" aria-labelledby="now-heading"><div class="section-head"><h2 id="now-heading">${T('Teraz')}</h2></div><div class="overview"></div></section>
+        <section class="section"><div class="section-head"><h2>${T('Pokoje')}</h2><button class="quiet" data-go="rooms">${T('Wszystkie pokoje')}</button></div><div class="rooms" id="home-rooms"></div></section>
+        <section class="section" id="activity" hidden><div class="section-head"><h2>${T('Ostatnie zdarzenia')}</h2></div><div class="activity"></div></section>
       </section>
-      <section id="rooms" class="inner" hidden><h1 class="page-title">Pokoje</h1><p class="intro" id="rooms-intro"></p><div class="rooms" id="all-rooms"></div></section>
-      <section id="room" class="inner" hidden><div class="room-banner"></div><div id="room-body"></div><nav class="room-strip" aria-label="Przełącz pokój"></nav></section>
-      <section id="climate" class="inner" hidden><h1 class="page-title">Klimat</h1><p class="intro" id="climate-intro"></p><div id="climate-body"></div></section>
-      <section id="heating" class="inner" hidden><h1 class="page-title">Ogrzewanie</h1><p class="intro" id="heating-intro"></p><div id="heating-body"></div></section>
-      <section id="weather" class="inner" hidden><h1 class="page-title">Pogoda</h1><p class="intro" id="weather-intro"></p><div id="weather-body"></div></section>
-      <section id="energy" class="inner" hidden><h1 class="page-title">Energia</h1><p class="intro" id="energy-intro"></p><div id="energy-body"></div></section>
-      <section id="security" class="inner" hidden><h1 class="page-title">Ochrona</h1><div id="security-body"></div></section>
-      <section id="bins" class="inner" hidden><h1 class="page-title">Kosze</h1><p class="intro" id="bins-intro"></p><div id="bins-body"></div></section>
-      <section id="f1" class="inner" hidden><h1 class="page-title">Formuła 1</h1><div class="heat-top" id="f1-pills"></div><div id="f1-body"></div></section>
-      <section id="settings" class="inner" hidden><h1 class="page-title">Ustawienia</h1><div id="settings-body"></div></section>
-      <div class="toast" role="status" hidden></div><dialog class="demo-dialog"><h2></h2><p></p><form method="dialog"><button class="quiet">Zamknij</button></form></dialog>
+      <section id="rooms" class="inner" hidden><h1 class="page-title">${T('Pokoje')}</h1><p class="intro" id="rooms-intro"></p><div class="rooms" id="all-rooms"></div></section>
+      <section id="room" class="inner" hidden><div class="room-banner"></div><div id="room-body"></div><nav class="room-strip" aria-label="${T('Przełącz pokój')}"></nav></section>
+      <section id="climate" class="inner" hidden><h1 class="page-title">${T('Klimat')}</h1><p class="intro" id="climate-intro"></p><div id="climate-body"></div></section>
+      <section id="heating" class="inner" hidden><h1 class="page-title">${T('Ogrzewanie')}</h1><p class="intro" id="heating-intro"></p><div id="heating-body"></div></section>
+      <section id="weather" class="inner" hidden><h1 class="page-title">${T('Pogoda')}</h1><p class="intro" id="weather-intro"></p><div id="weather-body"></div></section>
+      <section id="energy" class="inner" hidden><h1 class="page-title">${T('Energia')}</h1><p class="intro" id="energy-intro"></p><div id="energy-body"></div></section>
+      <section id="security" class="inner" hidden><h1 class="page-title">${T('Ochrona')}</h1><div id="security-body"></div></section>
+      <section id="bins" class="inner" hidden><h1 class="page-title">${T('Kosze')}</h1><p class="intro" id="bins-intro"></p><div id="bins-body"></div></section>
+      <section id="f1" class="inner" hidden><h1 class="page-title">${T('Formuła 1')}</h1><div class="heat-top" id="f1-pills"></div><div id="f1-body"></div></section>
+      <section id="settings" class="inner" hidden><h1 class="page-title">${T('Ustawienia')}</h1><div id="settings-body"></div></section>
+      <div class="toast" role="status" hidden></div><dialog class="demo-dialog"><h2></h2><p></p><form method="dialog"><button class="quiet">${T('Zamknij')}</button></form></dialog>
     </main>`;
     this.root = this.shadowRoot.querySelector('main');
     this.root.addEventListener('click', ev => this.click(ev));
     this.root.addEventListener('change', ev => { if (ev.target.matches('.dim')) void this.dim(ev.target.dataset.id,Number(ev.target.value)); });
     this.root.addEventListener('pointerdown',ev => { if (ev.target.matches?.('.dim')) this.dragging = true; });
-    for (const type of ['pointerup','pointercancel']) window.addEventListener(type,() => { this.dragging = false; });
+    if (!this.pointerBound) { this.pointerBound = true; for (const type of ['pointerup','pointercancel']) window.addEventListener(type,() => { this.dragging = false; }); }
     this.root.addEventListener('pointermove',ev => this.lightTile(ev),{passive:true});
     this.root.addEventListener('pointerout',ev => {
       if (this.litTile && (!ev.relatedTarget || !this.litTile.contains(ev.relatedTarget))) this.resetTileLight();
@@ -878,15 +993,15 @@ class AuraDomu extends HTMLElement {
   tick() {
     const now = new Date();
     const timeZone = this._hass?.config?.time_zone;
-    this.$('.clock').textContent = new Intl.DateTimeFormat('pl-PL',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone}).format(now);
-    if (!this.ui.event) this.$('.date').textContent = new Intl.DateTimeFormat('pl-PL',{weekday:'long',day:'numeric',month:'long',timeZone}).format(now);
+    this.$('.clock').textContent = new Intl.DateTimeFormat(loc(),{hour:'2-digit',minute:'2-digit',hour12:false,timeZone}).format(now);
+    if (!this.ui.event) this.$('.date').textContent = new Intl.DateTimeFormat(loc(),{weekday:'long',day:'numeric',month:'long',timeZone}).format(now);
   }
 
   hour() { return Number(new Intl.DateTimeFormat('en-GB',{hour:'numeric',hourCycle:'h23',timeZone:this._hass?.config?.time_zone}).format(new Date())); }
 
   greeting() {
     const h = this.hour();
-    const word = h < 5 || h >= 23 ? 'Spokojnej nocy' : h < 12 ? 'Dzień dobry' : h < 18 ? 'Miłego popołudnia' : 'Dobry wieczór';
+    const word = T(h < 5 || h >= 23 ? 'Spokojnej nocy' : h < 12 ? 'Dzień dobry' : h < 18 ? 'Miłego popołudnia' : 'Dobry wieczór');
     const name = String(this.config?.name ?? this._hass?.user?.name ?? '').trim().split(/\s+/)[0];
     return name ? `${word}, ${name}` : word;
   }
@@ -898,7 +1013,7 @@ class AuraDomu extends HTMLElement {
     const registry = hass.entities || {};
     const devices = hass.devices || {};
     const areas = new Map(Object.values(hass.areas || {}).filter(a=>a.area_id).map(a=>[a.area_id,{id:a.area_id,name:a.name || a.area_id,rows:[]}]));
-    const unassigned = {id:'__unassigned',name:'Bez pokoju',rows:[]};
+    const unassigned = {id:'__unassigned',name:T('Bez pokoju'),rows:[]};
     const byId = new Map();
     const rows = Object.values(hass.states || {}).map(entity => {
       const id = entity.entity_id;
@@ -1103,24 +1218,24 @@ class AuraDomu extends HTMLElement {
   }
 
   stateText(row) {
-    if (!row) return 'Brak encji';
-    if ((row.domain === 'event' || row.domain === 'scene' || row.attrs.device_class === 'timestamp') && available(row) && !Number.isNaN(Date.parse(row.state))) return `${row.attrs.device_class === 'timestamp' && Date.parse(row.state) > Date.now() ? 'O' : 'Ostatnio'} ${this.time(Date.parse(row.state))}`;
+    if (!row) return T('Brak encji');
+    if ((row.domain === 'event' || row.domain === 'scene' || row.attrs.device_class === 'timestamp') && available(row) && !Number.isNaN(Date.parse(row.state))) return `${row.attrs.device_class === 'timestamp' && Date.parse(row.state) > Date.now() ? T('O') : T('Ostatnio')} ${this.time(Date.parse(row.state))}`;
     if (row.domain === 'binary_sensor' && row.state === 'on') {
-      if (openingClasses.has(row.attrs.device_class)) return 'Otwarte';
-      if (criticalClasses.has(row.attrs.device_class)) return 'Wykryto';
-      if (['motion','occupancy','presence'].includes(row.attrs.device_class)) return 'Wykryto obecność';
+      if (openingClasses.has(row.attrs.device_class)) return T('Otwarte');
+      if (criticalClasses.has(row.attrs.device_class)) return T('Wykryto');
+      if (['motion','occupancy','presence'].includes(row.attrs.device_class)) return T('Wykryto obecność');
       if (row.attrs.device_class === 'problem') return 'Problem';
     }
     if (row.domain === 'binary_sensor' && row.state === 'off') {
-      if (securityClasses.has(row.attrs.device_class) || row.attrs.device_class === 'presence') return openingClasses.has(row.attrs.device_class) ? 'Zamknięte' : 'Brak wykrycia';
+      if (securityClasses.has(row.attrs.device_class) || row.attrs.device_class === 'presence') return T(openingClasses.has(row.attrs.device_class) ? 'Zamknięte' : 'Brak wykrycia');
       if (row.attrs.device_class === 'problem') return 'OK';
     }
-    if (row.domain === 'climate' && row.attrs.current_temperature != null) return `${format(row.attrs.current_temperature,this.tempUnit())} · ${stateLabels[row.attrs.hvac_action || row.state] || row.state}`;
-    if (row.domain === 'weather' && row.attrs.temperature != null) return `${format(row.attrs.temperature,row.attrs.temperature_unit || '°C')} · ${stateLabels[row.state] || row.state}`;
-    if (row.domain === 'media_player' && available(row) && row.attrs.media_title) return `${stateLabels[row.state] || row.state} · ${row.attrs.media_title}`;
-    if (row.domain === 'light' && row.state === 'on' && row.attrs.brightness != null) return `Wł. · ${Math.round(row.attrs.brightness / 2.55)}%`;
+    if (row.domain === 'climate' && row.attrs.current_temperature != null) return `${format(row.attrs.current_temperature,this.tempUnit())} · ${stl(row.attrs.hvac_action || row.state)}`;
+    if (row.domain === 'weather' && row.attrs.temperature != null) return `${format(row.attrs.temperature,row.attrs.temperature_unit || '°C')} · ${stl(row.state)}`;
+    if (row.domain === 'media_player' && available(row) && row.attrs.media_title) return `${stl(row.state)} · ${row.attrs.media_title}`;
+    if (row.domain === 'light' && row.state === 'on' && row.attrs.brightness != null) return `${T('Wł.')} · ${Math.round(row.attrs.brightness / 2.55)}%`;
     if (row.attrs.unit_of_measurement && available(row) && Number.isFinite(Number(row.state))) return /gbp|£|eur|€/i.test(row.attrs.unit_of_measurement) ? money(row) : format(row.state,row.attrs.unit_of_measurement);
-    return stateLabels[row.state] || row.state || 'Brak stanu';
+    return stateLabels[row.state] ? stl(row.state) : row.state || T('Brak stanu');
   }
 
   tempUnit() { return this._hass?.config?.unit_system?.temperature || '°C'; }
@@ -1191,41 +1306,41 @@ class AuraDomu extends HTMLElement {
     const h = this.hour();
     const mood = urgent.length ? 'alert' : (h >= 23 || h < 6) && !lightsOn.length ? 'night' : heating || (watts ?? 0) > 1500 ? 'active' : 'calm';
     const chips = [];
-    if (urgent.length) chips.push(['shield','Wykryto alarm']);
-    if (lights.some(available)) chips.push(['light',`${lightsOn.length} wł.`]);
-    if (temperature != null) chips.push(['thermo',`${format(temperature,unit)}${heating ? ' · grzeje' : ''}`]);
+    if (urgent.length) chips.push(['shield',T('Wykryto alarm')]);
+    if (lights.some(available)) chips.push(['light',`${lightsOn.length} ${T('wł.')}`]);
+    if (temperature != null) chips.push(['thermo',`${format(temperature,unit)}${heating ? ` · ${T('grzeje')}` : ''}`]);
     if (power) chips.push(['bolt',power]);
     const f1c = this.f1Chip();
     if (f1c) chips.push(['flag',f1c]);
     const binNext = this.tabVisible('bins') ? this.binCollections()[0] : null;
-    if (binNext && binNext.n <= 1) chips.push(['bin',`${binNext.n === 0 ? 'Kosze dziś' : 'Kosze jutro'}: ${andList(binNext.bins.map(b=>b.adj))}`]);
-    const brief = [lights.some(available) && `Światła · ${lightsOn.length} wł.`,heating && 'Ogrzewanie pracuje',urgent.length && 'Wykryto alarm'].filter(Boolean).join(' / ');
+    if (binNext && binNext.n <= 1) chips.push(['bin',`${T(binNext.n === 0 ? 'Kosze dziś' : 'Kosze jutro')}: ${andList(binNext.bins.map(b=>b.adj))}`]);
+    const brief = [lights.some(available) && `${T('Światła')} · ${lightsOn.length} ${T('wł.')}`,heating && T('Ogrzewanie pracuje'),urgent.length && T('Wykryto alarm')].filter(Boolean).join(' / ');
     this.snapshot = {
-      brief:brief || 'Stan urządzeń i pomieszczeń', weather:weather ? this.stateText(weather) : '', power, chips, mood,
+      brief:brief || T('Stan urządzeń i pomieszczeń'), weather:weather ? this.stateText(weather) : '', power, chips, mood,
       hue:mood === 'alert' ? 6 : Math.round(210 + Math.min(1,Math.max(0,(avg - 16) / 6)) * 175) % 360,
       tempo:mood === 'alert' ? 1.6 : watts == null ? 6.5 : Math.round(Math.max(2.2,Math.min(6.5,6.5 - watts / 700)) * 4) / 4,
-      caption:{alert:'Uwaga',night:'Dom odpoczywa',active:'Dom pracuje',calm:'Spokojnie'}[mood],
+      caption:T({alert:'Uwaga',night:'Dom odpoczywa',active:'Dom pracuje',calm:'Spokojnie'}[mood]),
     };
 
-    const roomsOn = [...new Set(lightsOn.map(row=>row.roomName).filter(name=>name !== 'Bez pokoju'))];
-    const lightsBody = `<span class="value">${lights.some(available) ? `${lightsOn.length} wł.` : '—'}</span><small>${lights.length} ${lights.length === 1 ? 'światło' : lights.length < 5 ? 'światła' : 'świateł'} w pokojach</small>
+    const roomsOn = [...new Set(lightsOn.map(row=>row.roomName).filter(name=>name !== T('Bez pokoju')))];
+    const lightsBody = `<span class="value">${lights.some(available) ? `${lightsOn.length} ${T('wł.')}` : '—'}</span><small>${T('{n} w pokojach',{n:plN(lights.length,'światło','światła','świateł')})}</small>
       ${roomsOn.length ? `<div class="tags">${roomsOn.slice(0,4).map(name=>`<span class="tag">${escapeHTML(name)}</span>`).join('')}</div>` : ''}
-      ${lightsOn.length ? `<button class="mini" data-act="all-off" ${this.pending.has('all-off') ? 'disabled' : ''}>${icon('power')}Zgaś wszystkie</button>` : ''}`;
+      ${lightsOn.length ? `<button class="mini" data-act="all-off" ${this.pending.has('all-off') ? 'disabled' : ''}>${icon('power')}${T('Zgaś wszystkie')}</button>` : ''}`;
 
     const pence = this.priceInPence(price);
     const cheap = this.config?.price_cheap ?? 15, dear = this.config?.price_expensive ?? 25;
-    const priceLevel = pence != null && pence < cheap ? ['var(--good)','tanio'] : pence != null && pence < dear ? ['var(--warn)','średnio'] : ['var(--bad)','drogo'];
-    const energyBody = `<span class="value">${escapeHTML(power || '—')}</span>${this.spark()}${price && pence != null ? `<span class="price" style="color:${priceLevel[0]}"><i></i>${escapeHTML(format(pence,'p/kWh'))} · ${priceLevel[1]}</span>` : `<small>${escapeHTML(energy?.name || 'Brak czujnika mocy')}</small>`}`;
+    const priceLevel = pence != null && pence < cheap ? ['var(--good)',T('tanio')] : pence != null && pence < dear ? ['var(--warn)',T('średnio')] : ['var(--bad)',T('drogo')];
+    const energyBody = `<span class="value">${escapeHTML(power || '—')}</span>${this.spark()}${price && pence != null ? `<span class="price" style="color:${priceLevel[0]}"><i></i>${escapeHTML(format(pence,'p/kWh'))} · ${priceLevel[1]}</span>` : `<small>${escapeHTML(energy?.name || T('Brak czujnika mocy'))}</small>`}`;
 
     const missing = security.filter(row=>!available(row));
     const openingsMissing = openings.filter(row=>!available(row)).length;
     const nameOf = row => this.labelFor(row);
-    const securityNote = urgent.length ? urgent.map(nameOf).join(', ') : open.length ? `Otwarte: ${open.map(nameOf).join(', ')}`
-      : !openings.length ? `${security.length} czujników` : !openingsMissing ? 'Okna zamknięte' : openingsMissing < openings.length ? 'Pozostałe okna zamknięte' : 'Brak odczytu okien';
-    const missingNote = missing.length ? `<small class="warn">Brak odczytu: ${escapeHTML(missing.slice(0,3).map(nameOf).join(', '))}${missing.length > 3 ? ` i ${missing.length - 3} więcej` : ''}</small>` : '';
+    const securityNote = urgent.length ? urgent.map(nameOf).join(', ') : open.length ? `${T('Otwarte')}: ${open.map(nameOf).join(', ')}`
+      : !openings.length ? plN(security.length,'czujnik','czujniki','czujników') : T(!openingsMissing ? 'Okna zamknięte' : openingsMissing < openings.length ? 'Pozostałe okna zamknięte' : 'Brak odczytu okien');
+    const missingNote = missing.length ? `<small class="warn">${T('Brak odczytu')}: ${escapeHTML(missing.slice(0,3).map(nameOf).join(', '))}${missing.length > 3 ? ` ${T('i {n} więcej',{n:missing.length - 3})}` : ''}</small>` : '';
     const guard = this.row(this.securityConfig()?.guard);
     const guardName = guard && available(guard) ? this.securityConfig()?.guard_options?.[guard.state]?.name || guard.state : '';
-    const securityValue = urgent.length ? 'Alarm!' : guardName || (alarm ? alarmShort[alarm.state] || this.stateText(alarm) : security.length ? 'Ochrona' : '—');
+    const securityValue = urgent.length ? 'Alarm!' : guardName || (alarm ? (alarmShort[alarm.state] ? T(alarmShort[alarm.state]) : this.stateText(alarm)) : security.length ? T('Ochrona') : '—');
     const securityBody = `<span class="value">${escapeHTML(securityValue)}</span><small>${escapeHTML(securityNote)}</small>${missingNote}`;
 
     return [
@@ -1251,12 +1366,12 @@ class AuraDomu extends HTMLElement {
   }
 
   card(group,active,body,artwork,clickable) {
-    const {label,glyph} = groups[group];
-    return `<article class="tile card${active ? ' active' : ''}"${clickable ? ` data-card="${group}"` : ''}><span class="label">${icon(glyph)}${label}</span><button class="arrow" data-group="${group}" aria-label="Pokaż: ${label}">${icon('arrow')}</button><div class="card-body">${body}</div>${artwork}</article>`;
+    const {glyph} = groups[group], label = T(groups[group].label);
+    return `<article class="tile card${active ? ' active' : ''}"${clickable ? ` data-card="${group}"` : ''}><span class="label">${icon(glyph)}${label}</span><button class="arrow" data-group="${group}" aria-label="${T('Pokaż')}: ${label}">${icon('arrow')}</button><div class="card-body">${body}</div>${artwork}</article>`;
   }
 
   climateBody(row) {
-    if (!row) return '<span class="value">—</span><small>Brak termostatu</small>';
+    if (!row) return `<span class="value">—</span><small>${T('Brak termostatu')}</small>`;
     const a = row.attrs, unit = this.tempUnit();
     const pending = this.targets.get(row.id);
     if (pending && (pending.value === a.temperature || Date.now() - pending.at > 8000)) this.targets.delete(row.id);
@@ -1266,17 +1381,17 @@ class AuraDomu extends HTMLElement {
     const f = v => Math.min(1,Math.max(0,(v - min) / (max - min)));
     const len = 2 * Math.PI * 48 * .75;
     const off = row.state === 'off' || target == null;
-    const action = stateLabels[a.hvac_action] || stateLabels[row.state] || row.state;
+    const action = stateLabels[a.hvac_action] ? stl(a.hvac_action) : stl(row.state);
     const id = escapeHTML(row.id);
     return `<div class="climate-row">
-      <button class="round" data-act="temp" data-step="-1" data-id="${id}" aria-label="Obniż temperaturę" ${off ? 'disabled' : ''}>−</button>
+      <button class="round" data-act="temp" data-step="-1" data-id="${id}" aria-label="${T('Obniż temperaturę')}" ${off ? 'disabled' : ''}>−</button>
       <div class="dial"><svg viewBox="0 0 118 100" fill="none" stroke-linecap="round" aria-hidden="true">
         <defs><linearGradient id="dial-heat" x1="0" x2="1"><stop offset="0" stop-color="#7aa7e0"/><stop offset=".55" stop-color="#e9a56b"/><stop offset="1" stop-color="#e9643f"/></linearGradient></defs>
         <circle cx="59" cy="59" r="48" class="trk" stroke-width="8" stroke-dasharray="${len.toFixed(1)} 999" transform="rotate(135 59 59)"/>
         <circle cx="59" cy="59" r="48" class="val" stroke="url(#dial-heat)" stroke-width="8" stroke-dasharray="${len.toFixed(1)} 999" stroke-dashoffset="${(len * (1 - f(current))).toFixed(1)}" transform="rotate(135 59 59)"/>
         ${off ? '' : `<circle cx="107" cy="59" r="6" class="knob" style="transform:rotate(${(135 + f(target) * 270).toFixed(1)}deg)"/>`}
-      </svg><div class="mid"><b>${format(current,'°')}</b><span>${off ? 'wyłączone' : `cel ${format(target,'°')}`}</span></div></div>
-      <button class="round" data-act="temp" data-step="1" data-id="${id}" aria-label="Podwyższ temperaturę" ${off ? 'disabled' : ''}>+</button>
+      </svg><div class="mid"><b>${format(current,'°')}</b><span>${off ? T('wyłączone') : `${T('cel')} ${format(target,'°')}`}</span></div></div>
+      <button class="round" data-act="temp" data-step="1" data-id="${id}" aria-label="${T('Podwyższ temperaturę')}" ${off ? 'disabled' : ''}>+</button>
     </div><small>${escapeHTML(this.labelFor(row))} · ${escapeHTML(action)}</small>`;
   }
 
@@ -1298,18 +1413,18 @@ class AuraDomu extends HTMLElement {
     const on = lights.filter(row=>row.state === 'on').length;
     const temp = this.roomTemp(room);
     const status = [];
-    if (lights.length) status.push(on ? `${on} ${on === 1 ? 'światło' : on < 5 ? 'światła' : 'świateł'}` : 'Zgaszone');
+    if (lights.length) status.push(on ? plN(on,'światło','światła','świateł') : T('Zgaszone'));
     if (temp != null) status.push(format(temp,this.tempUnit()));
     if (!status.length && room.cfg?.devices?.length) {
       const device = room.cfg.devices.find(d=>this.row(d.status)) || room.cfg.devices[0];
       const st = this.row(device.status);
       status.push(st ? `${device.name}: ${this.stateText(st)}` : device.name);
     }
-    return {lights,on,text:status.join(' · ') || (room.cfg ? 'Brak urządzeń' : `${room.rows.length} encji`)};
+    return {lights,on,text:status.join(' · ') || (room.cfg ? T('Brak urządzeń') : plN(room.rows.length,'encja','encje','encji'))};
   }
 
   roomTiles(rooms) {
-    if (!rooms.length) return '<p class="empty">Brak pomieszczeń. Dodaj listę „rooms” w konfiguracji karty.</p>';
+    if (!rooms.length) return `<p class="empty">${T('Brak pomieszczeń. Dodaj listę „rooms” w konfiguracji karty.')}</p>`;
     return rooms.map(room=>{
       const {lights,on,text} = this.roomStatus(room);
       const note = room.cfg?.subtitle || '';
@@ -1321,7 +1436,7 @@ class AuraDomu extends HTMLElement {
       const id = escapeHTML(room.id), name = escapeHTML(room.name);
       const inner = `<span class="label">${icon(glyph)}${name}</span><span><span class="value">${escapeHTML(text)}</span>${note ? `<span class="note">${escapeHTML(note)}</span>` : ''}</span>${drawing(glyph,true)}`;
       if (!lights.length) return `<button class="${cls}" data-room="${id}">${inner}<span class="arrow">${icon('arrow')}</span></button>`;
-      return `<article class="${cls}"${style}><button class="room-hit" data-room="${id}" aria-label="Otwórz: ${name}"></button>${inner}<button class="bulb" data-act="room" data-id="${id}" aria-pressed="${on > 0}" aria-label="${on ? 'Zgaś' : 'Zapal'} światła: ${name}" ${this.pending.has(`room:${room.id}`) ? 'disabled' : ''}>${icon('light')}</button></article>`;
+      return `<article class="${cls}"${style}><button class="room-hit" data-room="${id}" aria-label="${T('Otwórz')}: ${name}"></button>${inner}<button class="bulb" data-act="room" data-id="${id}" aria-pressed="${on > 0}" aria-label="${T(on ? 'Zgaś światła' : 'Zapal światła')}: ${name}" ${this.pending.has(`room:${room.id}`) ? 'disabled' : ''}>${icon('light')}</button></article>`;
     }).join('');
   }
 
@@ -1362,6 +1477,7 @@ class AuraDomu extends HTMLElement {
   tabVisible(key) { return this.tabAvailable(key) && !this.hiddenTabs().includes(key); }
 
   render() {
+    setLang(this.lang || 'pl');
     this.nameMap = null;
     const {rows,rooms} = this.getModel();
     const tabKey = this.ui.page === 'room' ? 'rooms' : this.ui.page;
@@ -1372,9 +1488,9 @@ class AuraDomu extends HTMLElement {
     this.$('#brand').textContent = this.config?.title || 'Aura domu';
     const online = Boolean(this._hass && this._hass.connected !== false);
     this.$('#connection').toggleAttribute('data-offline',!online);
-    this.setHTML('#connection',`<span class="led"></span>${this.config?.demo ? 'Dane demonstracyjne' : online ? 'Połączono z HA' : 'Brak połączenia'}`);
+    this.setHTML('#connection',`<span class="led"></span>${T(this.config?.demo ? 'Dane demonstracyjne' : online ? 'Połączono z HA' : 'Brak połączenia')}`);
     this.setHTML('.theme',icon(this.theme === 'dark' ? 'sun' : 'moon'));
-    this.$('.theme').setAttribute('aria-label',this.theme === 'dark' ? 'Włącz jasny motyw' : 'Włącz ciemny motyw');
+    this.$('.theme').setAttribute('aria-label',T(this.theme === 'dark' ? 'Włącz jasny motyw' : 'Włącz ciemny motyw'));
     const tab = page === 'room' ? 'rooms' : page;
     this.shadowRoot.querySelectorAll('.nav [data-go]').forEach(button=>button.dataset.go === tab ? button.setAttribute('aria-current','page') : button.removeAttribute('aria-current'));
     for (const section of ['home','rooms','room','climate','heating','weather','energy','security','bins','f1','settings']) this.$(`#${section}`).hidden = section !== page;
@@ -1395,7 +1511,7 @@ class AuraDomu extends HTMLElement {
     }
     if (page === 'rooms') {
       const lightsOn = rows.filter(row=>this.isLight(row) && row.state === 'on').length;
-      this.$('#rooms-intro').textContent = `${named.length} pomieszczeń · ${lightsOn ? `${lightsOn} wł. świateł` : 'wszystkie światła zgaszone'}`;
+      this.$('#rooms-intro').textContent = `${plN(named.length,'pomieszczenie','pomieszczenia','pomieszczeń')} · ${lightsOn ? T('{n} wł. świateł',{n:lightsOn}) : T('wszystkie światła zgaszone')}`;
       this.setHTML('#all-rooms',this.roomTiles(rooms));
     }
     if (page === 'room') this.renderRoom(rooms);
@@ -1419,7 +1535,7 @@ class AuraDomu extends HTMLElement {
     if (left < 8 || right > nav.clientWidth - 8) nav.scrollLeft = cur.offsetLeft - (nav.clientWidth - cur.offsetWidth) / 2;
   }
 
-  time(at) { return new Intl.DateTimeFormat('pl-PL',{hour:'2-digit',minute:'2-digit',timeZone:this._hass?.config?.time_zone}).format(at); }
+  time(at) { return new Intl.DateTimeFormat(loc(),{hour:'2-digit',minute:'2-digit',timeZone:this._hass?.config?.time_zone}).format(at); }
 
   renderStage() {
     const evt = this.ui.event;
@@ -1432,17 +1548,17 @@ class AuraDomu extends HTMLElement {
     stage.style.setProperty('--orb-hue',s.hue);
     stage.style.setProperty('--orb-tempo',`${s.tempo}s`);
     this.$('.orb').setAttribute('aria-pressed',String(awake));
-    this.$('.orb').setAttribute('aria-label',awake ? 'Zamknij podgląd zdarzenia' : 'Pokaż zdarzenie lub stan domu');
+    this.$('.orb').setAttribute('aria-label',T(awake ? 'Zamknij podgląd zdarzenia' : 'Pokaż zdarzenie lub stan domu'));
     this.$('.orb-caption').textContent = s.caption;
     this.$('.stage-copy').classList.toggle('is-event',awake);
     this.$('.stage-foot [data-act=close-event]').hidden = !awake;
     this.$('[data-act=power]').hidden = awake || !s.power;
-    this.$('.headline').textContent = evt?.livePower ? s.power || 'Brak odczytu' : evt?.title || this.greeting();
-    const status = evt?.text || (this._hass?.connected === false ? 'Brak połączenia z Home Assistantem' : '');
+    this.$('.headline').textContent = evt?.livePower ? s.power || T('Brak odczytu') : evt?.title || this.greeting();
+    const status = evt?.text || (this._hass?.connected === false ? T('Brak połączenia z Home Assistantem') : '');
     const chips = s.chips.map(([glyph,text])=>`<span class="state-chip">${icon(glyph)}${escapeHTML(text)}</span>`).join('');
     this.setHTML('#summary',status ? escapeHTML(status) : chips || escapeHTML(s.brief));
     this.setHTML('#stage-weather',s.weather ? `${icon('weather')}${escapeHTML(s.weather)}` : '');
-    if (evt) this.$('.date').textContent = evt.at ? `Zdarzenie · ${this.time(evt.at)}` : evt.kind === 'energy' ? 'Energia · na żywo' : 'Stan domu';
+    if (evt) this.$('.date').textContent = evt.at ? `${T('Zdarzenie')} · ${this.time(evt.at)}` : T(evt.kind === 'energy' ? 'Energia · na żywo' : 'Stan domu');
     const progress = this.$('.signal-progress');
     progress.hidden = !awake;
     if (evt !== this.visibleEvent) {
@@ -1456,11 +1572,11 @@ class AuraDomu extends HTMLElement {
   /* ---------- wspólne klocki ---------- */
   block(title,glyph,body,head = '') {
     if (!body) return '';
-    return `<section class="block"><div class="block-head"><h2>${icon(glyph)}${escapeHTML(title)}</h2>${head}</div>${body}</section>`;
+    return `<section class="block"><div class="block-head"><h2>${icon(glyph)}${escapeHTML(T(title))}</h2>${head}</div>${body}</section>`;
   }
 
   entityTile(row,item = {},extra = '') {
-    if (!row) return item.entity ? `<article class="entity" data-warn="true"><div class="entity-main"><span class="entity-icon">${icon('device')}</span><span class="entity-text"><span class="entity-name">${escapeHTML(item.name || item.entity)}</span><span class="entity-state">Brak encji w HA</span></span></div></article>` : '';
+    if (!row) return item.entity ? `<article class="entity" data-warn="true"><div class="entity-main"><span class="entity-icon">${icon('device')}</span><span class="entity-text"><span class="entity-name">${escapeHTML(item.name || item.entity)}</span><span class="entity-state">${T('Brak encji w HA')}</span></span></div></article>` : '';
     const id = escapeHTML(row.id);
     const label = escapeHTML(item.name || this.labelFor(row));
     const isOn = row.state === 'on' || row.state === 'playing' || ['heating','cooling'].includes(row.attrs.hvac_action);
@@ -1470,8 +1586,8 @@ class AuraDomu extends HTMLElement {
     const glyph = item.glyph || (item.type && sensorGlyph[item.type]) || glyphFor[row.domain];
     return `<article class="entity${dimmable ? ' has-dim' : ''}" data-on="${isOn}" data-warn="${Boolean(warn)}"><button class="entity-main" data-act="details" data-id="${id}" title="${id}">
       <span class="entity-icon">${icon(glyph)}</span><span class="entity-text"><span class="entity-name">${label}</span><span class="entity-state">${escapeHTML(item.state || this.stateText(row))}</span></span></button>
-      ${extra}${canToggle ? `<button class="toggle" data-act="toggle" data-id="${id}" aria-label="Zasilanie · ${label}" aria-pressed="${row.state === 'on'}" ${this.pending.has(row.id) ? 'disabled' : ''}>${icon('power')}</button>` : ''}
-      ${dimmable ? `<input class="dim" type="range" min="1" max="100" value="${Math.round(row.attrs.brightness / 2.55)}" data-id="${id}" aria-label="Jasność · ${label}">` : ''}</article>`;
+      ${extra}${canToggle ? `<button class="toggle" data-act="toggle" data-id="${id}" aria-label="${T('Zasilanie')} · ${label}" aria-pressed="${row.state === 'on'}" ${this.pending.has(row.id) ? 'disabled' : ''}>${icon('power')}</button>` : ''}
+      ${dimmable ? `<input class="dim" type="range" min="1" max="100" value="${Math.round(row.attrs.brightness / 2.55)}" data-id="${id}" aria-label="${T('Jasność')} · ${label}">` : ''}</article>`;
   }
 
   grid(items,map) { const html = items.map(map).join(''); return html ? `<div class="entity-grid">${html}</div>` : ''; }
@@ -1487,26 +1603,26 @@ class AuraDomu extends HTMLElement {
     const chips = [
       temp != null && ['thermo',format(temp,this.tempUnit())],
       humidity != null && ['water',`${format(humidity)}%`],
-      lights.length && ['light',on ? `${on} z ${lights.length} wł.` : 'Zgaszone'],
+      lights.length && ['light',on ? T('{on} z {n} wł.',{on,n:lights.length}) : T('Zgaszone')],
     ].filter(Boolean).map(([g,t])=>`<span class="state-chip">${icon(g)}${escapeHTML(t)}</span>`).join('');
-    this.setHTML('.room-banner',`<button class="quiet back" data-go="rooms">← Pokoje</button><h1 class="page-title">${escapeHTML(room.name)}</h1><p>${escapeHTML(cfg.subtitle || '')}</p><div class="chips">${chips}</div>${drawing(roomIcon(room.name),true)}`);
+    this.setHTML('.room-banner',`<button class="quiet back" data-go="rooms">← ${T('Pokoje')}</button><h1 class="page-title">${escapeHTML(room.name)}</h1><p>${escapeHTML(cfg.subtitle || '')}</p><div class="chips">${chips}</div>${drawing(roomIcon(room.name),true)}`);
 
     let body = '';
     if (room.cfg) {
       const lightItems = listOf(cfg.lights);
-      const allBtn = lights.length ? `<button class="mini" data-act="room" data-id="${escapeHTML(room.id)}" aria-pressed="${on > 0}" ${this.pending.has(`room:${room.id}`) ? 'disabled' : ''}>${icon('power')}${on ? 'Zgaś wszystkie' : 'Zapal wszystkie'}</button>` : '';
+      const allBtn = lights.length ? `<button class="mini" data-act="room" data-id="${escapeHTML(room.id)}" aria-pressed="${on > 0}" ${this.pending.has(`room:${room.id}`) ? 'disabled' : ''}>${icon('power')}${T(on ? 'Zgaś wszystkie' : 'Zapal wszystkie')}</button>` : '';
       body += this.block('Światła','light',this.grid(lightItems,item=>this.entityTile(this.row(item.entity),{...item,glyph:item.type === 'fan' ? 'fan' : 'light'})),allBtn);
       body += this.block('Klimat','thermo',this.climateCards(listOf(cfg.climate)));
       body += this.block('Multimedia','film',this.grid(listOf(cfg.media),item=>this.mediaTile(item)));
       body += this.block('Czujniki','sensor',this.grid(listOf(cfg.sensors),item=>this.entityTile(this.row(item.entity),item)));
       const devices = (cfg.devices || []).map(device=>this.deviceCard(device)).join('');
       body += this.block('Urządzenia','device',devices ? `<div class="cards">${devices}</div>` : '');
-      if (!body) body = '<p class="empty">Ten pokój nie ma jeszcze przypisanych urządzeń w konfiguracji karty.</p>';
+      if (!body) body = `<p class="empty">${T('Ten pokój nie ma jeszcze przypisanych urządzeń w konfiguracji karty.')}</p>`;
     } else {
       // tryb bez konfiguracji: tylko światła i klimat z obszaru, bez tysięcy encji diagnostycznych
       body += this.block('Światła','light',this.grid(lights,row=>this.entityTile(row)));
       body += this.block('Klimat','thermo',this.climateCards(room.rows.filter(row=>row.domain === 'climate').map(row=>({entity:row.id}))));
-      if (!body) body = '<p class="empty">Dodaj listę „rooms” w konfiguracji karty, aby wybrać urządzenia tego pokoju.</p>';
+      if (!body) body = `<p class="empty">${T('Dodaj listę „rooms” w konfiguracji karty, aby wybrać urządzenia tego pokoju.')}</p>`;
     }
     this.setHTML('#room-body',body);
     this.setHTML('.room-strip',rooms.filter(r=>r.id !== '__unassigned').map(r=>{
@@ -1532,7 +1648,7 @@ class AuraDomu extends HTMLElement {
       const row = this.row(item.entity);
       if (!row) return '';
       const heating = row.attrs.hvac_action === 'heating' || row.attrs.hvac_action === 'cooling';
-      return `<article class="tile${heating ? ' active' : ''}"><span class="label">${icon('thermo')}${escapeHTML(item.name || this.labelFor(row))}</span><div class="card-body">${available(row) ? this.climateBody(row) : '<span class="value">—</span><small>Niedostępne</small>'}${item.note ? `<p class="note-line">${escapeHTML(item.note)}</p>` : ''}</div></article>`;
+      return `<article class="tile${heating ? ' active' : ''}"><span class="label">${icon('thermo')}${escapeHTML(item.name || this.labelFor(row))}</span><div class="card-body">${available(row) ? this.climateBody(row) : `<span class="value">—</span><small>${T('Niedostępne')}</small>`}${item.note ? `<p class="note-line">${escapeHTML(item.note)}</p>` : ''}</div></article>`;
     }).join('');
     return html ? `<div class="cards">${html}</div>` : '';
   }
@@ -1544,8 +1660,8 @@ class AuraDomu extends HTMLElement {
     const id = escapeHTML(row.id), vid = escapeHTML(vol.id);
     const live = available(row) && !['off','standby'].includes(row.state);
     const extra = live ? `<span class="entity-extra">
-        ${item.speaker || row.attrs.supported_features == null || row.attrs.supported_features & 1 ? `<button class="round" data-act="media" data-cmd="media_play_pause" data-id="${id}" aria-label="Odtwórz / pauza">${row.state === 'playing' ? '❚❚' : '▶'}</button>` : ''}
-        <button class="round" data-act="media" data-cmd="volume_down" data-id="${vid}" aria-label="Ciszej">−</button><button class="round" data-act="media" data-cmd="volume_up" data-id="${vid}" aria-label="Głośniej">+</button></span>` : '';
+        ${item.speaker || row.attrs.supported_features == null || row.attrs.supported_features & 1 ? `<button class="round" data-act="media" data-cmd="media_play_pause" data-id="${id}" aria-label="${T('Odtwórz / pauza')}">${row.state === 'playing' ? '❚❚' : '▶'}</button>` : ''}
+        <button class="round" data-act="media" data-cmd="volume_down" data-id="${vid}" aria-label="${T('Ciszej')}">−</button><button class="round" data-act="media" data-cmd="volume_up" data-id="${vid}" aria-label="${T('Głośniej')}">+</button></span>` : '';
     return this.entityTile(row,{...item,glyph:'film',toggle:false},extra);
   }
 
@@ -1555,13 +1671,13 @@ class AuraDomu extends HTMLElement {
     const rowsHTML = Object.entries(device).filter(([key,value])=>!deviceSkip.has(key) && key !== 'status' && key !== 'entity' && !deviceActions[key] && typeof value === 'string').map(([key,id])=>{
       const row = this.row(id);
       if (!row || ['button','switch','light'].includes(row.domain)) return '';
-      const text = row.domain === 'binary_sensor' ? (row.state === 'on' ? (key === 'bin_full' ? 'Pełny' : key === 'water_full' ? 'Pełny' : 'Tak') : (key === 'bin_full' || key === 'water_full') ? 'OK' : 'Nie') : this.stateText(row);
-      return `<div><span>${escapeHTML(deviceLabels[key] || key)}</span><b>${escapeHTML(text)}</b></div>`;
+      const text = row.domain === 'binary_sensor' ? T(row.state === 'on' ? (key === 'bin_full' ? 'Pełny' : key === 'water_full' ? 'Pełny' : 'Tak') : (key === 'bin_full' || key === 'water_full') ? 'OK' : 'Nie') : this.stateText(row);
+      return `<div><span>${escapeHTML(deviceLabels[key] ? T(deviceLabels[key]) : key)}</span><b>${escapeHTML(text)}</b></div>`;
     }).join('');
     const problems = listOf(device.problems).map(item=>this.row(item.entity)).filter(row=>row?.state === 'on');
     const actions = [
-      ...(main && toggleDomains.has(main.domain) ? [{key:'entity',row:main,name:'Zasilanie'}] : []),
-      ...Object.entries(device).filter(([key,value])=>deviceActions[key] && typeof value === 'string').map(([key,id])=>({key,row:this.row(id),name:deviceActions[key]})),
+      ...(main && toggleDomains.has(main.domain) ? [{key:'entity',row:main,name:T('Zasilanie')}] : []),
+      ...Object.entries(device).filter(([key,value])=>deviceActions[key] && typeof value === 'string').map(([key,id])=>({key,row:this.row(id),name:T(deviceActions[key])})),
       ...listOf(device.switches).map(item=>({key:'switch',row:this.row(item.entity),name:item.name})),
     ].filter(a=>a.row).map(({row,name})=>{
       const id = escapeHTML(row.id);
@@ -1571,7 +1687,7 @@ class AuraDomu extends HTMLElement {
     }).join('');
     const busy = status && available(status) && !/^(off|idle|standby|finished|zakonczony|gotowa|gotowy|ready|none|unknown)$/i.test(fold(status.state));
     const glyph = deviceGlyph[device.type] || 'device';
-    return `<article class="tile${busy ? ' active' : ''}"><span class="label">${icon(glyph)}${escapeHTML(device.name || 'Urządzenie')}</span>
+    return `<article class="tile${busy ? ' active' : ''}"><span class="label">${icon(glyph)}${escapeHTML(device.name || T('Urządzenie'))}</span>
       <div class="card-body"><span class="big-value">${escapeHTML(status ? this.stateText(status) : '—')}</span>${problems.length ? `<small class="warn">Problem: ${escapeHTML(problems.map(r=>this.labelFor(r)).join(', '))}</small>` : ''}
       ${rowsHTML ? `<div class="device-rows">${rowsHTML}</div>` : ''}${actions ? `<div class="device-actions">${actions}</div>` : ''}</div></article>`;
   }
@@ -1587,16 +1703,16 @@ class AuraDomu extends HTMLElement {
       const open = windows.filter(row=>row.state === 'on');
       const climates = listOf(room.cfg?.climate).map(item=>this.row(item.entity)).filter(available);
       const heating = climates.some(row=>row.attrs.hvac_action === 'heating');
-      const note = [humidity != null && `wilgotność ${format(humidity)}%`,heating && 'grzeje',open.length && 'okno otwarte'].filter(Boolean).join(' · ');
+      const note = [humidity != null && `${T('wilgotność')} ${format(humidity)}%`,heating && T('grzeje'),open.length && T('okno otwarte')].filter(Boolean).join(' · ');
       return `<button class="tile room${heating ? ' active' : ''}" data-room="${escapeHTML(room.id)}"><span class="label">${icon(roomIcon(room.name))}${escapeHTML(room.name)}</span><span><span class="value">${temp != null ? escapeHTML(format(temp,unit)) : '—'}</span>${note ? `<span class="note">${escapeHTML(note)}</span>` : ''}</span><span class="arrow">${icon('arrow')}</span></button>`;
     }).join('');
     const seen = new Set();
     const items = [...listOf(this.config?.climate),...rooms.flatMap(room=>listOf(room.cfg?.climate))].filter(item=>!seen.has(item.entity) && seen.add(item.entity));
     if (!items.length && !this.getModel().configured) this.getModel().rows.filter(row=>row.domain === 'climate').forEach(row=>items.push({entity:row.id}));
     const temps = rooms.map(room=>this.roomTemp(room)).filter(Number.isFinite);
-    this.$('#climate-intro').textContent = temps.length ? `Średnio ${format(temps.reduce((a,b)=>a + b,0) / temps.length,unit)} w ${temps.length} pomieszczeniach` : 'Brak odczytów temperatury';
+    this.$('#climate-intro').textContent = temps.length ? T('Średnio {t} w {n}',{t:format(temps.reduce((a,b)=>a + b,0) / temps.length,unit),n:plN(temps.length,'pomieszczeniu','pomieszczeniach','pomieszczeniach')}) : T('Brak odczytów temperatury');
     const weather = this.getModel().rows.find(row=>row.domain === 'weather' && available(row) && (!this.config?.weather_entity || row.id === this.config.weather_entity));
-    const head = weather ? `<span class="state-chip">${icon('weather')}Na zewnątrz · ${escapeHTML(this.stateText(weather))}</span>` : '';
+    const head = weather ? `<span class="state-chip">${icon('weather')}${T('Na zewnątrz')} · ${escapeHTML(this.stateText(weather))}</span>` : '';
     this.setHTML('#climate-body',this.block('Pomieszczenia','rooms',tiles ? `<div class="rooms">${tiles}</div>` : '',head) + this.block('Termostaty i klimatyzacja','thermo',this.climateCards(items)));
   }
 
@@ -1607,7 +1723,7 @@ class AuraDomu extends HTMLElement {
     const energy = this.powerRow(rows);
     const price = r('el_rate') || this.row(this.config?.price_entity);
     const pence = this.priceInPence(price), next = this.priceInPence(r('el_next'));
-    const tile = (glyph,label,value,lines,active = false,extra = '') => `<article class="tile${active ? ' active' : ''}"><span class="label">${icon(glyph)}${escapeHTML(label)}</span><div class="card-body"><span class="big-value">${escapeHTML(value)}</span>${extra}${lines.filter(Boolean).length ? `<div class="device-rows">${lines.filter(Boolean).map(([k,v])=>`<div><span>${escapeHTML(k)}</span><b>${escapeHTML(v)}</b></div>`).join('')}</div>` : ''}</div></article>`;
+    const tile = (glyph,label,value,lines,active = false,extra = '') => `<article class="tile${active ? ' active' : ''}"><span class="label">${icon(glyph)}${escapeHTML(T(label))}</span><div class="card-body"><span class="big-value">${escapeHTML(value)}</span>${extra}${lines.filter(Boolean).length ? `<div class="device-rows">${lines.filter(Boolean).map(([k,v])=>`<div><span>${escapeHTML(T(k))}</span><b>${escapeHTML(v)}</b></div>`).join('')}</div>` : ''}</div></article>`;
     const val = key => r(key) ? this.stateText(r(key)) : null;
     const cards = [
       energy && tile('bolt','Moc teraz',available(energy) ? this.stateText(energy) : '—',[],available(energy),this.spark()),
@@ -1620,11 +1736,11 @@ class AuraDomu extends HTMLElement {
       const today = this.row(d.today), power = this.row(d.power);
       if (!today && !power) return '';
       const row = today || power;
-      return this.entityTile(row,{name:d.name,glyph:'bolt',toggle:false,state:[today && `dziś ${this.stateText(today)}`,power && this.stateText(power)].filter(Boolean).join(' · ')});
+      return this.entityTile(row,{name:d.name,glyph:'bolt',toggle:false,state:[today && `${T('dziś')} ${this.stateText(today)}`,power && this.stateText(power)].filter(Boolean).join(' · ')});
     }).join('');
-    this.$('#energy-intro').textContent = energy && available(energy) ? `Dom pobiera teraz ${this.stateText(energy)}` : 'Zużycie i koszty z liczników';
+    this.$('#energy-intro').textContent = energy && available(energy) ? T('Dom pobiera teraz {p}',{p:this.stateText(energy)}) : T('Zużycie i koszty z liczników');
     const body = this.block('Liczniki','bolt',cards ? `<div class="cards">${cards}</div>` : '') + this.block('Urządzenia','device',devices ? `<div class="entity-grid">${devices}</div>` : '');
-    this.setHTML('#energy-body',body || `<p class="empty">${this.config?.energy_page || this.config?.energy ? 'Nie znalazłem w Home Assistant encji wpisanych w „energy_page”.' : 'Dodaj sekcję „energy_page” w konfiguracji karty.'}</p>`);
+    this.setHTML('#energy-body',body || `<p class="empty">${T(this.config?.energy_page || this.config?.energy ? 'Nie znalazłem w Home Assistant encji wpisanych w „energy_page”.' : 'Dodaj sekcję „energy_page” w konfiguracji karty.')}</p>`);
   }
 
   /* ---------- zakładka Ochrona ---------- */
@@ -1637,8 +1753,8 @@ class AuraDomu extends HTMLElement {
     const lowBattery = batteries.filter(({row})=>available(row) && Number(row.state) < (cfg.battery_low ?? 20));
     const offline = [...windows,...motion,...leaks,...co].filter(({row})=>!available(row));
     const bad = alerts.length > 0;
-    const title = bad ? `Uwaga: ${alerts.map(({item,row})=>item.name || this.labelFor(row)).join(', ')}` : open.length ? `Otwarte: ${open.map(({item,row})=>item.name || this.labelFor(row)).join(', ')}` : 'Wszystko w porządku';
-    const sub = [offline.length && `${offline.length} bez odczytu`,lowBattery.length && `${lowBattery.length} słabych baterii`].filter(Boolean).join(' · ') || 'Czujniki działają, nie ma alarmów';
+    const title = bad ? `${T('Uwaga')}: ${alerts.map(({item,row})=>item.name || this.labelFor(row)).join(', ')}` : open.length ? `${T('Otwarte')}: ${open.map(({item,row})=>item.name || this.labelFor(row)).join(', ')}` : T('Wszystko w porządku');
+    const sub = [offline.length && T('{n} bez odczytu',{n:offline.length}),lowBattery.length && plN(lowBattery.length,'słaba bateria','słabe baterie','słabych baterii')].filter(Boolean).join(' · ') || T('Czujniki działają, nie ma alarmów');
     let body = `<div class="status-banner" data-bad="${bad}">${icon('shield')}<div><b>${escapeHTML(title)}</b><span>${escapeHTML(sub)}</span></div></div>`;
     const guard = this.row(cfg.guard);
     if (guard) {
@@ -1655,15 +1771,15 @@ class AuraDomu extends HTMLElement {
     body += this.block('Wycieki i czad','water',sensorGrid([...typed(leaks,'leak'),...typed(co,'co')]));
     body += this.block('Ruch i obecność','sensor',sensorGrid(typed(motion,'motion')));
     const cams = (cfg.cameras || []).map(cam=>{
-      const states = [['ring','Dzwonek'],['person','Osoba'],['motion','Ruch']].map(([key,label])=>{ const row = this.row(cam[key]); return row?.state === 'on' ? label : null; }).filter(Boolean);
+      const states = [['ring','Dzwonek'],['person','Osoba'],['motion','Ruch']].map(([key,label])=>{ const row = this.row(cam[key]); return row?.state === 'on' ? T(label) : null; }).filter(Boolean);
       const enabled = this.row(cam.enabled);
       const row = this.row(cam.motion) || this.row(cam.person) || enabled;
       if (!row) return '';
-      return this.entityTile(row,{name:cam.name,glyph:'shield',toggle:false,state:states.length ? `Wykryto: ${states.join(', ')}` : enabled?.state === 'off' ? 'Kamera wyłączona' : 'Spokój'});
+      return this.entityTile(row,{name:cam.name,glyph:'shield',toggle:false,state:states.length ? `${T('Wykryto')}: ${states.join(', ')}` : T(enabled?.state === 'off' ? 'Kamera wyłączona' : 'Spokój')});
     }).join('');
     body += this.block('Kamery','shield',cams ? `<div class="entity-grid">${cams}</div>` : '');
     body += this.block('Baterie czujników','bolt',this.grid(batteries.sort((a,b)=>Number(a.row?.state ?? 999) - Number(b.row?.state ?? 999)),({item,row})=>this.entityTile(row,{...item,type:'battery',warn:!available(row) || Number(row?.state) < (cfg.battery_low ?? 20)})));
-    if (!this.securityConfig()) body += '<p class="empty">Dodaj sekcję „security_page” w konfiguracji karty.</p>';
+    if (!this.securityConfig()) body += `<p class="empty">${T('Dodaj sekcję „security_page” w konfiguracji karty.')}</p>`;
     this.setHTML('#security-body',body);
   }
 
@@ -1671,85 +1787,85 @@ class AuraDomu extends HTMLElement {
   f1E() { return {...F1_DEF,...(this.config?.f1 || {})}; }
   f1Sessions(A) {
     const now = Date.now();
-    const list = F1_SES.map(([k,n,g,dur])=>A[k] ? {k,n,g,t:Date.parse(A[k]),end:Date.parse(A[k]) + dur * 60e3} : null).filter(s=>s && !Number.isNaN(s.t)).sort((a,b)=>a.t - b.t);
+    const list = F1_SES.map(([k,n,g,dur])=>A[k] ? {k,n:T(n),g,t:Date.parse(A[k]),end:Date.parse(A[k]) + dur * 60e3} : null).filter(s=>s && !Number.isNaN(s.t)).sort((a,b)=>a.t - b.t);
     list.forEach(s=>{ s.st = now >= s.end ? 'done' : now >= s.t ? 'now' : 'todo'; });
     const nx = list.find(s=>s.st !== 'done');
     if (nx) nx.next = true;
     return list;
   }
   f1Live() { const s = this.row(this.f1E().status), v = available(s) ? String(s.state).toLowerCase() : ''; return {live:['live','suspended','started'].includes(v),pre:v === 'pre'}; }
-  f1Track() { const s = this.row(this.f1E().track); if (!available(s)) return null; return F1_TRACK[String(s.state).toUpperCase().replace(/\s+/g,'_')] || ['warn',s.state,'stan toru']; }
-  f1Until(ms) { if (ms <= 0) return ''; const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5), m = Math.round(ms / 6e4); return d >= 1 ? `za ${plN(d,'dzień','dni','dni')}` : h >= 1 ? `za ${h} godz.` : `za ${Math.max(1,m)} min`; }
-  f1Day(t,long = false) { return new Date(t).toLocaleDateString('pl-PL',long ? {weekday:'long',day:'numeric',month:'long',timeZone:this._hass?.config?.time_zone} : {weekday:'short',day:'numeric',month:'short',timeZone:this._hass?.config?.time_zone}).replace(/\./g,''); }
-  f1SessionName(s) { return F1_SNAME[String(s || '').toLowerCase()] || s || 'Sesja'; }
+  f1Track() { const s = this.row(this.f1E().track); if (!available(s)) return null; const tr = F1_TRACK[String(s.state).toUpperCase().replace(/\s+/g,'_')]; return tr ? [tr[0],T(tr[1]),T(tr[2])] : ['warn',s.state,T('stan toru')]; }
+  f1Until(ms) { if (ms <= 0) return ''; const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5), m = Math.round(ms / 6e4); return d >= 1 ? T('za {x}',{x:plN(d,'dzień','dni','dni')}) : h >= 1 ? T('za {n} godz.',{n:h}) : T('za {n} min',{n:Math.max(1,m)}); }
+  f1Day(t,long = false) { return new Date(t).toLocaleDateString(loc(),long ? {weekday:'long',day:'numeric',month:'long',timeZone:this._hass?.config?.time_zone} : {weekday:'short',day:'numeric',month:'short',timeZone:this._hass?.config?.time_zone}).replace(/\./g,''); }
+  f1SessionName(s) { const k = F1_SNAME[String(s || '').toLowerCase()]; return k ? T(k) : s || T('Sesja'); }
   // krótka informacja na ekran główny: w tygodniu wyścigowym i na żywo
   f1Chip() {
     if (!this.tabVisible('f1')) return null;
     const E = this.f1E(), nr = this.row(E.next), lv = this.f1Live(), wk = this.row(E.week);
     if (!nr || (!lv.live && !lv.pre && wk?.state !== 'on')) return null;
-    if (lv.live) return `Na żywo · ${this.f1SessionName(this.row(E.session)?.state)}${this.f1Track() ? ` · ${this.f1Track()[1]}` : ''}`;
+    if (lv.live) return `${T('Na żywo')} · ${this.f1SessionName(this.row(E.session)?.state)}${this.f1Track() ? ` · ${this.f1Track()[1]}` : ''}`;
     const nx = this.f1Sessions(nr.attrs).find(s=>s.next);
-    return `${String(nr.attrs.race_name || 'F1').replace(/ Grand Prix$/,' GP')}${nx ? ` · ${nx.st === 'now' ? `${nx.n} trwa` : `${nx.n} ${this.f1Until(nx.t - Date.now())}`}` : ''}`;
+    return `${String(nr.attrs.race_name || 'F1').replace(/ Grand Prix$/,' GP')}${nx ? ` · ${nx.st === 'now' ? T('{s} trwa',{s:nx.n}) : `${nx.n} ${this.f1Until(nx.t - Date.now())}`}` : ''}`;
   }
 
   renderF1() {
     const E = this.f1E(), nr = this.row(E.next), A = nr?.attrs || {}, S = this.f1Sessions(A), lv = this.f1Live(), spoil = this.row(E.nospoil)?.state === 'on';
     const num = x => { const v = parseFloat(x); return Number.isNaN(v) ? null : v; };
-    const tile = (g,title,sub,body,cls = '') => `<article class="tile${cls ? ` ${cls}` : ''}"><span class="label">${icon(g)}${escapeHTML(title)}${sub ? `<small style="font-weight:400;color:var(--muted);margin-left:4px">${escapeHTML(sub)}</small>` : ''}</span><div class="card-body">${body}</div></article>`;
-    const muted = t => `<p class="note-line">${escapeHTML(t)}</p>`;
+    const tile = (g,title,sub,body,cls = '') => `<article class="tile${cls ? ` ${cls}` : ''}"><span class="label">${icon(g)}${escapeHTML(T(title))}${sub ? `<small style="font-weight:400;color:var(--muted);margin-left:4px">${escapeHTML(T(sub))}</small>` : ''}</span><div class="card-body">${body}</div></article>`;
+    const muted = x => `<p class="note-line">${escapeHTML(T(x))}</p>`;
     // pigułki u góry
     const season = this.row(E.season), wk = this.row(E.week), ds = this.row(E.drivers), L = ds?.attrs.driver_standings || [];
     const chip = (g,t) => `<span class="state-chip">${icon(g)}${escapeHTML(t)}</span>`;
     const pills = [];
-    if (A.round) pills.push(chip('flag',`Runda ${A.round}${Array.isArray(season?.attrs.races) ? ` z ${season.attrs.races.length}` : ''}`));
-    if (lv.live) pills.push(chip('bolt',`Na żywo · ${this.f1SessionName(this.row(E.session)?.state)}`));
-    else if (wk?.state === 'on') pills.push(chip('spark','Tydzień wyścigowy'));
-    else if (S[0]) { const d = Math.floor((S[0].t - Date.now()) / 864e5); pills.push(chip('clock',d <= 0 ? 'Pierwszy trening już blisko' : `Pierwszy trening za ${plN(d,'dzień','dni','dni')}`)); }
-    if (!spoil && L.length > 1) pills.push(chip('trophy',`Lider ${L[0].Driver?.familyName || L[0].Driver?.code || ''} +${Math.round((num(L[0].points) || 0) - (num(L[1].points) || 0))} pkt`));
+    if (A.round) pills.push(chip('flag',`${T('Runda')} ${A.round}${Array.isArray(season?.attrs.races) ? ` ${T('z')} ${season.attrs.races.length}` : ''}`));
+    if (lv.live) pills.push(chip('bolt',`${T('Na żywo')} · ${this.f1SessionName(this.row(E.session)?.state)}`));
+    else if (wk?.state === 'on') pills.push(chip('spark',T('Tydzień wyścigowy')));
+    else if (S[0]) { const d = Math.floor((S[0].t - Date.now()) / 864e5); pills.push(chip('clock',d <= 0 ? T('Pierwszy trening już blisko') : T('Pierwszy trening za {x}',{x:plN(d,'dzień','dni','dni')}))); }
+    if (!spoil && L.length > 1) pills.push(chip('trophy',T('Lider {n} +{p} pkt',{n:L[0].Driver?.familyName || L[0].Driver?.code || '',p:Math.round((num(L[0].points) || 0) - (num(L[1].points) || 0))})));
     this.setHTML('#f1-pills',pills.join(''));
-    if (!nr) { this.setHTML('#f1-body','<p class="empty">Nie widzę integracji F1 Sensor w Home Assistant.</p>'); return; }
+    if (!nr) { this.setHTML('#f1-body',`<p class="empty">${T('Nie widzę integracji F1 Sensor w Home Assistant.')}</p>`); return; }
 
     // góra: odliczanie albo stan na żywo
     let top;
     if (lv.live) {
-      const tk = this.f1Track() || ['ok','Brak danych','czekam na stan toru'], col = {ok:'#3fcf7a',warn:'#ffae42',bad:'#ff5a4a'}[tk[0]];
+      const tk = this.f1Track() || ['ok',T('Brak danych'),T('czekam na stan toru')], col = {ok:'#3fcf7a',warn:'#ffae42',bad:'#ff5a4a'}[tk[0]];
       const lap = this.row(E.laps), tot = lap?.attrs.total_laps, rem = this.row(E.remain);
       const remTxt = available(rem) ? (/^\d+(\.\d+)?$/.test(rem.state) ? (s=>`${Math.floor(s / 3600) ? `${Math.floor(s / 3600)}:` : ''}${String(Math.floor(s % 3600 / 60)).padStart(Math.floor(s / 3600) ? 2 : 1,'0')}:${String(s % 60).padStart(2,'0')}`)(Math.round(+rem.state)) : rem.state) : null;
       const tw = this.row(E.tw), twA = available(tw) ? tw.attrs : null, air = twA ? num(twA.air_temperature ?? twA.air_temp) : null, trk = twA ? num(twA.track_temperature ?? twA.track_temp) : null;
       const asList = x => Array.isArray(x) ? x : x && typeof x === 'object' ? Object.entries(x).map(([k,v])=>v && typeof v === 'object' ? {_k:k,...v} : null).filter(Boolean) : [];
       const D = new Map(asList(this.row(E.list)?.attrs.drivers).map(d=>[String(d.racing_number ?? d._k ?? '').trim(),d]));
       const rows = asList(this.row(E.positions)?.attrs.drivers).map(p=>{ const rn = String(p.racing_number ?? (String(p._k || '').match(/\d+/) || [''])[0]).trim(), d = D.get(rn) || {}; const pos = parseInt(p.current_position ?? p.position ?? d.position,10); const c = String(d.team_color || p.team_color || '').replace(/^#?/,'#');
-        return {pos:Number.isNaN(pos) ? null : pos,tla:p.tla || d.tla || rn,name:d.last_name || d.full_name || '',team:d.team || d.team_name || '',col:/^#[0-9a-f]{6}$/i.test(c) ? c : '',gap:pos === 1 ? 'lider' : String(p.gap_to_leader ?? p.interval ?? '').replace('.',',')}; }).filter(r=>r.pos != null).sort((a,b)=>a.pos - b.pos);
+        return {pos:Number.isNaN(pos) ? null : pos,tla:p.tla || d.tla || rn,name:d.last_name || d.full_name || '',team:d.team || d.team_name || '',col:/^#[0-9a-f]{6}$/i.test(c) ? c : '',gap:pos === 1 ? T('lider') : String(p.gap_to_leader ?? p.interval ?? '').replace('.',LANG === 'en' ? '.' : ',')}; }).filter(r=>r.pos != null).sort((a,b)=>a.pos - b.pos);
       const rc = this.row(E.rc), msgs = available(rc) ? (Array.isArray(rc.attrs.history) && rc.attrs.history.length ? rc.attrs.history.slice(-4).reverse() : [{message:rc.attrs.message || rc.state,utc:rc.attrs.utc}]) : [];
       const led = this.row(E.led), tvRoom = this.getModel().roomsCfg.find(r=>listOf(r.media).length);
       top = `<div class="f1-grid">
-        ${tile('flag','Stan na torze',A.race_name || '',`<div class="flag-ring" style="--fc:${col}"><svg viewBox="0 0 300 300"><circle class="r0" cx="150" cy="150" r="140"/><circle class="r1" cx="150" cy="150" r="118"/><circle class="r0" cx="150" cy="150" r="98"/></svg><div><small>Stan toru</small><b>${escapeHTML(tk[1])}</b><small>${escapeHTML(tk[2])}</small></div></div>
-          <div class="device-rows">${available(lap) ? `<div><span>Okrążenie</span><b>${escapeHTML(lap.state)}${tot ? ` / ${escapeHTML(tot)}` : ''}</b></div>` : ''}${remTxt ? `<div><span>Do końca</span><b>${escapeHTML(remTxt)}</b></div>` : ''}${air != null ? `<div><span>Na torze</span><b>${format(air,'°C')}${trk != null ? ` · tor ${format(trk,'°')}` : ''}</b></div>` : ''}</div>`,'active')}
+        ${tile('flag','Stan na torze',A.race_name || '',`<div class="flag-ring" style="--fc:${col}"><svg viewBox="0 0 300 300"><circle class="r0" cx="150" cy="150" r="140"/><circle class="r1" cx="150" cy="150" r="118"/><circle class="r0" cx="150" cy="150" r="98"/></svg><div><small>${T('Stan toru')}</small><b>${escapeHTML(tk[1])}</b><small>${escapeHTML(tk[2])}</small></div></div>
+          <div class="device-rows">${available(lap) ? `<div><span>${T('Okrążenie')}</span><b>${escapeHTML(lap.state)}${tot ? ` / ${escapeHTML(tot)}` : ''}</b></div>` : ''}${remTxt ? `<div><span>${T('Do końca')}</span><b>${escapeHTML(remTxt)}</b></div>` : ''}${air != null ? `<div><span>${T('Na torze')}</span><b>${format(air,'°C')}${trk != null ? ` · ${T('tor')} ${format(trk,'°')}` : ''}</b></div>` : ''}</div>`,'active')}
         ${tile('trophy','Pozycje','',rows.length ? `<div class="std">${rows.slice(0,10).map(r=>`<div class="std-row"><span class="p">${r.pos}</span><span class="cd" style="--tc:${r.col || 'var(--hot)'}">${escapeHTML(r.tla)}</span><span class="n">${escapeHTML(r.name)}${r.team ? `<small>${escapeHTML(r.team)}</small>` : ''}</span><span class="pt">${escapeHTML(r.gap)}</span></div>`).join('')}</div>` : muted('Pozycje pojawią się, gdy sesja ruszy.'))}
         ${tile('bell','Dyrekcja wyścigu','',msgs.filter(m=>m?.message).length ? `<div class="rc">${msgs.filter(m=>m?.message).map(m=>`<div><time>${m.utc ? this.time(Date.parse(m.utc)) : ''}</time><span>${escapeHTML(m.message)}</span></div>`).join('')}</div>` : muted('Brak komunikatów.'))}
-        ${led || tvRoom ? tile('home','Dom w trakcie wyścigu','tylko podgląd',`${led ? `<div class="f1-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45"><path d="${glyphs.light}"/></svg><div><b>${escapeHTML(led.attrs.friendly_name || 'Automatyzacja F1')}</b><small>automatyzacja ${led.state === 'on' ? 'włączona' : 'wyłączona'}</small></div></div>` : ''}${tvRoom ? `<button class="f1-row" data-room="${escapeHTML(tvRoom.id)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45"><path d="${glyphs.film}"/></svg><div><b>${escapeHTML(tvRoom.name)}</b><small>otwórz pokój z telewizorem</small></div></button>` : ''}`) : ''}</div>`;
+        ${led || tvRoom ? tile('home','Dom w trakcie wyścigu','tylko podgląd',`${led ? `<div class="f1-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45"><path d="${glyphs.light}"/></svg><div><b>${escapeHTML(led.attrs.friendly_name || T('Automatyzacja F1'))}</b><small>${T(led.state === 'on' ? 'automatyzacja włączona' : 'automatyzacja wyłączona')}</small></div></div>` : ''}${tvRoom ? `<button class="f1-row" data-room="${escapeHTML(tvRoom.id)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45"><path d="${glyphs.film}"/></svg><div><b>${escapeHTML(tvRoom.name)}</b><small>${T('otwórz pokój z telewizorem')}</small></div></button>` : ''}`) : ''}</div>`;
     } else {
       const rs = Date.parse(A.race_start), left = rs - Date.now(), nx = S.find(s=>s.next);
-      const badge = lv.pre ? `Sesja zaraz się zacznie${nx ? ` · ${nx.n}` : ''}` : wk?.state === 'on' && nx ? `Tydzień wyścigowy · ${nx.st === 'now' ? 'trwa' : 'najbliżej'} ${nx.n}` : '';
-      const cd = left > 0 ? `<div class="f1-cd" aria-label="Do wyścigu"><div><b>${Math.floor(left / 864e5)}</b><small>dni</small></div><div><b>${Math.floor(left % 864e5 / 36e5)}</b><small>godz.</small></div><div><b>${Math.floor(left % 36e5 / 6e4)}</b><small>min</small></div></div>` : '';
-      const sub = [Number.isNaN(rs) ? '' : `Wyścig ${this.f1Day(rs,true)} o ${this.time(rs)}`,num(A.scheduled_laps) ? `${A.scheduled_laps} okrążeń` : '',A.sprint_start ? 'weekend ze sprintem' : ''].filter(Boolean).join(' · ');
-      top = `<div class="f1-hero"><div class="f1-copy">${badge ? `<span class="f1-badge"><i></i>${escapeHTML(badge)}</span>` : ''}<span class="f1-eye">${A.country_flag_url ? `<img src="${escapeHTML(A.country_flag_url)}" alt="" onerror="this.remove()">` : ''}Runda ${escapeHTML(A.round || '—')} · ${escapeHTML(A.circuit_name || '')}</span>
-        <span class="f1-name">${escapeHTML(A.race_name || 'Następny wyścig')}</span><span class="f1-sub">${escapeHTML(sub)}</span>${cd}</div>${f1Scene()}</div>`;
+      const badge = lv.pre ? `${T('Sesja zaraz się zacznie')}${nx ? ` · ${nx.n}` : ''}` : wk?.state === 'on' && nx ? `${T('Tydzień wyścigowy')} · ${T(nx.st === 'now' ? 'trwa' : 'najbliżej')} ${nx.n}` : '';
+      const cd = left > 0 ? `<div class="f1-cd" aria-label="${T('Do wyścigu')}"><div><b>${Math.floor(left / 864e5)}</b><small>${T('dni')}</small></div><div><b>${Math.floor(left % 864e5 / 36e5)}</b><small>${T('godz.')}</small></div><div><b>${Math.floor(left % 36e5 / 6e4)}</b><small>min</small></div></div>` : '';
+      const sub = [Number.isNaN(rs) ? '' : T('Wyścig {d} o {h}',{d:this.f1Day(rs,true),h:this.time(rs)}),num(A.scheduled_laps) ? T('{n} okrążeń',{n:A.scheduled_laps}) : '',A.sprint_start ? T('weekend ze sprintem') : ''].filter(Boolean).join(' · ');
+      top = `<div class="f1-hero"><div class="f1-copy">${badge ? `<span class="f1-badge"><i></i>${escapeHTML(badge)}</span>` : ''}<span class="f1-eye">${A.country_flag_url ? `<img src="${escapeHTML(A.country_flag_url)}" alt="" onerror="this.remove()">` : ''}${T('Runda')} ${escapeHTML(A.round || '—')} · ${escapeHTML(A.circuit_name || '')}</span>
+        <span class="f1-name">${escapeHTML(A.race_name || T('Następny wyścig'))}</span><span class="f1-sub">${escapeHTML(sub)}</span>${cd}</div>${f1Scene()}</div>`;
     }
     // plan weekendu
-    const plan = tile('clock','Plan weekendu','Twój czas',S.length ? S.map(s=>{ const rel = s.st === 'now' ? 'trwa' : s.st === 'done' ? 'zakończona' : s.next ? this.f1Until(s.t - Date.now()) : '';
+    const plan = tile('clock','Plan weekendu','Twój czas',S.length ? S.map(s=>{ const rel = s.st === 'now' ? T('trwa') : s.st === 'done' ? T('zakończona') : s.next ? this.f1Until(s.t - Date.now()) : '';
       return `<div class="f1-row ${s.st}${s.next ? ' next' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="${glyphs[s.g]}"/></svg><div><b>${escapeHTML(s.n)}</b><small>${escapeHTML(this.f1Day(s.t))}</small></div><div class="t">${escapeHTML(this.time(s.t))}${rel ? `<small>${escapeHTML(rel)}</small>` : ''}</div></div>`; }).join('') : muted('Brak planu sesji.'));
     // ostatni wyścig
     const last = this.row(E.last), LA = last?.attrs || {}, R = Array.isArray(LA.results) ? LA.results : [];
-    const where = `${F1_COUNTRY[LA.circuit_country] || LA.circuit_country || LA.race_name || ''}${LA.round ? ` · runda ${LA.round}` : ''}`;
+    const where = `${(LA.circuit_country && country(LA.circuit_country)) || LA.race_name || ''}${LA.round ? ` · ${T('runda')} ${LA.round}` : ''}`;
     const podium = !available(last) ? muted('Brak wyników.') : spoil ? muted('Wyniki ukryte, bo tryb bez spoilerów jest włączony.')
-      : `<div class="podium">${[[R[1],'p2'],[R[0],'p1'],[R[2],'p3']].map(([r,c])=>r ? `<div class="${c}"><b>${escapeHTML(r.driver?.code || '')}</b><small>${escapeHTML(r.constructor?.name || '')}</small><em>${escapeHTML(String(r.time || r.status || '').replace('.',','))}</em><span class="step">${escapeHTML(r.position)}</span></div>` : '<div></div>').join('')}</div>`;
+      : `<div class="podium">${[[R[1],'p2'],[R[0],'p1'],[R[2],'p3']].map(([r,c])=>r ? `<div class="${c}"><b>${escapeHTML(r.driver?.code || '')}</b><small>${escapeHTML(r.constructor?.name || '')}</small><em>${escapeHTML(String(r.time || r.status || '').replace('.',LANG === 'en' ? '.' : ','))}</em><span class="step">${escapeHTML(r.position)}</span></div>` : '<div></div>').join('')}</div>`;
     // klasyfikacje
     const standings = kind => {
       const s = this.row(kind === 'd' ? E.drivers : E.teams), title = kind === 'd' ? 'Kierowcy' : 'Zespoły';
       if (!available(s)) return tile('trophy',title,'',muted('Brak klasyfikacji.'));
       const list = (kind === 'd' ? s.attrs.driver_standings : s.attrs.constructor_standings) || [];
-      const sub = s.attrs.round ? `po ${plN(+s.attrs.round,'rundzie','rundach','rundach')}` : '';
+      const sub = s.attrs.round ? T('po {x}',{x:plN(+s.attrs.round,'rundzie','rundach','rundach')}) : '';
       if (spoil) return tile('trophy',title,sub,muted('Klasyfikacja ukryta, bo tryb bez spoilerów jest włączony.'));
       const max = num(list[0]?.points) || 1;
       return tile('trophy',title,sub,`<div class="std">${list.slice(0,5).map(r=>{ const pts = num(r.points) || 0, team = kind === 'd' ? r.Constructors?.[0] : r.Constructor;
@@ -1758,19 +1874,19 @@ class AuraDomu extends HTMLElement {
     };
     // o torze
     const facts = [];
-    if (A.defending_winner?.driver_name) facts.push(`<div><small>Broni zwycięstwa</small><b>${escapeHTML(A.defending_winner.driver_name)}</b> · ${escapeHTML(A.defending_winner.constructor_name || '')}${A.defending_winner.grid ? `, start z P${escapeHTML(A.defending_winner.grid)}` : ''}</div>`);
-    if (Array.isArray(A.last_5_winners) && A.last_5_winners.length) facts.push(`<div><small>Ostatni zwycięzcy</small><span class="wins">${A.last_5_winners.map(w=>`<span>${escapeHTML(w.season)} ${escapeHTML(w.driver_code || '')}</span>`).join('')}</span></div>`);
-    if (num(A.pole_to_win_conversion_last_5) != null) facts.push(`<div><small>Pole position → zwycięstwo</small><b>${format(A.pole_to_win_conversion_last_5)}%</b> w ostatnich wyścigach tutaj</div>`);
-    if (num(A.dnf_rate_last_5) != null) facts.push(`<div><small>Nie dojeżdża do mety</small><b>${format(A.dnf_rate_last_5)}%</b> kierowców w ostatnich latach</div>`);
+    if (A.defending_winner?.driver_name) facts.push(`<div><small>${T('Broni zwycięstwa')}</small><b>${escapeHTML(A.defending_winner.driver_name)}</b> · ${escapeHTML(A.defending_winner.constructor_name || '')}${A.defending_winner.grid ? `, ${T('start z')} P${escapeHTML(A.defending_winner.grid)}` : ''}</div>`);
+    if (Array.isArray(A.last_5_winners) && A.last_5_winners.length) facts.push(`<div><small>${T('Ostatni zwycięzcy')}</small><span class="wins">${A.last_5_winners.map(w=>`<span>${escapeHTML(w.season)} ${escapeHTML(w.driver_code || '')}</span>`).join('')}</span></div>`);
+    if (num(A.pole_to_win_conversion_last_5) != null) facts.push(`<div><small>${T('Pole position → zwycięstwo')}</small><b>${format(A.pole_to_win_conversion_last_5)}%</b> ${T('w ostatnich wyścigach tutaj')}</div>`);
+    if (num(A.dnf_rate_last_5) != null) facts.push(`<div><small>${T('Nie dojeżdża do mety')}</small><b>${format(A.dnf_rate_last_5)}%</b> ${T('kierowców w ostatnich latach')}</div>`);
     const held = num(A.races_held_here);
-    const about = tile('flag','O torze',[A.circuit_locality,held ? plN(held,'wyścig','wyścigi','wyścigów') : ''].filter(Boolean).join(' · '),`<div class="track-about">${A.circuit_outline_url ? `<img src="${escapeHTML(A.circuit_outline_url)}" alt="Obrys toru ${escapeHTML(A.circuit_name || '')}" onerror="this.remove()">` : ''}<div class="facts">${facts.join('') || muted('Brak danych o torze.')}</div></div>`,'wide');
+    const about = tile('flag','O torze',[A.circuit_locality,held ? plN(held,'wyścig','wyścigi','wyścigów') : ''].filter(Boolean).join(' · '),`<div class="track-about">${A.circuit_outline_url ? `<img src="${escapeHTML(A.circuit_outline_url)}" alt="${T('Obrys toru')} ${escapeHTML(A.circuit_name || '')}" onerror="this.remove()">` : ''}<div class="facts">${facts.join('') || muted('Brak danych o torze.')}</div></div>`,'wide');
     // pogoda na wyścig
-    const fw = this.row(E.weather), FW = fw?.attrs || {}, t = num(FW.race_temperature);
+    const fw = this.row(E.weather), FW = fw?.attrs || {}, rt = num(FW.race_temperature);
     const wmo = k => { k = +k; return k === 0 ? 'bezchmurnie' : k <= 2 ? 'małe zachmurzenie' : k === 3 ? 'pochmurno' : k === 45 || k === 48 ? 'mgła' : k >= 51 && k <= 57 ? 'mżawka' : k >= 61 && k <= 67 ? 'deszcz' : k >= 71 && k <= 77 ? 'śnieg' : k >= 80 && k <= 82 ? 'przelotny deszcz' : k >= 95 ? 'burza' : ''; };
     const fwGlyph = +FW.race_weather_code >= 51 ? 'rain' : +FW.race_weather_code >= 2 ? 'weather' : 'sun';
-    const wx = tile(fwGlyph,'Pogoda na wyścig',FW.circuit_locality || '',t == null ? muted('Prognoza pojawi się bliżej wyścigu.') : `<span class="big-value">${format(t,'°C')}</span><small>${escapeHTML([wmo(FW.race_weather_code),FW.race_precipitation_probability != null ? `deszcz ${format(FW.race_precipitation_probability)}%` : '',num(FW.race_wind_speed) != null ? `wiatr ${format(FW.race_wind_speed)} m/s` : ''].filter(Boolean).join(' · '))}</small>`);
+    const wx = tile(fwGlyph,'Pogoda na wyścig',FW.circuit_locality || '',rt == null ? muted('Prognoza pojawi się bliżej wyścigu.') : `<span class="big-value">${format(rt,'°C')}</span><small>${escapeHTML([T(wmo(FW.race_weather_code)),FW.race_precipitation_probability != null ? `${T('deszcz')} ${format(FW.race_precipitation_probability)}%` : '',num(FW.race_wind_speed) != null ? `${T('wiatr')} ${format(FW.race_wind_speed)} m/s` : ''].filter(Boolean).join(' · '))}</small>`);
     const rest = `<div class="f1-grid">${lv.live ? plan : ''}${tile('trophy','Ostatni wyścig',where,podium)}${standings('d')}${standings('t')}${wx}${about}</div>`;
-    this.setHTML('#f1-body',`${top}<div class="block">${lv.live ? '' : `<div class="f1-grid">${plan}${tile('flag','Szybko',`${A.circuit_country ? F1_COUNTRY[A.circuit_country] || A.circuit_country : ''}`,`<div class="device-rows"><div><span>Kwalifikacje</span><b>${A.qualifying_start ? `${escapeHTML(this.f1Day(Date.parse(A.qualifying_start)))} ${escapeHTML(this.time(Date.parse(A.qualifying_start)))}` : '—'}</b></div><div><span>Wyścig</span><b>${A.race_start ? `${escapeHTML(this.f1Day(Date.parse(A.race_start)))} ${escapeHTML(this.time(Date.parse(A.race_start)))}` : '—'}</b></div><div><span>Okrążenia</span><b>${escapeHTML(A.scheduled_laps || '—')}</b></div><div><span>Tryb bez spoilerów</span><b>${spoil ? 'włączony' : 'wyłączony'}</b></div></div>`)}</div>`}</div><div class="block">${rest}</div>`);
+    this.setHTML('#f1-body',`${top}<div class="block">${lv.live ? '' : `<div class="f1-grid">${plan}${tile('flag','Szybko',`${A.circuit_country ? country(A.circuit_country) : ''}`,`<div class="device-rows"><div><span>${T('Kwalifikacje')}</span><b>${A.qualifying_start ? `${escapeHTML(this.f1Day(Date.parse(A.qualifying_start)))} ${escapeHTML(this.time(Date.parse(A.qualifying_start)))}` : '—'}</b></div><div><span>${T('Wyścig')}</span><b>${A.race_start ? `${escapeHTML(this.f1Day(Date.parse(A.race_start)))} ${escapeHTML(this.time(Date.parse(A.race_start)))}` : '—'}</b></div><div><span>${T('Okrążenia')}</span><b>${escapeHTML(A.scheduled_laps || '—')}</b></div><div><span>${T('Tryb bez spoilerów')}</span><b>${T(spoil ? 'włączony' : 'wyłączony')}</b></div></div>`)}</div>`}</div><div class="block">${rest}</div>`);
   }
 
   /* ---------- zakładka Kosze (Waste Collection Schedule, jak w Home Pulse) ---------- */
@@ -1782,12 +1898,12 @@ class AuraDomu extends HTMLElement {
     return (calendar && S[calendar]) || (sensor && S[sensor]) ? {calendar,sensor} : null;
   }
   binKind(text) {
-    const t = String(text || '').trim(), src = this.binSource();
+    const txt = String(text || '').trim(), src = this.binSource();
     const types = this.config?.bins?.types || BIN_PRESETS.find(([re])=>re.test(src?.calendar || ''))?.[1] || {};
-    const k = BIN_KIND.find(([re])=>re.test(t));
-    if (k) return {key:k[1],adj:k[1],name:`${cap(k[1])} kosz`,col:k[2],type:types[k[1]] || ''};
-    const w = BIN_BY_NAME.find(([re])=>re.test(t));
-    return {key:t.toLowerCase(),adj:t,name:t,col:w ? w[2] : '#8a8a8a',type:w ? w[1] : ''};
+    const k = BIN_KIND.find(([re])=>re.test(txt));
+    if (k) return {key:k[1],adj:T(k[1]),name:T('{c} kosz',{c:cap(T(k[1]))}),col:k[2],type:T(types[k[1]] || '')};
+    const w = BIN_BY_NAME.find(([re])=>re.test(txt));
+    return {key:txt.toLowerCase(),adj:txt,name:txt,col:w ? w[2] : '#8a8a8a',type:w ? T(w[1]) : ''};
   }
   dayKey(d) { return new Date(d).toLocaleDateString('en-CA',{timeZone:this._hass?.config?.time_zone}); }
   dayDiff(k) { const n = s => { const [y,m,d] = s.split('-').map(Number); return Date.UTC(y,m - 1,d) / 864e5; }; return n(k) - n(this.dayKey(Date.now())); }
@@ -1816,30 +1932,30 @@ class AuraDomu extends HTMLElement {
     if (Array.isArray(this.binCal) && this.binCalFor === src.calendar) this.binCal.forEach(ev=>{ const st = ev.start?.date || ev.start?.dateTime; if (st) add(String(st).slice(0,10),ev.summary || ''); });
     return Object.keys(by).filter(k=>this.dayDiff(k) >= 0).sort().map(k=>({k,n:this.dayDiff(k),bins:Object.values(by[k])}));
   }
-  binRel(n) { return n === 0 ? 'dziś' : n === 1 ? 'jutro' : `za ${n} dni`; }
-  binDate(k,opts) { const [y,m,d] = k.split('-').map(Number); return new Date(Date.UTC(y,m - 1,d,12)).toLocaleDateString('pl-PL',{...opts,timeZone:'UTC'}); }
+  binRel(n) { return n === 0 ? T('dziś') : n === 1 ? T('jutro') : T('za {n} dni',{n}); }
+  binDate(k,opts) { const [y,m,d] = k.split('-').map(Number); return new Date(Date.UTC(y,m - 1,d,12)).toLocaleDateString(loc(),{...opts,timeZone:'UTC'}); }
   binWhat(bins) { return bins.length > 1 ? cap(andList(bins.map(b=>b.adj))) : bins[0].name; }
   binDots(bins) { return `<span class="bin-dots">${bins.map(b=>`<span class="bin-dot" style="--bin:${b.col}">${icon('bin')}</span>`).join('')}</span>`; }
 
   renderBins() {
     const src = this.binSource(), list = this.binCollections(), x = list[0];
     const sourceName = String(this.row(src?.calendar)?.attrs.friendly_name || 'Waste Collection Schedule').replace(/^Waste Collection Schedule\s*/i,'') || 'Waste Collection Schedule';
-    this.$('#bins-intro').textContent = x ? `Najbliższy odbiór ${this.binRel(x.n)} · ${sourceName}` : sourceName;
-    if (!x) { this.setHTML('#bins-body',`<p class="empty">${this.binBusy || !this.binCalAt ? 'Wczytuję harmonogram odbiorów…' : 'Kalendarz nie ma żadnych przyszłych odbiorów.'}</p>`); return; }
+    this.$('#bins-intro').textContent = x ? `${T('Najbliższy odbiór {r}',{r:this.binRel(x.n)})} · ${sourceName}` : sourceName;
+    if (!x) { this.setHTML('#bins-body',`<p class="empty">${T(this.binBusy || !this.binCalAt ? 'Wczytuję harmonogram odbiorów…' : 'Kalendarz nie ma żadnych przyszłych odbiorów.')}</p>`); return; }
     const types = bins => cap(andList(bins.map(b=>b.type).filter(Boolean)));
     const [y,m,d] = x.k.split('-').map(Number);
-    const eve = new Date(Date.UTC(y,m - 1,d - 1,12)).toLocaleDateString('pl-PL',{weekday:'long',timeZone:'UTC'});
-    const tip = x.n === 0 ? 'Odbiór jest dziś. Kosze powinny już stać przy drodze.' : x.n === 1 ? 'Wystaw dziś wieczorem.' : `Wystaw ${W_ACC[eve] || 'dzień wcześniej'} wieczorem.`;
+    const eve = new Date(Date.UTC(y,m - 1,d - 1,12)).toLocaleDateString(loc(),{weekday:'long',timeZone:'UTC'});
+    const tip = x.n === 0 ? T('Odbiór jest dziś. Kosze powinny już stać przy drodze.') : x.n === 1 ? T('Wystaw dziś wieczorem.') : LANG === 'en' ? `Put them out on ${eve} evening.` : `Wystaw ${W_ACC[eve] || 'dzień wcześniej'} wieczorem.`;
     const next = `<article class="tile bins-next${x.n <= 1 ? ' active' : ''}"><div class="bin-art">${x.bins.map((b,i)=>binArt(b,i)).join('')}</div><div class="card-body">
-      <span class="label">${icon('bin')}Co wystawić jako następne · ${escapeHTML(this.binRel(x.n))}</span>
+      <span class="label">${icon('bin')}${T('Co wystawić jako następne')} · ${escapeHTML(this.binRel(x.n))}</span>
       <span class="big-value">${escapeHTML(this.binWhat(x.bins))}</span>${types(x.bins) ? `<span class="bin-type">${escapeHTML(types(x.bins))}</span>` : ''}
       <small>${escapeHTML(cap(this.binDate(x.k,{weekday:'long',day:'numeric',month:'long'})))}</small><span class="bin-tip">${icon('clock')}${escapeHTML(tip)}</span></div></article>`;
     const kinds = {};
     list.forEach(d=>d.bins.forEach(b=>{ if (!kinds[b.key]) kinds[b.key] = {b,d}; }));
     const per = `<div class="bin-rows">${Object.values(kinds).map(({b,d})=>`<div class="bin-row${d.n <= 1 ? ' soon' : ''}">${this.binDots([b])}<div><b>${escapeHTML(b.name)}</b><small>${escapeHTML([b.type ? cap(b.type) : '',cap(this.binDate(d.k,{weekday:'long',day:'numeric',month:'long'}))].filter(Boolean).join(' · '))}</small></div><span class="when">${escapeHTML(this.binRel(d.n))}</span></div>`).join('')}</div>`;
     const later = list.slice(1,9);
-    const upcoming = later.length ? `<div class="bin-rows">${later.map(d=>`<div class="bin-row"><span class="bin-date"><b>${escapeHTML(this.binDate(d.k,{day:'numeric'}))}</b><small>${escapeHTML(this.binDate(d.k,{month:'short'}).replace('.',''))}</small></span>${this.binDots(d.bins)}<div><b>${escapeHTML(this.binWhat(d.bins))}</b><small>${escapeHTML([types(d.bins),cap(this.binDate(d.k,{weekday:'long'})),this.binRel(d.n)].filter(Boolean).join(' · '))}</small></div></div>`).join('')}</div>` : '<p class="empty">Kolejne terminy pojawią się, gdy rada je opublikuje.</p>';
-    this.setHTML('#bins-body',`${next}${this.block('Najbliższe terminy dla każdego kosza','bin',per)}${this.block('Nadchodzące odbiory','clock',upcoming)}<p class="note-line">Źródło: ${escapeHTML(sourceName)}</p>`);
+    const upcoming = later.length ? `<div class="bin-rows">${later.map(d=>`<div class="bin-row"><span class="bin-date"><b>${escapeHTML(this.binDate(d.k,{day:'numeric'}))}</b><small>${escapeHTML(this.binDate(d.k,{month:'short'}).replace('.',''))}</small></span>${this.binDots(d.bins)}<div><b>${escapeHTML(this.binWhat(d.bins))}</b><small>${escapeHTML([types(d.bins),cap(this.binDate(d.k,{weekday:'long'})),this.binRel(d.n)].filter(Boolean).join(' · '))}</small></div></div>`).join('')}</div>` : `<p class="empty">${T('Kolejne terminy pojawią się, gdy rada je opublikuje.')}</p>`;
+    this.setHTML('#bins-body',`${next}${this.block('Najbliższe terminy dla każdego kosza','bin',per)}${this.block('Nadchodzące odbiory','clock',upcoming)}<p class="note-line">${T('Źródło')}: ${escapeHTML(sourceName)}</p>`);
   }
 
   /* ---------- zakładka Pogoda ---------- */
@@ -1871,7 +1987,7 @@ class AuraDomu extends HTMLElement {
 
   renderWeather() {
     const w = this.weatherRow();
-    if (!w) { this.setHTML('#weather-body','<p class="empty">Brak encji pogody w Home Assistant.</p>'); return; }
+    if (!w) { this.setHTML('#weather-body',`<p class="empty">${T('Brak encji pogody w Home Assistant.')}</p>`); return; }
     this.subscribeForecast(w);
     const a = w.attrs, unit = a.temperature_unit || this.tempUnit(), night = this.isNight();
     const tz = this._hass?.config?.time_zone;
@@ -1883,42 +1999,42 @@ class AuraDomu extends HTMLElement {
     const fromHour = Boolean(hourNow && wet.has(hourNow.condition) && !wet.has(w.state));
     const base = fromHour ? hourNow.condition : w.state;
     const cond = base === 'sunny' && night ? 'clear-night' : base;
-    const label = weatherLabels[cond] || stateLabels[cond] || cond;
+    const label = weatherLabels[cond] ? T(weatherLabels[cond]) : stl(cond);
     const today = daily[0];
     const deg = v => v == null || !Number.isFinite(Number(v)) ? '—' : `${format(v)}°`;
-    const dir = Number.isFinite(Number(a.wind_bearing)) ? windDirs[Math.round(Number(a.wind_bearing) / 45) % 8] : '';
+    const dir = Number.isFinite(Number(a.wind_bearing)) ? (LANG === 'en' ? windDirsEn : windDirs)[Math.round(Number(a.wind_bearing) / 45) % 8] : '';
     const chip = (g,t) => `<span class="state-chip">${icon(g)}${escapeHTML(t)}</span>`;
-    const date = new Intl.DateTimeFormat('pl-PL',{weekday:'long',day:'numeric',month:'long',timeZone:tz}).format(new Date());
-    this.$('#weather-intro').textContent = `${label}, ${format(a.temperature,unit)}${a.wind_speed != null ? ` · wiatr ${format(a.wind_speed,a.wind_speed_unit || 'km/h')}${dir ? ` z kierunku ${dir}` : ''}` : ''}`;
-    const hero = `<div class="weather-hero" data-night="${night}"><div class="wx-copy"><span class="date">${escapeHTML(date)}</span><span class="wx-temp">${deg(a.temperature)}</span><span class="wx-cond">${escapeHTML(label)}</span>${fromHour ? `<small class="note-line">${escapeHTML(`wg prognozy na tę godzinę${Number(hourNow.precipitation) > 0 ? ` · ${format(hourNow.precipitation,'mm')}` : ''}`)}</small>` : ''}
+    const date = new Intl.DateTimeFormat(loc(),{weekday:'long',day:'numeric',month:'long',timeZone:tz}).format(new Date());
+    this.$('#weather-intro').textContent = `${label}, ${format(a.temperature,unit)}${a.wind_speed != null ? ` · ${T('wiatr')} ${format(a.wind_speed,a.wind_speed_unit || 'km/h')}${dir ? ` ${T('z kierunku {d}',{d:dir})}` : ''}` : ''}`;
+    const hero = `<div class="weather-hero" data-night="${night}"><div class="wx-copy"><span class="date">${escapeHTML(date)}</span><span class="wx-temp">${deg(a.temperature)}</span><span class="wx-cond">${escapeHTML(label)}</span>${fromHour ? `<small class="note-line">${escapeHTML(`${T('wg prognozy na tę godzinę')}${Number(hourNow.precipitation) > 0 ? ` · ${format(hourNow.precipitation,'mm')}` : ''}`)}</small>` : ''}
       <div class="chips">${today ? chip('thermo',`${deg(today.temperature)} / ${deg(today.templow)}`) : ''}${a.humidity != null ? chip('water',`${format(a.humidity)}%`) : ''}${a.wind_speed != null ? chip('wind',`${format(a.wind_speed,a.wind_speed_unit || 'km/h')}`) : ''}</div></div>
       ${weatherScene(cond,night,Number(a.temperature))}</div>`;
     const row = (k,v) => `<div><span>${escapeHTML(k)}</span><b>${escapeHTML(v)}</b></div>`;
-    const tile = (g,title,value,rows,extra = '') => `<article class="tile"><span class="label">${icon(g)}${escapeHTML(title)}</span>${extra}<div class="card-body"><span class="big-value">${escapeHTML(value)}</span>${rows ? `<div class="device-rows">${rows}</div>` : ''}</div></article>`;
+    const tile = (g,title,value,rows,extra = '') => `<article class="tile"><span class="label">${icon(g)}${escapeHTML(T(title))}</span>${extra}<div class="card-body"><span class="big-value">${escapeHTML(value)}</span>${rows ? `<div class="device-rows">${rows}</div>` : ''}</div></article>`;
     const sun = this.row('sun.sun'), at = v => v && !Number.isNaN(Date.parse(v)) ? this.time(Date.parse(v)) : '—';
     const compass = Number.isFinite(Number(a.wind_bearing)) ? `<svg class="compass" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="currentColor" stroke-width="1"/><path d="M26 6v4M26 42v4M6 26h4M42 26h4" stroke="currentColor" stroke-width="1"/><path class="needle" style="transform:rotate(${(Number(a.wind_bearing) + 180).toFixed(0)}deg)" d="M26 10l5 16h-10z"/></svg>` : '';
     const stats = `<div class="wx-stats">
-      ${tile('wind','Wiatr',a.wind_speed != null ? format(a.wind_speed,a.wind_speed_unit || 'km/h') : '—',dir ? row('Kierunek',`z ${dir} (${format(a.wind_bearing)}°)`) : '',compass)}
-      ${tile('water','Wilgotność',a.humidity != null ? `${format(a.humidity)}%` : '—',a.dew_point != null ? row('Punkt rosy',deg(a.dew_point)) : '')}
-      ${tile('sensor','Ciśnienie',a.pressure != null ? format(a.pressure,a.pressure_unit || 'hPa') : '—',[a.cloud_coverage != null && row('Zachmurzenie',`${format(a.cloud_coverage)}%`),a.uv_index != null && row('Indeks UV',format(a.uv_index)),a.visibility != null && row('Widoczność',format(a.visibility,a.visibility_unit || 'km'))].filter(Boolean).join(''))}
-      ${tile(night ? 'moon' : 'sun','Słońce',sun ? (night ? `wschód ${at(sun.attrs.next_rising)}` : `zachód ${at(sun.attrs.next_setting)}`) : '—',sun ? row('Wschód',at(sun.attrs.next_rising)) + row('Zachód',at(sun.attrs.next_setting)) : '')}</div>`;
+      ${tile('wind','Wiatr',a.wind_speed != null ? format(a.wind_speed,a.wind_speed_unit || 'km/h') : '—',dir ? row(T('Kierunek'),`${T('z kierunku {d}',{d:dir})} (${format(a.wind_bearing)}°)`) : '',compass)}
+      ${tile('water','Wilgotność',a.humidity != null ? `${format(a.humidity)}%` : '—',a.dew_point != null ? row(T('Punkt rosy'),deg(a.dew_point)) : '')}
+      ${tile('sensor','Ciśnienie',a.pressure != null ? format(a.pressure,a.pressure_unit || 'hPa') : '—',[a.cloud_coverage != null && row(T('Zachmurzenie'),`${format(a.cloud_coverage)}%`),a.uv_index != null && row(T('Indeks UV'),format(a.uv_index)),a.visibility != null && row(T('Widoczność'),format(a.visibility,a.visibility_unit || 'km'))].filter(Boolean).join(''))}
+      ${tile(night ? 'moon' : 'sun','Słońce',sun ? (night ? `${T('wschód')} ${at(sun.attrs.next_rising)}` : `${T('zachód')} ${at(sun.attrs.next_setting)}`) : '—',sun ? row(T('Wschód'),at(sun.attrs.next_rising)) + row(T('Zachód'),at(sun.attrs.next_setting)) : '')}</div>`;
     let hours = '';
     if (hourly.length) {
       const temps = hourly.map(h=>Number(h.temperature)), min = Math.min(...temps), span = (Math.max(...temps) - min) || 1, step = 84;
       const pts = temps.map((t,i)=>[i * step + 37,52 - (t - min) / span * 40]);
       const d = pts.map(([x,y],i)=>`${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
-      const fmt = new Intl.DateTimeFormat('pl-PL',{hour:'2-digit',minute:'2-digit',timeZone:tz});
+      const fmt = new Intl.DateTimeFormat(loc(),{hour:'2-digit',minute:'2-digit',timeZone:tz});
       hours = `<div class="hours"><div class="hours-track" style="width:${hourly.length * step - 10}px"><svg class="temp-curve" width="${hourly.length * step - 10}" viewBox="0 0 ${hourly.length * step - 10} 64"><path class="line" d="${d}"/>${pts.map(([x,y])=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"/>`).join('')}</svg>
-        <div class="hour-row">${hourly.map((h,i)=>`<div class="hour${i === 0 ? ' now' : ''}"><time>${i === 0 ? 'Teraz' : fmt.format(new Date(h.datetime))}</time>${icon(weatherGlyph[h.condition] || 'weather')}<b>${deg(h.temperature)}</b><small>${Number(h.precipitation) > 0 ? format(h.precipitation,'mm') : Number(h.precipitation_probability) > 0 ? `${format(h.precipitation_probability)}%` : ''}</small></div>`).join('')}</div></div></div>`;
+        <div class="hour-row">${hourly.map((h,i)=>`<div class="hour${i === 0 ? ' now' : ''}"><time>${i === 0 ? T('Teraz') : fmt.format(new Date(h.datetime))}</time>${icon(weatherGlyph[h.condition] || 'weather')}<b>${deg(h.temperature)}</b><small>${Number(h.precipitation) > 0 ? format(h.precipitation,'mm') : Number(h.precipitation_probability) > 0 ? `${format(h.precipitation_probability)}%` : ''}</small></div>`).join('')}</div></div></div>`;
     }
     let days = '';
     if (daily.length) {
       const list = daily.slice(0,7), lo = Math.min(...list.map(d=>Number(d.templow ?? d.temperature))), hi = Math.max(...list.map(d=>Number(d.temperature))), span = (hi - lo) || 1;
-      const name = (d,i) => i === 0 ? 'Dziś' : i === 1 ? 'Jutro' : new Intl.DateTimeFormat('pl-PL',{weekday:'long',timeZone:tz}).format(new Date(d.datetime)).replace(/^./,ch=>ch.toUpperCase());
+      const name = (d,i) => i === 0 ? T('Dziś') : i === 1 ? T('Jutro') : new Intl.DateTimeFormat(loc(),{weekday:'long',timeZone:tz}).format(new Date(d.datetime)).replace(/^./,ch=>ch.toUpperCase());
       days = `<div class="days">${list.map((d,i)=>{ const l = Number(d.templow ?? d.temperature), h = Number(d.temperature);
-        return `<div class="day"><b>${escapeHTML(name(d,i))}</b>${icon(weatherGlyph[d.condition] || 'weather')}<span class="muted label-col">${escapeHTML(weatherLabels[d.condition] || d.condition || '')}</span><span class="rain">${Number(d.precipitation) > 0 ? format(d.precipitation,'mm') : ''}</span><span class="lo">${deg(d.templow)}</span><span class="range"><i style="left:${((l - lo) / span * 100).toFixed(1)}%;right:${(100 - (h - lo) / span * 100).toFixed(1)}%"></i></span><b>${deg(d.temperature)}</b></div>`; }).join('')}</div>`;
+        return `<div class="day"><b>${escapeHTML(name(d,i))}</b>${icon(weatherGlyph[d.condition] || 'weather')}<span class="muted label-col">${escapeHTML(weatherLabels[d.condition] ? T(weatherLabels[d.condition]) : d.condition || '')}</span><span class="rain">${Number(d.precipitation) > 0 ? format(d.precipitation,'mm') : ''}</span><span class="lo">${deg(d.templow)}</span><span class="range"><i style="left:${((l - lo) / span * 100).toFixed(1)}%;right:${(100 - (h - lo) / span * 100).toFixed(1)}%"></i></span><b>${deg(d.temperature)}</b></div>`; }).join('')}</div>`;
     }
-    const wait = '<p class="empty">Czekam na prognozę z Home Assistant…</p>';
+    const wait = `<p class="empty">${T('Czekam na prognozę z Home Assistant…')}</p>`;
     this.setHTML('#weather-body',`${hero}<div class="block">${stats}</div>${this.block('Najbliższe godziny','clock',hours || wait)}${this.block('Kolejne dni','weather',days || wait)}<p class="note-line">${escapeHTML(a.attribution || '')}</p>`);
   }
 
@@ -1938,8 +2054,8 @@ class AuraDomu extends HTMLElement {
     const valve = a.valve_open_percent != null ? Number(a.valve_open_percent) : null;
     const wants = Boolean(row) && row.state !== 'off' && (main ? a.hvac_action === 'heating' : a.hvac_action === 'heating' || valve > 0);
     const boiler = this.heatOn(), flow = boiler && (main || wants), v = valve != null ? `${valve}% ` : '';
-    const note = !available(row) ? 'brak połączenia' : row.state === 'off' ? 'wyłączone' : main ? (boiler ? 'grzeje – kocioł pracuje' : 'temperatura osiągnięta')
-      : wants && boiler ? `zawór ${v}otwarty – grzeje` : wants ? `zawór ${v}otwarty – czeka na kocioł` : 'zawór zamknięty';
+    const note = !available(row) ? T('brak połączenia') : row.state === 'off' ? T('wyłączone') : main ? T(boiler ? 'grzeje – kocioł pracuje' : 'temperatura osiągnięta')
+      : wants && boiler ? T('zawór {v}otwarty – grzeje',{v}) : wants ? T('zawór {v}otwarty – czeka na kocioł',{v}) : T('zawór zamknięty');
     return {row,main,wants,flow,note};
   }
   heatModesCfg() { const p = this.heatCfg(); return {comfort:{main:22,rooms:21,...p.comfort},eco:{main:18,rooms:18,...p.eco},boost:Number(p.boost) || 1}; }
@@ -1962,14 +2078,14 @@ class AuraDomu extends HTMLElement {
     return null;
   }
   heatPlan(k) {
-    const p = this.heatCfg(), M = this.heatModesCfg(), src = p.source, srcN = p.source_name || 'termostat główny';
+    const p = this.heatCfg(), M = this.heatModesCfg(), src = p.source, srcN = p.source_name || T('termostat główny');
     const others = this.heatRooms().filter(r=>r.climate !== src), pr = this.heatPresets(src);
     const none = pr.includes('none') ? [['set_preset_mode',{entity_id:src,preset_mode:'none'}]] : [];
     const set = (id,t) => ['set_temperature',{entity_id:id,temperature:t}];
-    if (k === 'auto') return [`Auto: ${srcN} wraca do swojego harmonogramu. Pokoje bez zmian.`,none];
-    if (k === 'comfort') return [`Komfort: ${srcN} ${M.comfort.main}°, pozostałe pokoje ${M.comfort.rooms}°.`,[...none,set(src,M.comfort.main),...others.map(r=>set(r.climate,M.comfort.rooms))]];
-    if (k === 'eco') return [`Eco: ${srcN} oszczędnie, pozostałe pokoje ${M.eco.rooms}°.`,[pr.includes('eco') ? ['set_preset_mode',{entity_id:src,preset_mode:'eco'}] : set(src,M.eco.main),...others.map(r=>set(r.climate,M.eco.rooms))]];
-    return [`Boost: wszystkie pokoje +${M.boost}° od obecnej zadanej, bez automatycznego powrotu.`,[...none,...this.heatRooms().map(r=>{ const t = this.row(r.climate)?.attrs.temperature; return t != null ? set(r.climate,Math.round((Number(t) + M.boost) * 2) / 2) : null; }).filter(Boolean)]];
+    if (k === 'auto') return [T('Auto: {s} wraca do swojego harmonogramu. Pokoje bez zmian.',{s:srcN}),none];
+    if (k === 'comfort') return [T('Komfort: {s} {a}°, pozostałe pokoje {b}°.',{s:srcN,a:M.comfort.main,b:M.comfort.rooms}),[...none,set(src,M.comfort.main),...others.map(r=>set(r.climate,M.comfort.rooms))]];
+    if (k === 'eco') return [T('Eco: {s} oszczędnie, pozostałe pokoje {b}°.',{s:srcN,b:M.eco.rooms}),[pr.includes('eco') ? ['set_preset_mode',{entity_id:src,preset_mode:'eco'}] : set(src,M.eco.main),...others.map(r=>set(r.climate,M.eco.rooms))]];
+    return [T('Boost: wszystkie pokoje +{b}° od obecnej zadanej, bez automatycznego powrotu.',{b:M.boost}),[...none,...this.heatRooms().map(r=>{ const t = this.row(r.climate)?.attrs.temperature; return t != null ? set(r.climate,Math.round((Number(t) + M.boost) * 2) / 2) : null; }).filter(Boolean)]];
   }
   // tryb zmienia termostaty dopiero po drugim stuknięciu (jak w Home Pulse)
   async heatMode(k) {
@@ -1984,7 +2100,7 @@ class AuraDomu extends HTMLElement {
     const [text,calls] = this.heatPlan(k);
     let ok = true;
     for (const [service,data] of calls) ok = await this.call(`heat:${k}`,'climate',service,data,'Termostat nie przyjął zmiany.') && ok;
-    if (ok) this.toast(text.split(':')[0] + ' ustawiony');
+    if (ok) this.toast(T('{m} ustawiony',{m:text.split(':')[0]}));
   }
   async heatHistory() {
     if (!this._hass?.callWS || Date.now() - (this.heatHistAt || 0) < 300000) return;
@@ -2005,39 +2121,39 @@ class AuraDomu extends HTMLElement {
   }
 
   renderHeating() {
-    const p = this.heatCfg(), on = this.heatOn(), src = this.row(p.source), sa = src?.attrs || {}, srcN = p.source_name || src?.name || 'Termostat';
+    const p = this.heatCfg(), on = this.heatOn(), src = this.row(p.source), sa = src?.attrs || {}, srcN = p.source_name || src?.name || T('Termostat');
     void this.heatHistory();
     const unit = this.tempUnit();
     const weather = this.getModel().rows.find(row=>row.domain === 'weather' && available(row) && (!this.config?.weather_entity || row.id === this.config.weather_entity));
     const out = p.outdoor ? this.reading(p.outdoor) : weather ? Number(weather.attrs.temperature) : null;
-    const mode = !src ? '—' : src.state === 'off' ? 'Wyłączone' : sa.preset_mode === 'eco' ? 'Eco' : 'Ogrzewanie';
+    const mode = !src ? '—' : T(src.state === 'off' ? 'Wyłączone' : sa.preset_mode === 'eco' ? 'Eco' : 'Ogrzewanie');
     const chip = (g,t) => `<span class="state-chip">${icon(g)}${escapeHTML(t)}</span>`;
-    this.$('#heating-intro').textContent = [p.boiler_name,srcN].filter(Boolean).join(' · ') + ' · instalacja na żywo';
+    this.$('#heating-intro').textContent = [p.boiler_name,srcN].filter(Boolean).join(' · ') + ` · ${T('instalacja na żywo')}`;
     const rooms = this.heatRooms(), states = rooms.map(r=>this.heatRoomState(r)), open = states.filter(x=>x.flow).length;
     const row = (k,v) => `<div><span>${escapeHTML(k)}</span><b>${escapeHTML(v)}</b></div>`;
-    const boiler = `<article class="tile boiler${on ? ' heating active' : ''}"><span class="label">${icon('fire')}${escapeHTML(p.boiler_name || 'Kocioł')}</span><div class="card-body">
-      ${boilerArt}<span class="big-value">${on ? 'Grzeje' : 'Czuwa'}</span>
-      <div class="device-rows">${row(srcN,`${src ? format(sa.current_temperature,'°') : '—'} → ${src && sa.temperature != null ? format(sa.temperature,'°') : '—'}`)}${row('Żądanie ciepła',on ? 'TAK – grzeje' : 'Nie – czuwa')}${row('Aktywne obiegi',`${open} / ${rooms.length}`)}${row('Pompa obiegowa',on ? 'pracuje' : 'stop')}</div></div></article>`;
+    const boiler = `<article class="tile boiler${on ? ' heating active' : ''}"><span class="label">${icon('fire')}${escapeHTML(p.boiler_name || T('Kocioł'))}</span><div class="card-body">
+      ${boilerArt}<span class="big-value">${T(on ? 'Grzeje' : 'Czuwa')}</span>
+      <div class="device-rows">${row(srcN,`${src ? format(sa.current_temperature,'°') : '—'} → ${src && sa.temperature != null ? format(sa.temperature,'°') : '—'}`)}${row(T('Żądanie ciepła'),T(on ? 'TAK – grzeje' : 'Nie – czuwa'))}${row(T('Aktywne obiegi'),`${open} / ${rooms.length}`)}${row(T('Pompa obiegowa'),T(on ? 'pracuje' : 'stop'))}</div></div></article>`;
     const roomTiles = rooms.map((r,i)=>{
       const x = states[i], fl = this.row(r.floor_climate), flOn = Boolean(fl) && available(fl) && fl.state !== 'off';
       const ft = r.floor ? this.reading(r.floor) : fl?.attrs.current_temperature != null ? Number(fl.attrs.current_temperature) : null;
       const hum = this.reading(r.humidity) ?? (x.row?.attrs.current_humidity != null ? Number(x.row.attrs.current_humidity) : null);
-      const sub = r.sub ?? (x.main ? p.source_name || 'termostat główny' : 'grzejnik');
+      const sub = r.sub ?? (x.main ? p.source_name || T('termostat główny') : T('grzejnik'));
       return `<article class="tile heat-room${x.flow ? ' flow active' : ''}${x.wants && !x.flow ? ' wait' : ''}"><span class="label">${icon(roomIcon(r.name))}${escapeHTML(r.name)}<small>${escapeHTML(sub)}</small></span><div class="card-body">
         ${available(x.row) ? this.climateBody(x.row) : '<span class="value">—</span>'}
-        <span class="heat-note">${escapeHTML(x.note)}${hum != null ? ` · wilgotność ${format(hum)}%` : ''}</span>
-        ${ft != null || fl ? `<span class="floor${flOn ? ' on' : ''}">${icon('thermo')}Podłogówka${ft != null ? ` ${escapeHTML(format(ft,unit))}` : ''} · ${flOn ? 'włączona' : 'wył.'}</span>` : ''}</div></article>`;
-    }).join('') || '<p class="empty">Dodaj pokoje w „heating_page → rooms”.</p>';
+        <span class="heat-note">${escapeHTML(x.note)}${hum != null ? ` · ${T('wilgotność')} ${format(hum)}%` : ''}</span>
+        ${ft != null || fl ? `<span class="floor${flOn ? ' on' : ''}">${icon('thermo')}${T('Podłogówka')}${ft != null ? ` ${escapeHTML(format(ft,unit))}` : ''} · ${T(flOn ? 'włączona' : 'wył.')}</span>` : ''}</div></article>`;
+    }).join('') || `<p class="empty">${T('Dodaj pokoje w „heating_page → rooms”.')}</p>`;
     const gasKwh = this.row(p.gas_kwh || this.config?.energy_page?.gas_today_kwh), gasCost = this.row(p.gas_cost || this.config?.energy_page?.gas_cost);
     const cur = this.heatCurrent();
-    const modes = this.heatModes().map(([k,n,g])=>`<button class="preset${this.heatArm === k ? ' arm' : ''}" data-act="heat-mode" data-mode="${k}" aria-pressed="${cur === k}" ${this.pending.has(`heat:${k}`) ? 'disabled' : ''}>${icon(g)}${n}</button>`).join('');
-    const note = this.heatArm ? `${this.heatPlan(this.heatArm)[0]} Stuknij ponownie, aby ustawić.` : 'Tryb zmienia termostaty dopiero po drugim stuknięciu.';
+    const modes = this.heatModes().map(([k,n,g])=>`<button class="preset${this.heatArm === k ? ' arm' : ''}" data-act="heat-mode" data-mode="${k}" aria-pressed="${cur === k}" ${this.pending.has(`heat:${k}`) ? 'disabled' : ''}>${icon(g)}${T(n)}</button>`).join('');
+    const note = this.heatArm ? `${this.heatPlan(this.heatArm)[0]} ${T('Stuknij ponownie, aby ustawić.')}` : T('Tryb zmienia termostaty dopiero po drugim stuknięciu.');
     const m = this.heatRunMs != null ? Math.round(this.heatRunMs / 60000) : null;
     const foot = `<div class="heat-foot">
-      <article class="tile"><span class="label">${icon('fire')}Gaz dziś</span><div class="card-body"><span class="big-value">${gasKwh ? escapeHTML(this.stateText(gasKwh)) : '—'}</span>${gasCost ? `<small>koszt ${escapeHTML(money(gasCost))}</small>` : ''}</div></article>
-      <article class="tile"><span class="label">${icon('thermo')}Tryb ogrzewania</span><div class="card-body"><div class="modes">${modes}</div><p class="note-line">${escapeHTML(note)}</p></div></article>
-      <article class="tile"><span class="label">${icon('clock')}Praca kotła dziś</span><div class="card-body"><span class="big-value">${m == null ? '—' : `${Math.floor(m / 60)} h ${m % 60} min`}</span><small>${p.boiler && this.row(p.boiler) ? 'według kotła' : 'według żądań termostatu'}</small></div></article></div>`;
-    const top = `<div class="heat-top">${chip('weather',`Na zewnątrz ${out != null && Number.isFinite(out) ? format(out,unit) : '—'}`)}${chip('thermo',`Tryb systemu: ${mode}`)}${chip('fire',`Kocioł: ${on ? 'grzeje' : 'czuwa'}`)}</div>`;
+      <article class="tile"><span class="label">${icon('fire')}${T('Gaz dziś')}</span><div class="card-body"><span class="big-value">${gasKwh ? escapeHTML(this.stateText(gasKwh)) : '—'}</span>${gasCost ? `<small>${T('koszt')} ${escapeHTML(money(gasCost))}</small>` : ''}</div></article>
+      <article class="tile"><span class="label">${icon('thermo')}${T('Tryb ogrzewania')}</span><div class="card-body"><div class="modes">${modes}</div><p class="note-line">${escapeHTML(note)}</p></div></article>
+      <article class="tile"><span class="label">${icon('clock')}${T('Praca kotła dziś')}</span><div class="card-body"><span class="big-value">${m == null ? '—' : `${Math.floor(m / 60)} h ${m % 60} min`}</span><small>${T(p.boiler && this.row(p.boiler) ? 'według kotła' : 'według żądań termostatu')}</small></div></article></div>`;
+    const top = `<div class="heat-top">${chip('weather',`${T('Na zewnątrz')} ${out != null && Number.isFinite(out) ? format(out,unit) : '—'}`)}${chip('thermo',`${T('Tryb systemu')}: ${mode}`)}${chip('fire',`${T('Kocioł')}: ${T(on ? 'grzeje' : 'czuwa')}`)}</div>`;
     this.setHTML('#heating-body',`${top}<div class="heat-grid">${boiler}<div class="heat-rooms">${roomTiles}</div></div>${foot}`);
   }
 
@@ -2049,42 +2165,42 @@ class AuraDomu extends HTMLElement {
     const lights = rows.filter(row=>this.isLight(row)).length;
     const devices = rooms.reduce((n,room)=>n + (room.cfg?.devices?.length || 0),0);
     const here = location.pathname;
-    const mode = (key,label,glyph) => `<button class="preset" data-act="theme-mode" data-mode="${key}" aria-pressed="${this.themeMode === key}">${icon(glyph)}${label}</button>`;
-    const row = (k,v) => `<div><span>${escapeHTML(k)}</span><b>${escapeHTML(v)}</b></div>`;
-    const tile = (glyph,title,body) => `<article class="tile"><span class="label">${icon(glyph)}${escapeHTML(title)}</span><div class="card-body">${body}</div></article>`;
-    const screen = tile('sun','Ten ekran',`<p class="note-line">Motyw zapamiętuje to urządzenie. Inne ekrany mają własny wybór.</p><div class="modes">${mode('light','Jasny','sun')}${mode('dark','Ciemny','moon')}${mode('auto','Jak w systemie','spark')}</div>`);
+    const mode = (key,label,glyph) => `<button class="preset" data-act="theme-mode" data-mode="${key}" aria-pressed="${this.themeMode === key}">${icon(glyph)}${T(label)}</button>`;
+    const row = (k,v) => `<div><span>${escapeHTML(T(k))}</span><b>${escapeHTML(v)}</b></div>`;
+    const tile = (glyph,title,body) => `<article class="tile"><span class="label">${icon(glyph)}${escapeHTML(T(title))}</span><div class="card-body">${body}</div></article>`;
+    const screen = tile('sun','Ten ekran',`<p class="note-line">${T('Motyw zapamiętuje to urządzenie. Inne ekrany mają własny wybór.')}</p><div class="modes">${mode('light','Jasny','sun')}${mode('dark','Ciemny','moon')}${mode('auto','Jak w systemie','spark')}</div>`);
     const dash = tile('rooms','Pulpit',`<div class="device-rows">${row('Pokoje',String(rooms.length))}${row('Światła',String(lights))}${row('Urządzenia',String(devices))}</div>
-      <p class="note-line">${admin ? 'Pokoje i urządzenia zmieniasz w konfiguracji karty (lista „rooms”).' : 'Pulpit może zmieniać tylko administrator.'}</p>
-      <div class="device-actions">${admin ? `<button class="mini" data-act="ha-nav" data-to="${escapeHTML(here)}?disable_km&edit=1">${icon('arrow')}Edytuj pulpit</button>` : ''}<button class="mini" data-act="ha-nav" data-to="${escapeHTML(here)}?disable_km">${icon('arrow')}Pokaż menu HA</button></div>`);
-    const ha = tile('settings','Home Assistant',`<div class="device-rows">${row('Konto',`${user?.name || '—'} · ${admin ? 'administrator' : 'użytkownik'}`)}${row('Połączenie',online ? 'Połączono' : 'Brak połączenia')}${row('Wersja HA',this._hass?.config?.version || '—')}</div>
-      <p class="note-line">Urządzenia, integracje, użytkownicy i pozostałe pulpity ustawia się w Home Assistant.</p>
-      <div class="device-actions"><button class="mini" data-act="ha-nav" data-to="/config/dashboard">${icon('settings')}Otwórz ustawienia Home Assistant</button></div>`);
+      <p class="note-line">${T(admin ? 'Pokoje i urządzenia zmieniasz w konfiguracji karty (lista „rooms”).' : 'Pulpit może zmieniać tylko administrator.')}</p>
+      <div class="device-actions">${admin ? `<button class="mini" data-act="ha-nav" data-to="${escapeHTML(here)}?disable_km&edit=1">${icon('arrow')}${T('Edytuj pulpit')}</button>` : ''}<button class="mini" data-act="ha-nav" data-to="${escapeHTML(here)}?disable_km">${icon('arrow')}${T('Pokaż menu HA')}</button></div>`);
+    const ha = tile('settings','Home Assistant',`<div class="device-rows">${row('Konto',`${user?.name || '—'} · ${T(admin ? 'administrator' : 'użytkownik')}`)}${row('Połączenie',T(online ? 'Połączono' : 'Brak połączenia'))}${row('Wersja HA',this._hass?.config?.version || '—')}</div>
+      <p class="note-line">${T('Urządzenia, integracje, użytkownicy i pozostałe pulpity ustawia się w Home Assistant.')}</p>
+      <div class="device-actions"><button class="mini" data-act="ha-nav" data-to="/config/dashboard">${icon('settings')}${T('Otwórz ustawienia Home Assistant')}</button></div>`);
     const hidden = this.hiddenTabs();
     const toggles = Object.entries(tabNames).map(([key,name])=>{
       const avail = this.tabAvailable(key), on = avail && !hidden.includes(key);
-      return `<div class="f1-row${on ? '' : ' done'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="${glyphs[{rooms:'rooms',climate:'thermo',heating:'fire',weather:'weather',energy:'bolt',security:'shield',bins:'bin',f1:'flag'}[key]]}"/></svg><div><b>${escapeHTML(name)}</b><small>${avail ? (on ? 'widoczna w menu' : 'ukryta') : 'brak danych w Home Assistant'}</small></div>
-        <button class="toggle" data-act="tab-toggle" data-tab="${key}" aria-pressed="${on}" aria-label="${on ? 'Ukryj' : 'Pokaż'} zakładkę ${escapeHTML(name)}" ${!avail ? 'disabled' : ''}>${icon('power')}</button></div>`;
+      return `<div class="f1-row${on ? '' : ' done'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="${glyphs[{rooms:'rooms',climate:'thermo',heating:'fire',weather:'weather',energy:'bolt',security:'shield',bins:'bin',f1:'flag'}[key]]}"/></svg><div><b>${escapeHTML(T(name))}</b><small>${T(avail ? (on ? 'widoczna w menu' : 'ukryta') : 'brak danych w Home Assistant')}</small></div>
+        <button class="toggle" data-act="tab-toggle" data-tab="${key}" aria-pressed="${on}" aria-label="${T(on ? 'Ukryj zakładkę {n}' : 'Pokaż zakładkę {n}',{n:escapeHTML(T(name))})}" ${!avail ? 'disabled' : ''}>${icon('power')}</button></div>`;
     }).join('');
-    const tabs = `<article class="tile wide-tile"><span class="label">${icon('rooms')}Zakładki w menu</span><div class="card-body"><p class="note-line">Wybierz, które zakładki mają być widoczne na tym urządzeniu. Wybór zapamiętuje przeglądarka, jak motyw. Dla wszystkich urządzeń ustawisz to w konfiguracji karty (<code>hidden_tabs</code>). Dom i Ustawienia są zawsze widoczne.</p><div class="tab-toggles">${toggles}</div></div></article>`;
+    const tabs = `<article class="tile wide-tile"><span class="label">${icon('rooms')}${T('Zakładki w menu')}</span><div class="card-body"><p class="note-line">${T('Wybierz, które zakładki mają być widoczne na tym urządzeniu. Wybór zapamiętuje przeglądarka, jak motyw. Dla wszystkich urządzeń ustawisz to w konfiguracji karty (<code>hidden_tabs</code>). Dom i Ustawienia są zawsze widoczne.')}</p><div class="tab-toggles">${toggles}</div></div></article>`;
     // gotowa konfiguracja: to, co karta teraz pokazuje, jako YAML do skopiowania (karta nie zapisuje pulpitu sama)
     const eff = this.effective(), m = this.getModel();
     const yaml = `type: custom:aura-domu\n${toYaml(eff)}`;
-    const autoParts = [m.autoRooms && 'pokoje', !this.config?.security_page && !this.config?.security && eff.security_page && 'ochrona', !this.config?.heating_page && eff.heating_page && 'ogrzewanie'].filter(Boolean);
+    const autoParts = [m.autoRooms && T('pokoje'), !this.config?.security_page && !this.config?.security && eff.security_page && T('ochrona'), !this.config?.heating_page && eff.heating_page && T('ogrzewanie')].filter(Boolean);
     const count = eff.rooms.reduce((n,r)=>n + ['lights','climate','media','sensors'].reduce((k,key)=>k + listOf(r[key]).length,0),0);
-    const gen = `<article class="tile wide-tile"><span class="label">${icon('spark')}Gotowa konfiguracja</span><div class="card-body">
-      <p class="note-line">${autoParts.length ? `Karta sama dobrała z obszarów Home Assistanta: ${escapeHTML(andList(autoParts))} (${plN(eff.rooms.length,'pokój','pokoje','pokoi')}, ${plN(count,'encja','encje','encji')}). Skopiuj YAML, wklej go w edytorze pulpitu (⋮ → Edytuj pulpit → ⋮ → Edytor kodu) w miejsce tej karty, popraw nazwy i dopisz urządzenia.` : 'Pulpit używa Twojej konfiguracji. Poniżej to, co karta z niej odczytała.'}</p>
-      <div class="device-actions"><button class="mini" data-act="gen-toggle" aria-pressed="${Boolean(this.showGen)}">${icon('arrow')}${this.showGen ? 'Ukryj YAML' : 'Pokaż YAML'}</button><button class="mini" data-act="gen-copy">${icon('spark')}Kopiuj</button></div>
+    const gen = `<article class="tile wide-tile"><span class="label">${icon('spark')}${T('Gotowa konfiguracja')}</span><div class="card-body">
+      <p class="note-line">${autoParts.length ? T('Karta sama dobrała z obszarów Home Assistanta: {parts} ({rooms}, {ents}). Skopiuj YAML, wklej go w edytorze pulpitu (⋮ → Edytuj pulpit → ⋮ → Edytor kodu) w miejsce tej karty, popraw nazwy i dopisz urządzenia.',{parts:escapeHTML(andList(autoParts)),rooms:plN(eff.rooms.length,'pokój','pokoje','pokoi'),ents:plN(count,'encja','encje','encji')}) : T('Pulpit używa Twojej konfiguracji. Poniżej to, co karta z niej odczytała.')}</p>
+      <div class="device-actions"><button class="mini" data-act="gen-toggle" aria-pressed="${Boolean(this.showGen)}">${icon('arrow')}${T(this.showGen ? 'Ukryj YAML' : 'Pokaż YAML')}</button><button class="mini" data-act="gen-copy">${icon('spark')}${T('Kopiuj')}</button></div>
       ${this.showGen ? `<pre class="gen-yaml">${escapeHTML(yaml)}</pre>` : ''}</div></article>`;
     this.genYaml = yaml;
     this.setHTML('#settings-body',`<div class="cards">${screen}${dash}${ha}${tabs}${gen}</div>`);
   }
 
   async copyText(text) {
-    try { await navigator.clipboard.writeText(text); this.toast('Skopiowano YAML do schowka'); }
+    try { await navigator.clipboard.writeText(text); this.toast(T('Skopiowano YAML do schowka')); }
     catch {
       // http bez HTTPS: schowek bywa zablokowany, wtedy pokazujemy YAML do zaznaczenia
       this.showGen = true; this.queue();
-      this.toast('Przeglądarka nie pozwala na schowek. Zaznacz YAML poniżej i skopiuj ręcznie.');
+      this.toast(T('Przeglądarka nie pozwala na schowek. Zaznacz YAML poniżej i skopiuj ręcznie.'));
     }
   }
 
@@ -2141,8 +2257,8 @@ class AuraDomu extends HTMLElement {
     if (act === 'gen-toggle') { this.showGen = !this.showGen; this.queue(); }
     if (act === 'gen-copy') void this.copyText(this.genYaml);
     if (act === 'tab-toggle') this.toggleTab(button.dataset.tab);
-    if (act === 'orb') this.ui.event ? this.showEvent(null) : this.showEvent(this.events[0] || {title:'Stan domu',text:this.snapshot.brief,kind:'status'});
-    if (act === 'power' && this.snapshot.power) this.showEvent({text:'Chwilowy pobór mocy domu',kind:'energy',livePower:true});
+    if (act === 'orb') this.ui.event ? this.showEvent(null) : this.showEvent(this.events[0] || {title:T('Stan domu'),text:this.snapshot.brief,kind:'status'});
+    if (act === 'power' && this.snapshot.power) this.showEvent({text:T('Chwilowy pobór mocy domu'),kind:'energy',livePower:true});
     if (act === 'close-event') this.showEvent(null);
     if (act === 'details') this.details(id);
     if (act === 'toggle') void this.toggle(id);
@@ -2173,7 +2289,7 @@ class AuraDomu extends HTMLElement {
     this.pending.add(key);
     this.queue();
     try { await this._hass.callService(domain,service,data); return true; }
-    catch { this.toast(error); return false; }
+    catch { this.toast(T(error)); return false; }
     finally { this.pending.delete(key); this.queue(); }
   }
 
@@ -2203,13 +2319,13 @@ class AuraDomu extends HTMLElement {
       this.igniteAt = {id,x:Math.round(ev.clientX - box.left),y:Math.round(ev.clientY - box.top)};
       setTimeout(()=>{ if (this.igniteAt?.id === id) this.igniteAt = null; },4000);
     }
-    await this.call(key,'homeassistant',turnOn ? 'turn_on' : 'turn_off',{entity_id:ids},`Nie udało się ${turnOn ? 'zapalić' : 'zgasić'} świateł: ${room.name}.`);
+    await this.call(key,'homeassistant',turnOn ? 'turn_on' : 'turn_off',{entity_id:ids},`${T(turnOn ? 'Nie udało się zapalić świateł' : 'Nie udało się zgasić świateł')}: ${room.name}.`);
   }
 
   async allOff() {
     const ids = this.getModel().rows.filter(row=>this.isLight(row) && row.state === 'on').map(row=>row.id);
     if (!ids.length || this.pending.has('all-off')) return;
-    if (await this.call('all-off','homeassistant','turn_off',{entity_id:ids},'Nie udało się zgasić świateł.')) this.toast(`Zgaszono ${ids.length} ${ids.length === 1 ? 'światło' : ids.length < 5 ? 'światła' : 'świateł'}`);
+    if (await this.call('all-off','homeassistant','turn_off',{entity_id:ids},'Nie udało się zgasić świateł.')) this.toast(T('Zgaszono {n}',{n:plN(ids.length,'światło','światła','świateł')}));
   }
 
   stepTemp(id,dir) {
@@ -2265,9 +2381,9 @@ class AuraDomu extends HTMLElement {
       const laundry = domain === 'sensor' && /pralka|washer|suszarka|dryer/.test(fold(`${id} ${name}`)) && /(?:^|[_. ])(?:status|state|stan|phase|faza|job_state)(?:[_. ]|$)/.test(fold(`${id} ${name}`)) && /^(finished|complete|completed|program_finished|end|ended|zakonczono|koniec)$/.test(fold(state.state));
       if ((!available(before) && !priority && !(domain === 'event' && doorbell)) || (!priority && !doorbell && !matched && !laundry)) continue;
       const at = Date.parse(state.last_changed) || Date.now();
-      const laundryTitle = /dryer|suszarka/.test(fold(`${id} ${name}`)) ? 'Suszenie zakończone' : 'Pranie zakończone';
-      const title = custom?.title || (doorbell ? 'Dzwonek do drzwi' : laundry ? laundryTitle : name);
-      const details = priority ? 'Czujnik wykrył zdarzenie alarmowe' : doorbell ? 'Zarejestrowano naciśnięcie dzwonka' : laundry ? 'Program dobiegł końca' : `${name} · ${stateLabels[state.state] || state.state}`;
+      const laundryTitle = T(/dryer|suszarka/.test(fold(`${id} ${name}`)) ? 'Suszenie zakończone' : 'Pranie zakończone');
+      const title = custom?.title || (doorbell ? T('Dzwonek do drzwi') : laundry ? laundryTitle : name);
+      const details = priority ? T('Czujnik wykrył zdarzenie alarmowe') : doorbell ? T('Zarejestrowano naciśnięcie dzwonka') : laundry ? T('Program dobiegł końca') : `${name} · ${stl(state.state)}`;
       const kind = priority ? 'alert' : doorbell ? 'bell' : laundry || custom?.kind === 'laundry' ? 'laundry' : custom?.kind === 'energy' ? 'energy' : 'status';
       next.push({title,text:custom?.text || details,at,priority,kind});
     }
@@ -2278,9 +2394,9 @@ class AuraDomu extends HTMLElement {
   }
 }
 
-console.info('%c AURA-DOMU %c v0.9.3 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
+console.info('%c AURA-DOMU %c v0.10.0 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
 if (!customElements.get('aura-domu')) {
   customElements.define('aura-domu',AuraDomu);
   window.customCards = window.customCards || [];
-  window.customCards.push({type:'aura-domu',name:'Aura domu',description:'Dashboard z pokojami, scenami i sterowaniem dla Home Assistanta.'});
+  window.customCards.push({type:'aura-domu',name:'Aura domu',description:'Full-screen dashboard: rooms, climate, heating, weather, energy, security, bins and F1 (English / Polski).'});
 }

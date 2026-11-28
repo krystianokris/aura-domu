@@ -14,42 +14,42 @@
 
 A soft neumorphic look, light and dark theme, drawn scenes instead of photos, and tiles that rise out of concave dimples when you open a tab. Works on a desktop, a wall tablet and a phone.
 
-> **Version 0.9 (beta).** The interface is **Polish only** for now — an English translation is planned. Feedback and ideas are very welcome: [report a bug or suggest a change](../../issues/new/choose).
+> **Version 0.10 (beta).** The interface is in **English and Polish**: it follows the language of your Home Assistant profile (Polish → Polish, anything else → English), or set `language: en` / `pl`. Feedback and ideas are very welcome: [report a bug or suggest a change](../../issues/new/choose).
 
 ## Contents
 [Features](#features) · [Installation](#installation) · [Zero-config start](#zero-config-start) · [Configuration](#configuration) · [Options](#all-options) · [Full screen](#full-screen-dashboard) · [FAQ](#faq)
 
 ## Features
 
-### Dom (Home)
-Clock, greeting and a **home mood orb**: its colour follows room temperatures, its pulse follows power draw, red means an alarm. Below: scenes, *Teraz* (Now) tiles — lights with "turn all off", thermostat, energy with a chart, security — and rooms. Events such as the doorbell, a leak, CO or finished laundry appear on the orb, and reminders show up when the bins go out tomorrow or an F1 weekend is on.
+### Home
+Clock, greeting and a **home mood orb**: its colour follows room temperatures, its pulse follows power draw, red means an alarm. Below: scenes, *Now* tiles — lights with "turn all off", thermostat, energy with a chart, security — and rooms. Events such as the doorbell, a leak, CO or finished laundry appear on the orb, and reminders show up when the bins go out tomorrow or an F1 weekend is on.
 
 | Light | Dark | Phone |
 |---|---|---|
 | ![](docs/screenshots/home.webp) | ![](docs/screenshots/home-dark.webp) | ![](docs/screenshots/mobile.webp) |
 
-### Pokoje (Rooms)
+### Rooms
 Room tiles with temperature and light count (the bulb switches the whole room). Inside a room: **Lights** (with brightness slider), **Climate**, **Media**, **Sensors** and **Devices** — washer, dryer, 3D printer, litter box, pet feeder, air purifier… plus a room switcher at the bottom.
 
 | Rooms | Room | Room on a phone |
 |---|---|---|
 | ![](docs/screenshots/rooms.webp) | ![](docs/screenshots/room.webp) | ![](docs/screenshots/mobile-room.webp) |
 
-### Klimat & Ogrzewanie (Climate & Heating)
+### Climate & Heating
 Temperature and humidity of every room and all thermostats. **Heating** shows the boiler (flame and flowing pipes while it heats), radiator circuits with valves and floor heating, **Auto / Comfort / Eco / Boost** modes (applied on a second tap), gas used today and boiler run time from history.
 
 | Climate | Heating |
 |---|---|
 | ![](docs/screenshots/climate.webp) | ![](docs/screenshots/heating.webp) |
 
-### Pogoda (Weather)
+### Weather
 An animated drawn scene — sun, moon and stars, clouds, rain, snow, hail, fog, wind and storms; the house window lights up at night and the chimney smokes on cold days. Wind with a compass, humidity, pressure, sunrise and sunset, an hourly forecast with a temperature curve and a daily forecast.
 
 | Light | Dark |
 |---|---|
 | ![](docs/screenshots/weather.webp) | ![](docs/screenshots/weather-dark.webp) |
 
-### Energia, Ochrona, Kosze (Energy, Security, Bins)
+### Energy, Security, Bins
 **Energy** — power now, electricity, gas and water, price, per-device usage. **Security** — alarm mode, windows, leaks, CO, motion, cameras and sensor batteries (low ones in red). **Bins** — collections from [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule) with drawn bins in their colours, what goes out next and when.
 
 | Energy | Security | Bins |
@@ -61,7 +61,7 @@ From [F1 Sensor](https://github.com/Nicxe/f1_sensor): race countdown, the weeken
 
 ![Formula 1](docs/screenshots/f1.webp)
 
-### Ustawienia (Settings)
+### Settings
 Theme (light, dark, system), **show / hide tabs** (remembered on each device, like the theme; set `hidden_tabs` for a default everywhere), a **ready-made configuration** to copy, and a link to Home Assistant settings.
 
 ![Settings](docs/screenshots/settings.webp)
@@ -75,14 +75,14 @@ Theme (light, dark, system), **show / hide tabs** (remembered on each device, li
 
 ### Manual
 1. Download `aura-domu.js` from the [latest release](../../releases/latest) to `/config/www/aura-domu.js`.
-2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.9.3`, type **JavaScript module**.
+2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.10.0`, type **JavaScript module**.
 3. Change `?v=` after every update — browsers cache `/local` files for up to 31 days.
 
 ### Add the dashboard
 Create a new dashboard from scratch, open **⋮ → Edit dashboard → ⋮ → Raw configuration editor** and paste:
 ```yaml
 views:
-  - title: Dom
+  - title: Home
     path: dom
     type: panel
     cards:
@@ -102,7 +102,7 @@ views:
 
 > Assign your devices to areas (**Settings → Areas**) and the rooms build themselves.
 
-**Ustawienia → Gotowa konfiguracja** (Settings → Ready configuration) shows everything the card picked as YAML: **Kopiuj** (Copy) and paste it into the dashboard editor (**Edit dashboard → ⋮ → Raw configuration editor**). Then just rename things, add devices (washer, printer, litter box…) and remove what you don't need.
+**Settings → Ready-made configuration** shows everything the card picked as YAML: **Copy** it and paste it into the dashboard editor (**Edit dashboard → ⋮ → Raw configuration editor**). Then just rename things, add devices (washer, printer, litter box…) and remove what you don't need.
 
 ## Configuration
 
@@ -145,7 +145,7 @@ rooms:
 | `title` | Name in the top-left corner (default "Aura domu"). |
 | `name` | Name in the greeting (default: your HA user). |
 | `weather_entity` | Weather entity (default: the first one found). |
-| `climate_entity` | Thermostat on the *Klimat* tile of the home screen. |
+| `climate_entity` | Thermostat on the *Climate* tile of the home screen. |
 | `power_entity` | House power draw (W or kW). |
 | `price_entity`, `price_cheap`, `price_expensive` | Electricity price and the colour thresholds. |
 | `scenes` | Scenes under the orb: `scene.x` or `{entity, name, icon}`. |
@@ -156,6 +156,7 @@ rooms:
 | `f1` | Override F1 Sensor entities, e.g. `{led: automation.f1_flags}`. |
 | `hidden_tabs` | Hidden tabs: `rooms`, `climate`, `heating`, `weather`, `energy`, `security`, `bins`, `f1`. |
 | `event_entities` | Custom orb events: `{sensor.x: {to: "done", title: "…", text: "…"}}`. |
+| `language` | `en` or `pl`. Default: the language of your HA profile (Polish → `pl`, anything else → `en`). |
 | `load_font` | `false` disables the Inter Tight font from Google Fonts. |
 
 ### Room (`rooms[]`)
@@ -175,13 +176,13 @@ No HA header or sidebar, as in the screenshots: install [kiosk-mode](https://git
 kiosk_mode:
   kiosk: true
 ```
-HA settings are then reached from the card's **Ustawienia** tab. To edit the dashboard, add `?disable_km&edit=1` to the URL or use the "Edytuj pulpit" button in Settings.
+HA settings are then reached from the card's **Settings** tab. To edit the dashboard, add `?disable_km&edit=1` to the URL or use the **Edit dashboard** button in Settings. **Show HA menu** brings back the HA sidebar.
 
 ## FAQ
 
 **"Custom element doesn't exist: aura-domu".** The browser has an old copy cached — hard-refresh (Ctrl+Shift+R); for manual installs bump `?v=` in the resource URL.
 
-**A tab is missing.** Tabs without data hide themselves (e.g. Bins without Waste Collection Schedule). Also check **Ustawienia → Zakładki w menu**.
+**A tab is missing.** Tabs without data hide themselves (e.g. Bins without Waste Collection Schedule). Also check **Settings → Menu tabs**.
 
 **Too much or too little in a room.** In zero-config mode the card uses your areas. Copy the ready configuration, remove what you don't need and add what is missing.
 

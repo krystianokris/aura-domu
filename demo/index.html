@@ -118,7 +118,7 @@ put('sensor.f1_last_race_results', 'Verstappen', {round: '22', circuit_country: 
 put('sensor.f1_weather', '27', {circuit_locality: 'Yas Island', race_temperature: 27, race_weather_code: 1, race_precipitation_probability: 0, race_wind_speed: 4.2});
 
 const config = {
-  type: 'custom:aura-domu', demo: true, title: 'Aura domu', weather_entity: 'weather.home', climate_entity: 'climate.salon', power_entity: 'sensor.dom_moc',
+  type: 'custom:aura-domu', demo: true, language: q.get('lang') || 'auto', title: 'Aura domu', weather_entity: 'weather.home', climate_entity: 'climate.salon', power_entity: 'sensor.dom_moc',
   scenes: [{entity: 'scene.wieczor', name: 'Wieczór'}, {entity: 'scene.film', name: 'Film'}, {entity: 'scene.dobranoc', name: 'Dobranoc'}, {entity: 'scene.wyjscie', name: 'Wyjście'}],
   rooms: [
     {id: 'salon', name: 'Salon', subtitle: 'Ciepłe światło. Dobry odpoczynek.', temperature: 'sensor.salon_temperatura', humidity: 'sensor.salon_wilgotnosc',
