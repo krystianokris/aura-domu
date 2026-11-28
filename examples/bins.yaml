@@ -1,0 +1,40 @@
+# Aura domu — kosze bez integracji (własny harmonogram)
+# Bin collection without any integration (your own schedule)
+#
+# color:  kolor kosza / bin colour — black, brown, green, blue, yellow, grey, purple, red
+#         (po polsku też: czarny, brązowy, zielony, niebieski, żółty, szary…) albo #hex
+# type:   co do niego wrzucasz / what goes in (opcjonalnie / optional)
+# start:  pierwszy odbiór / first collection (RRRR-MM-DD / YYYY-MM-DD)
+# every:  co ile dni / every N days   (albo / or  weeks: 2)
+# dates:  pojedyncze terminy / one-off dates (np. choinki / e.g. Christmas trees)
+# name:   własna nazwa / custom name (opcjonalnie / optional)
+
+type: custom:aura-domu
+bins:
+  schedule:
+    - color: czarny
+      type: odpady zmieszane
+      start: 2026-12-01
+      every: 14
+    - color: żółty
+      type: metale i tworzywa
+      start: 2026-12-08
+      weeks: 2
+    - color: niebieski
+      type: papier
+      start: 2026-12-03
+      every: 28
+    - color: brązowy
+      type: bio
+      start: 2026-12-02
+      every: 7
+    - name: Choinki
+      color: green
+      dates: [2027-01-12, 2027-01-26]
+
+# English example:
+# bins:
+#   schedule:
+#     - {color: black, type: general waste, start: 2026-12-01, every: 14}
+#     - {color: green, type: recycling, start: 2026-12-08, every: 14}
+#     - {color: brown, type: garden waste, start: 2026-12-04, weeks: 2}

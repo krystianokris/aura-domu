@@ -75,7 +75,7 @@ Theme (light, dark, system), **language** (same as Home Assistant, Polski, Engli
 
 ### Manual
 1. Download `aura-domu.js` from the [latest release](../../releases/latest) to `/config/www/aura-domu.js`.
-2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.10.1`, type **JavaScript module**.
+2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.11.0`, type **JavaScript module**.
 3. Change `?v=` after every update — browsers cache `/local` files for up to 31 days.
 
 ### Add the dashboard
@@ -98,7 +98,7 @@ views:
 | **Rooms** | Each area: lights (and switches with "light / lamp / LED" in the name), fans, thermostats, media players, window and door sensors, leak, motion and CO sensors, air purifiers; room temperature and humidity from a room sensor. Diagnostic and hidden entities are skipped. |
 | **Security** | Windows, leaks, CO, motion and alarm from all areas, plus the batteries of those sensors. |
 | **Heating** | Heating thermostats (air conditioners excluded), one circuit per room, floor heating separately; the main thermostat is recognised by integration (Nest, Ecobee, Tado…). |
-| **Weather, Bins, F1** | When you have a weather entity, Waste Collection Schedule or F1 Sensor. |
+| **Weather, Bins, F1** | When you have a weather entity, Waste Collection Schedule (or your own `bins.schedule`) or F1 Sensor. |
 
 > Assign your devices to areas (**Settings → Areas**) and the rooms build themselves.
 
@@ -136,6 +136,7 @@ rooms:
 | [`examples/aura-domu.yaml`](examples/aura-domu.yaml) | Full dashboard with every tab |
 | [`examples/rooms-and-devices.yaml`](examples/rooms-and-devices.yaml) | Rooms and devices: washer, dryer, 3D printer, litter box, feeder, purifier |
 | [`examples/tabs.yaml`](examples/tabs.yaml) | Heating, Energy, Security, Bins, F1, hidden tabs |
+| [`examples/bins.yaml`](examples/bins.yaml) | Bin collection without an integration (colour, start date, every N days) |
 
 ## All options
 
@@ -152,7 +153,7 @@ rooms:
 | `rooms` | Room list (below). Without it: rooms from HA areas. |
 | `climate` | Extra thermostats on the Climate tab: `[{entity, name}]`. |
 | `heating_page`, `energy_page`, `security_page` | Heating, Energy, Security tabs — see [`examples/tabs.yaml`](examples/tabs.yaml). |
-| `bins` | `{calendar, sensor, types}` — optional, Waste Collection Schedule is detected automatically. |
+| `bins` | `{calendar, sensor, types, schedule}` — Waste Collection Schedule is detected automatically. **No integration?** Use `schedule`: a list of bins with `color`, `type`, `start` (first collection) and `every` (days) or `weeks`, or one-off `dates` — see [`examples/bins.yaml`](examples/bins.yaml). |
 | `f1` | Override F1 Sensor entities, e.g. `{led: automation.f1_flags}`. |
 | `hidden_tabs` | Hidden tabs: `rooms`, `climate`, `heating`, `weather`, `energy`, `security`, `bins`, `f1`. |
 | `event_entities` | Custom orb events: `{sensor.x: {to: "done", title: "…", text: "…"}}`. |

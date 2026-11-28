@@ -77,7 +77,7 @@ HACS sam doda zasób i będzie informował o nowych wersjach.
 
 ### Ręcznie
 1. Pobierz `aura-domu.js` z [najnowszego wydania](../../releases/latest) i skopiuj do `/config/www/aura-domu.js`.
-2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.10.1`, typ **Moduł JavaScript**.
+2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.11.0`, typ **Moduł JavaScript**.
 3. Przy każdej aktualizacji zmień `?v=` na nowy numer — przeglądarka trzyma pliki z `/local` nawet 31 dni.
 
 ### Dodanie pulpitu
@@ -148,6 +148,7 @@ Więcej przykładów:
 | [`examples/aura-domu.yaml`](examples/aura-domu.yaml) | Pełny pulpit ze wszystkimi zakładkami |
 | [`examples/rooms-and-devices.yaml`](examples/rooms-and-devices.yaml) | Pokoje i urządzenia: pralka, suszarka, drukarka 3D, kuweta, karmnik, oczyszczacz |
 | [`examples/tabs.yaml`](examples/tabs.yaml) | Ogrzewanie, Energia, Ochrona, Kosze, F1, ukrywanie zakładek |
+| [`examples/bins.yaml`](examples/bins.yaml) | Kosze bez integracji (kolor, pierwszy odbiór, co ile dni) |
 
 ## Wszystkie opcje
 
@@ -164,7 +165,7 @@ Więcej przykładów:
 | `rooms` | Lista pokoi (niżej). Bez niej — pokoje z obszarów HA. |
 | `climate` | Dodatkowe termostaty na zakładce Klimat: `[{entity, name}]`. |
 | `heating_page`, `energy_page`, `security_page` | Zakładki Ogrzewanie, Energia, Ochrona — [`examples/tabs.yaml`](examples/tabs.yaml). |
-| `bins` | `{calendar, sensor, types}` — opcjonalnie; Waste Collection Schedule jest wykrywany sam. |
+| `bins` | `{calendar, sensor, types, schedule}` — Waste Collection Schedule jest wykrywany sam. **Bez integracji?** Użyj `schedule`: lista koszy z `color`, `type`, `start` (pierwszy odbiór) i `every` (co ile dni) albo `weeks`, albo pojedyncze `dates` — zobacz [`examples/bins.yaml`](examples/bins.yaml). |
 | `f1` | Nadpisanie encji F1 Sensor, np. `{led: automation.flagi_f1}`. |
 | `hidden_tabs` | Ukryte zakładki: `rooms`, `climate`, `heating`, `weather`, `energy`, `security`, `bins`, `f1`. |
 | `event_entities` | Własne zdarzenia na kuli: `{sensor.x: {to: "done", title: "…", text: "…"}}`. |

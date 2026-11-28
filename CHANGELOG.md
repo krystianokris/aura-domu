@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0 — kosze bez integracji
+
+- Własny harmonogram odbioru odpadów: `bins.schedule` z kolorem, rodzajem, pierwszym odbiorem i co ile dni (`every` / `weeks`) albo listą dat. Działa bez Waste Collection Schedule i bez API gminy; można łączyć z integracją. Przykład: `examples/bins.yaml`.
+- Own bin schedule without any integration or council API: `bins.schedule` with colour, type, first date and `every` N days / `weeks`, or one-off `dates`.
+- Kolory koszy także po polsku (czarny, żółty, niebieski…) i nowy kolor żółty (metale i tworzywa).
+
 ## 0.10.1 — przełącznik języka
 
 - **Ustawienia → Język**: jak w Home Assistant, polski albo angielski. Wybór zapamiętuje urządzenie (jak motyw) i ma pierwszeństwo przed `language` z konfiguracji.
