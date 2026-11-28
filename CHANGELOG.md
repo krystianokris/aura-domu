@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.1 — przełącznik języka
+
+- **Ustawienia → Język**: jak w Home Assistant, polski albo angielski. Wybór zapamiętuje urządzenie (jak motyw) i ma pierwszeństwo przed `language` z konfiguracji.
+- **Settings → Language**: same as Home Assistant, Polski or English, remembered per device like the theme.
+- Demo w całości po angielsku: wymyślony dom (pokoje, urządzenia, sceny, ochrona) zmienia język razem z kartą.
+
 ## 0.10.0 — English / po angielsku
 
 - Interfejs po angielsku i po polsku. Karta bierze język z profilu użytkownika Home Assistanta (polski → polski, każdy inny → angielski); opcja `language: en` albo `pl` wymusza język. Daty, godziny i liczby w formacie wybranego języka.

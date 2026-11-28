@@ -14,7 +14,7 @@
 
 A soft neumorphic look, light and dark theme, drawn scenes instead of photos, and tiles that rise out of concave dimples when you open a tab. Works on a desktop, a wall tablet and a phone.
 
-> **Version 0.10 (beta).** The interface is in **English and Polish**: it follows the language of your Home Assistant profile (Polish → Polish, anything else → English), or set `language: en` / `pl`. Feedback and ideas are very welcome: [report a bug or suggest a change](../../issues/new/choose).
+> **Version 0.10 (beta).** The interface is in **English and Polish**: it follows the language of your Home Assistant profile (Polish → Polish, anything else → English), or set `language: en` / `pl` (also switchable per device in **Settings**). Room and device names come from your own Home Assistant areas and entities. Feedback and ideas are very welcome: [report a bug or suggest a change](../../issues/new/choose).
 
 ## Contents
 [Features](#features) · [Installation](#installation) · [Zero-config start](#zero-config-start) · [Configuration](#configuration) · [Options](#all-options) · [Full screen](#full-screen-dashboard) · [FAQ](#faq)
@@ -62,7 +62,7 @@ From [F1 Sensor](https://github.com/Nicxe/f1_sensor): race countdown, the weeken
 ![Formula 1](docs/screenshots/f1.webp)
 
 ### Settings
-Theme (light, dark, system), **show / hide tabs** (remembered on each device, like the theme; set `hidden_tabs` for a default everywhere), a **ready-made configuration** to copy, and a link to Home Assistant settings.
+Theme (light, dark, system), **language** (same as Home Assistant, Polski, English), **show / hide tabs** (remembered on each device, like the theme; set `hidden_tabs` for a default everywhere), a **ready-made configuration** to copy, and a link to Home Assistant settings.
 
 ![Settings](docs/screenshots/settings.webp)
 
@@ -75,7 +75,7 @@ Theme (light, dark, system), **show / hide tabs** (remembered on each device, li
 
 ### Manual
 1. Download `aura-domu.js` from the [latest release](../../releases/latest) to `/config/www/aura-domu.js`.
-2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.10.0`, type **JavaScript module**.
+2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.10.1`, type **JavaScript module**.
 3. Change `?v=` after every update — browsers cache `/local` files for up to 31 days.
 
 ### Add the dashboard
@@ -156,7 +156,7 @@ rooms:
 | `f1` | Override F1 Sensor entities, e.g. `{led: automation.f1_flags}`. |
 | `hidden_tabs` | Hidden tabs: `rooms`, `climate`, `heating`, `weather`, `energy`, `security`, `bins`, `f1`. |
 | `event_entities` | Custom orb events: `{sensor.x: {to: "done", title: "…", text: "…"}}`. |
-| `language` | `en` or `pl`. Default: the language of your HA profile (Polish → `pl`, anything else → `en`). |
+| `language` | `en` or `pl`. Default: the language of your HA profile (Polish → `pl`, anything else → `en`). A choice made in **Settings → Language** on a device wins over this. |
 | `load_font` | `false` disables the Inter Tight font from Google Fonts. |
 
 ### Room (`rooms[]`)

@@ -1,8 +1,8 @@
-// Aura domu — karta Home Assistanta · v0.10.0
+// Aura domu — karta Home Assistanta · v0.10.1
 // https://github.com/krystianokris/aura-domu · licencja MIT
 // Instalacja: HACS (repozytorium niestandardowe, kategoria Dashboard) albo ręcznie:
 //   1) skopiuj dist/aura-domu.js do /config/www/aura-domu.js
-//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.10.0 (Moduł JavaScript)
+//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.10.1 (Moduł JavaScript)
 //   3) pulpit z widokiem „Panel” i kartą `type: custom:aura-domu`
 // Pełny przykład konfiguracji: examples/aura-domu.yaml i README.
 const AURA_CSS = `
@@ -681,7 +681,7 @@ const EN = {
   'Stuknij ponownie, aby ustawić.':'Tap again to apply.','Tryb zmienia termostaty dopiero po drugim stuknięciu.':'A mode changes the thermostats only on the second tap.','koszt':'cost','Tryb ogrzewania':'Heating mode','Praca kotła dziś':'Boiler runtime today','według kotła':'from the boiler',
   'według żądań termostatu':'from thermostat demand','Tryb systemu':'System mode','czuwa':'standby',
   // ustawienia
-  'Jasny':'Light','Ciemny':'Dark','Jak w systemie':'System','Ten ekran':'This screen','Motyw zapamiętuje to urządzenie. Inne ekrany mają własny wybór.':'The theme is remembered on this device. Other screens keep their own choice.','Pulpit':'Dashboard',
+  'Jasny':'Light','Ciemny':'Dark','Jak w systemie':'System','Ten ekran':'This screen','Motyw i język zapamiętuje to urządzenie. Inne ekrany mają własny wybór.':'Theme and language are remembered on this device. Other screens keep their own choice.','Język':'Language','Jak w Home Assistant':'Same as Home Assistant','Pulpit':'Dashboard',
   'Pokoje i urządzenia zmieniasz w konfiguracji karty (lista „rooms”).':'Rooms and devices are set in the card configuration (the “rooms” list).','Pulpit może zmieniać tylko administrator.':'Only an administrator can change the dashboard.','Edytuj pulpit':'Edit dashboard','Pokaż menu HA':'Show HA menu',
   'Konto':'Account','administrator':'administrator','użytkownik':'user','Połączenie':'Connection','Połączono':'Connected','Wersja HA':'HA version','Urządzenia, integracje, użytkownicy i pozostałe pulpity ustawia się w Home Assistant.':'Devices, integrations, users and other dashboards are managed in Home Assistant.',
   'Otwórz ustawienia Home Assistant':'Open Home Assistant settings','widoczna w menu':'shown in the menu','ukryta':'hidden','brak danych w Home Assistant':'no data in Home Assistant','Ukryj zakładkę {n}':'Hide the {n} tab','Pokaż zakładkę {n}':'Show the {n} tab','Zakładki w menu':'Menu tabs',
@@ -864,9 +864,12 @@ class AuraDomu extends HTMLElement {
 
   getCardSize() { return 8; }
 
-  // język: `language: en|pl` z konfiguracji, a domyślnie język profilu użytkownika HA (polski → pl, każdy inny → en)
+  // język: wybór tego urządzenia (Ustawienia, localStorage), potem `language: en|pl` z konfiguracji,
+  // a domyślnie język profilu użytkownika HA (polski → pl, każdy inny → en)
+  langPref() { try { const v = localStorage.getItem('aura-domu:lang'); return v === 'pl' || v === 'en' ? v : 'auto'; } catch { return 'auto'; } }
   applyLang() {
-    const want = String(this.config?.language || 'auto').toLowerCase();
+    const pref = this.langPref();
+    const want = pref !== 'auto' ? pref : String(this.config?.language || 'auto').toLowerCase();
     const src = want !== 'auto' ? want : this._hass?.locale?.language || this._hass?.language || navigator.language || 'en';
     const lang = /^pl/.test(String(src).toLowerCase()) ? 'pl' : 'en';
     if (lang === this.lang) return;
@@ -2168,7 +2171,10 @@ class AuraDomu extends HTMLElement {
     const mode = (key,label,glyph) => `<button class="preset" data-act="theme-mode" data-mode="${key}" aria-pressed="${this.themeMode === key}">${icon(glyph)}${T(label)}</button>`;
     const row = (k,v) => `<div><span>${escapeHTML(T(k))}</span><b>${escapeHTML(v)}</b></div>`;
     const tile = (glyph,title,body) => `<article class="tile"><span class="label">${icon(glyph)}${escapeHTML(T(title))}</span><div class="card-body">${body}</div></article>`;
-    const screen = tile('sun','Ten ekran',`<p class="note-line">${T('Motyw zapamiętuje to urządzenie. Inne ekrany mają własny wybór.')}</p><div class="modes">${mode('light','Jasny','sun')}${mode('dark','Ciemny','moon')}${mode('auto','Jak w systemie','spark')}</div>`);
+    const pref = this.langPref();
+    const lang = (key,label) => `<button class="preset" data-act="lang-mode" data-mode="${key}" aria-pressed="${pref === key}">${icon(key === 'auto' ? 'settings' : 'spark')}${label}</button>`;
+    const screen = tile('sun','Ten ekran',`<p class="note-line">${T('Motyw i język zapamiętuje to urządzenie. Inne ekrany mają własny wybór.')}</p><div class="modes">${mode('light','Jasny','sun')}${mode('dark','Ciemny','moon')}${mode('auto','Jak w systemie','spark')}</div>
+      <p class="note-line">${T('Język')}</p><div class="modes">${lang('auto',T('Jak w Home Assistant'))}${lang('pl','Polski')}${lang('en','English')}</div>`);
     const dash = tile('rooms','Pulpit',`<div class="device-rows">${row('Pokoje',String(rooms.length))}${row('Światła',String(lights))}${row('Urządzenia',String(devices))}</div>
       <p class="note-line">${T(admin ? 'Pokoje i urządzenia zmieniasz w konfiguracji karty (lista „rooms”).' : 'Pulpit może zmieniać tylko administrator.')}</p>
       <div class="device-actions">${admin ? `<button class="mini" data-act="ha-nav" data-to="${escapeHTML(here)}?disable_km&edit=1">${icon('arrow')}${T('Edytuj pulpit')}</button>` : ''}<button class="mini" data-act="ha-nav" data-to="${escapeHTML(here)}?disable_km">${icon('arrow')}${T('Pokaż menu HA')}</button></div>`);
@@ -2250,6 +2256,11 @@ class AuraDomu extends HTMLElement {
     if (act === 'theme' || act === 'theme-mode') {
       this.themeMode = act === 'theme' ? (this.theme === 'dark' ? 'light' : 'dark') : button.dataset.mode;
       try { localStorage.setItem('aura-domu:theme',this.themeMode); } catch {}
+      this.queue();
+    }
+    if (act === 'lang-mode') {
+      try { if (button.dataset.mode === 'auto') localStorage.removeItem('aura-domu:lang'); else localStorage.setItem('aura-domu:lang',button.dataset.mode); } catch {}
+      this.applyLang();
       this.queue();
     }
     if (act === 'ha-nav') this.haNav(button.dataset.to);
@@ -2394,7 +2405,7 @@ class AuraDomu extends HTMLElement {
   }
 }
 
-console.info('%c AURA-DOMU %c v0.10.0 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
+console.info('%c AURA-DOMU %c v0.10.1 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
 if (!customElements.get('aura-domu')) {
   customElements.define('aura-domu',AuraDomu);
   window.customCards = window.customCards || [];

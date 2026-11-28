@@ -20,76 +20,78 @@ const now = Date.now(), H = 3600e3, D = 864e5;
 const iso = t => new Date(t).toISOString();
 const day = n => new Date(now + n * D).toLocaleDateString('en-CA');
 const hour = new Date().getHours();
+function build(lang) {
+const L = (pl, en) => lang === 'en' ? en : pl;
 const S = {};
 const put = (id, state, attributes = {}) => { S[id] = {entity_id: id, state: String(state), attributes, last_changed: iso(now - 20 * 60e3), last_updated: iso(now)}; };
 const sens = (id, v, unit, dc, name) => put(id, v, {unit_of_measurement: unit, device_class: dc, friendly_name: name});
 const bin = (id, on, dc, name) => put(id, on ? 'on' : 'off', {device_class: dc, friendly_name: name});
 
 // --- światła i urządzenia ---
-put('light.salon_sufit', 'on', {friendly_name: 'Sufit', brightness: 150, supported_color_modes: ['brightness']});
-put('switch.salon_lampa', 'on', {friendly_name: 'Lampa podłogowa'});
-put('switch.salon_tv_swiatlo', 'off', {friendly_name: 'Światło TV'});
-put('switch.kuchnia_glowne', 'on', {friendly_name: 'Światło główne'});
-put('light.kuchnia_led', 'on', {friendly_name: 'LED blat', brightness: 90, supported_color_modes: ['brightness']});
-put('switch.kuchnia_okap', 'off', {friendly_name: 'Okap'});
-put('switch.sypialnia_glowne', 'off', {friendly_name: 'Światło'});
-put('light.sypialnia_nocna', 'off', {friendly_name: 'Lampka nocna', supported_color_modes: ['brightness']});
+put('light.salon_sufit', 'on', {friendly_name: L('Sufit', 'Ceiling'), brightness: 150, supported_color_modes: ['brightness']});
+put('switch.salon_lampa', 'on', {friendly_name: L('Lampa podłogowa', 'Floor lamp')});
+put('switch.salon_tv_swiatlo', 'off', {friendly_name: L('Światło TV', 'TV light')});
+put('switch.kuchnia_glowne', 'on', {friendly_name: L('Światło główne', 'Main light')});
+put('light.kuchnia_led', 'on', {friendly_name: L('LED blat', 'Worktop LED'), brightness: 90, supported_color_modes: ['brightness']});
+put('switch.kuchnia_okap', 'off', {friendly_name: L('Okap', 'Cooker hood')});
+put('switch.sypialnia_glowne', 'off', {friendly_name: L('Światło', 'Light')});
+put('light.sypialnia_nocna', 'off', {friendly_name: L('Lampka nocna', 'Bedside lamp'), supported_color_modes: ['brightness']});
 put('light.dziecko_led', 'on', {friendly_name: 'LED', brightness: 200, supported_color_modes: ['brightness']});
-put('switch.dziecko_glowne', 'off', {friendly_name: 'Światło główne'});
-put('switch.lazienka_glowne', 'off', {friendly_name: 'Światło'});
-put('switch.lazienka_wentylator', 'on', {friendly_name: 'Wentylator'});
-put('fan.oczyszczacz', 'on', {friendly_name: 'Oczyszczacz'});
-put('media_player.salon_tv', 'playing', {friendly_name: 'Telewizor', media_title: 'Formuła 1 · kwalifikacje', supported_features: 152463});
-put('media_player.kuchnia_glosnik', 'paused', {friendly_name: 'Głośnik', media_title: 'Poranne radio', supported_features: 152463});
+put('switch.dziecko_glowne', 'off', {friendly_name: L('Światło główne', 'Main light')});
+put('switch.lazienka_glowne', 'off', {friendly_name: L('Światło', 'Light')});
+put('switch.lazienka_wentylator', 'on', {friendly_name: L('Wentylator', 'Extractor fan')});
+put('fan.oczyszczacz', 'on', {friendly_name: L('Oczyszczacz', 'Air purifier')});
+put('media_player.salon_tv', 'playing', {friendly_name: L('Telewizor', 'TV'), media_title: L('Formuła 1 · kwalifikacje', 'Formula 1 · qualifying'), supported_features: 152463});
+put('media_player.kuchnia_glosnik', 'paused', {friendly_name: L('Głośnik', 'Speaker'), media_title: L('Poranne radio', 'Morning radio'), supported_features: 152463});
 
 // --- czujniki pokojowe ---
-sens('sensor.salon_temperatura', 21.6, '°C', 'temperature', 'Salon temperatura');
-sens('sensor.salon_wilgotnosc', 46, '%', 'humidity', 'Salon wilgotność');
-sens('sensor.kuchnia_temperatura', 22.4, '°C', 'temperature', 'Kuchnia temperatura');
-sens('sensor.kuchnia_wilgotnosc', 41, '%', 'humidity', 'Kuchnia wilgotność');
-sens('sensor.dziecko_temperatura', 21.2, '°C', 'temperature', 'Pokój dziecka temperatura');
-sens('sensor.dziecko_wilgotnosc', 52, '%', 'humidity', 'Pokój dziecka wilgotność');
-sens('sensor.lazienka_temperatura', 23.8, '°C', 'temperature', 'Łazienka temperatura');
-sens('sensor.lazienka_wilgotnosc', 64, '%', 'humidity', 'Łazienka wilgotność');
-sens('sensor.salon_pm25', 8, 'µg/m³', 'pm25', 'Pyły PM2.5');
-sens('sensor.oczyszczacz_filtr', 72, '%', null, 'Filtr');
+sens('sensor.salon_temperatura', 21.6, '°C', 'temperature', L('Salon temperatura', 'Living room temperature'));
+sens('sensor.salon_wilgotnosc', 46, '%', 'humidity', L('Salon wilgotność', 'Living room humidity'));
+sens('sensor.kuchnia_temperatura', 22.4, '°C', 'temperature', L('Kuchnia temperatura', 'Kitchen temperature'));
+sens('sensor.kuchnia_wilgotnosc', 41, '%', 'humidity', L('Kuchnia wilgotność', 'Kitchen humidity'));
+sens('sensor.dziecko_temperatura', 21.2, '°C', 'temperature', L('Pokój dziecka temperatura', "Kids' room temperature"));
+sens('sensor.dziecko_wilgotnosc', 52, '%', 'humidity', L('Pokój dziecka wilgotność', "Kids' room humidity"));
+sens('sensor.lazienka_temperatura', 23.8, '°C', 'temperature', L('Łazienka temperatura', 'Bathroom temperature'));
+sens('sensor.lazienka_wilgotnosc', 64, '%', 'humidity', L('Łazienka wilgotność', 'Bathroom humidity'));
+sens('sensor.salon_pm25', 8, 'µg/m³', 'pm25', L('Pyły PM2.5', 'PM2.5'));
+sens('sensor.oczyszczacz_filtr', 72, '%', null, L('Filtr', 'Filter'));
 
 // --- klimat ---
 const clim = (id, name, cur, target, action, extra = {}) => put(id, extra.state || 'heat', {friendly_name: name, current_temperature: cur, temperature: target, hvac_action: action, hvac_modes: extra.modes || ['heat', 'off'], min_temp: 7, max_temp: 30, target_temp_step: 0.5, preset_modes: extra.presets, preset_mode: extra.presets ? 'none' : undefined, valve_open_percent: extra.valve});
-clim('climate.salon', 'Termostat', 21.6, 22, 'heating', {presets: ['none', 'eco']});
-clim('climate.kuchnia_glowica', 'Głowica', 22.1, 22, 'idle', {valve: 0});
-clim('climate.dziecko_glowica', 'Głowica', 21.2, 21.5, 'heating', {valve: 45});
-clim('climate.sypialnia_klima', 'Klimatyzacja', 20.1, 21, 'off', {state: 'off', modes: ['cool', 'heat', 'dry', 'off']});
+clim('climate.salon', L('Termostat', 'Thermostat'), 21.6, 22, 'heating', {presets: ['none', 'eco']});
+clim('climate.kuchnia_glowica', L('Głowica', 'Radiator valve'), 22.1, 22, 'idle', {valve: 0});
+clim('climate.dziecko_glowica', L('Głowica', 'Radiator valve'), 21.2, 21.5, 'heating', {valve: 45});
+clim('climate.sypialnia_klima', L('Klimatyzacja', 'Air conditioner'), 20.1, 21, 'off', {state: 'off', modes: ['cool', 'heat', 'dry', 'off']});
 
 // --- pralnia ---
-put('sensor.pralka_status', 'Pranie', {friendly_name: 'Pralka'});
-put('sensor.pralka_pozostalo', '42', {unit_of_measurement: 'min', friendly_name: 'Pozostało'});
-put('sensor.pralka_temperatura', '40', {unit_of_measurement: '°C', friendly_name: 'Temperatura'});
-put('sensor.suszarka_status', 'Gotowa', {friendly_name: 'Suszarka'});
+put('sensor.pralka_status', L('Pranie', 'Washing'), {friendly_name: L('Pralka', 'Washer')});
+put('sensor.pralka_pozostalo', '42', {unit_of_measurement: 'min', friendly_name: L('Pozostało', 'Remaining')});
+put('sensor.pralka_temperatura', '40', {unit_of_measurement: '°C', friendly_name: L('Temperatura', 'Temperature')});
+put('sensor.suszarka_status', L('Gotowa', 'Ready'), {friendly_name: L('Suszarka', 'Dryer')});
 
 // --- ochrona ---
-put('select.ochrona', 'Home', {friendly_name: 'Tryb ochrony', options: ['Home', 'Away', 'Disarmed']});
-for (const [id, name] of [['salon', 'Salon'], ['kuchnia', 'Kuchnia'], ['dziecko', 'Pokój dziecka']]) bin(`binary_sensor.${id}_okno`, false, 'window', `Okno · ${name}`);
-for (const [id, name] of [['kuchnia', 'Pod zlewem'], ['pralnia', 'Pralka'], ['lazienka', 'Prysznic']]) bin(`binary_sensor.${id}_zalanie`, false, 'moisture', name);
-bin('binary_sensor.czujnik_czadu', false, 'carbon_monoxide', 'Czujnik czadu');
-bin('binary_sensor.lazienka_ruch', true, 'occupancy', 'Łazienka');
-bin('binary_sensor.korytarz_ruch', false, 'motion', 'Korytarz');
-bin('binary_sensor.wejscie_ruch', false, 'motion', 'Wejście · ruch');
-bin('binary_sensor.wejscie_osoba', false, 'occupancy', 'Wejście · osoba');
+put('select.ochrona', 'Home', {friendly_name: L('Tryb ochrony', 'Security mode'), options: ['Home', 'Away', 'Disarmed']});
+for (const [id, name] of [['salon', L('Salon', 'Living room')], ['kuchnia', L('Kuchnia', 'Kitchen')], ['dziecko', L('Pokój dziecka', "Kids' room")]]) bin(`binary_sensor.${id}_okno`, false, 'window', `${L(L('Okno', 'Window'), 'Window')} · ${name}`);
+for (const [id, name] of [['kuchnia', L('Pod zlewem', 'Under the sink')], ['pralnia', L('Pralka', 'Washer')], ['lazienka', L('Prysznic', 'Shower')]]) bin(`binary_sensor.${id}_zalanie`, false, 'moisture', name);
+bin('binary_sensor.czujnik_czadu', false, 'carbon_monoxide', L('Czujnik czadu', 'CO detector'));
+bin('binary_sensor.lazienka_ruch', true, 'occupancy', L('Łazienka', 'Bathroom'));
+bin('binary_sensor.korytarz_ruch', false, 'motion', L('Korytarz', 'Hallway'));
+bin('binary_sensor.wejscie_ruch', false, 'motion', L('Wejście · ruch', 'Entrance · motion'));
+bin('binary_sensor.wejscie_osoba', false, 'occupancy', L('Wejście · osoba', 'Entrance · person'));
 for (const [id, v] of [['okno_kuchnia', 87], ['okno_salon', 64], ['czujnik_czadu', 92], ['zalanie_pralka', 15]]) sens(`sensor.${id}_bateria`, v, '%', 'battery', id);
 
 // --- energia ---
-sens('sensor.dom_moc', 1240, 'W', 'power', 'Pobór mocy');
-sens('sensor.prad_dzis', 9.8, 'kWh', 'energy', 'Prąd dziś');
-sens('sensor.gaz_dzis', 18.4, 'kWh', 'energy', 'Gaz dziś');
-sens('sensor.gaz_m3', 1.7, 'm³', 'gas', 'Gaz dziś m³');
-sens('sensor.woda_wczoraj', 210, 'L', 'water', 'Woda wczoraj');
-sens('sensor.pralka_energia', 0.8, 'kWh', 'energy', 'Pralka dziś');
-sens('sensor.pralka_moc', 410, 'W', 'power', 'Pralka moc');
-sens('sensor.lodowka_energia', 1.1, 'kWh', 'energy', 'Lodówka dziś');
+sens('sensor.dom_moc', 1240, 'W', 'power', L('Pobór mocy', 'Power draw'));
+sens('sensor.prad_dzis', 9.8, 'kWh', 'energy', L('Prąd dziś', 'Electricity today'));
+sens('sensor.gaz_dzis', 18.4, 'kWh', 'energy', L('Gaz dziś', 'Gas today'));
+sens('sensor.gaz_m3', 1.7, 'm³', 'gas', L('Gaz dziś m³', 'Gas today m³'));
+sens('sensor.woda_wczoraj', 210, 'L', 'water', L('Woda wczoraj', 'Water yesterday'));
+sens('sensor.pralka_energia', 0.8, 'kWh', 'energy', L('Pralka dziś', 'Washer today'));
+sens('sensor.pralka_moc', 410, 'W', 'power', L('Pralka moc', 'Washer power'));
+sens('sensor.lodowka_energia', 1.1, 'kWh', 'energy', L('Lodówka dziś', 'Fridge today'));
 
 // --- pogoda i słońce ---
-put('weather.home', hour >= 7 && hour < 17 ? 'partlycloudy' : 'cloudy', {friendly_name: 'Dom', temperature: 7.4, temperature_unit: '°C', humidity: 71, dew_point: 2.3, pressure: 1016, pressure_unit: 'hPa', wind_speed: 14, wind_speed_unit: 'km/h', wind_bearing: 230, cloud_coverage: 55, uv_index: 1.2, precipitation_unit: 'mm', supported_features: 3, attribution: 'Dane przykładowe'});
+put('weather.home', hour >= 7 && hour < 17 ? 'partlycloudy' : 'cloudy', {friendly_name: L('Dom', 'Home'), temperature: 7.4, temperature_unit: '°C', humidity: 71, dew_point: 2.3, pressure: 1016, pressure_unit: 'hPa', wind_speed: 14, wind_speed_unit: 'km/h', wind_bearing: 230, cloud_coverage: 55, uv_index: 1.2, precipitation_unit: 'mm', supported_features: 3, attribution: L('Dane przykładowe', 'Sample data')});
 const night = hour < 7 || hour >= 17;
 put('sun.sun', night ? 'below_horizon' : 'above_horizon', {next_rising: iso(new Date().setHours(night && hour >= 17 ? 31 : 7, 18, 0, 0)), next_setting: iso(new Date().setHours(16, 24, 0, 0) + (hour >= 17 ? D : 0))});
 const conds = ['partlycloudy', 'cloudy', 'cloudy', 'rainy', 'rainy', 'cloudy', 'partlycloudy', 'sunny'];
@@ -97,10 +99,10 @@ const hourly = Array.from({length: 26}, (_, i) => { const t = new Date(now + i *
 const daily = [['partlycloudy', 9, 3, 0.2], ['rainy', 8, 4, 6.5], ['cloudy', 7, 2, 0], ['sunny', 10, 1, 0], ['partlycloudy', 11, 4, 0], ['rainy', 9, 5, 3.1]].map(([c, hi, lo, p], i) => ({datetime: new Date(now + i * D).toISOString(), condition: c, temperature: hi, templow: lo, precipitation: p}));
 
 // --- kosze (Waste Collection Schedule) ---
-put('sensor.waste_collection_schedule_bin', 'Black jutro', {friendly_name: 'Odbiór odpadów', [day(1)]: 'Black, Brown', [day(8)]: 'Green', [day(15)]: 'Black', [day(22)]: 'Green, Brown'});
+put('sensor.waste_collection_schedule_bin', 'Black jutro', {friendly_name: L('Odbiór odpadów', 'Waste collection'), [day(1)]: 'Black, Brown', [day(8)]: 'Green', [day(15)]: 'Black', [day(22)]: 'Green, Brown'});
 
 // --- sceny ---
-for (const [id, name] of [['wieczor', 'Wieczór'], ['film', 'Film'], ['dobranoc', 'Dobranoc'], ['wyjscie', 'Wyjście']]) put(`scene.${id}`, iso(now - (id === 'wieczor' ? 2 : 30) * H), {friendly_name: name});
+for (const [id, name] of [['wieczor', L('Wieczór', 'Evening')], ['film', L('Film', 'Movie')], ['dobranoc', L('Dobranoc', 'Good night')], ['wyjscie', L('Wyjście', 'Away')]]) put(`scene.${id}`, iso(now - (id === 'wieczor' ? 2 : 30) * H), {friendly_name: name});
 
 // --- F1 (F1 Sensor) ---
 const at = (days, h, m = 0) => { const t = new Date(); t.setDate(t.getDate() + days); t.setHours(h, m, 0, 0); return t.getTime(); };
@@ -119,50 +121,53 @@ put('sensor.f1_weather', '27', {circuit_locality: 'Yas Island', race_temperature
 
 const config = {
   type: 'custom:aura-domu', demo: true, language: q.get('lang') || 'auto', title: 'Aura domu', weather_entity: 'weather.home', climate_entity: 'climate.salon', power_entity: 'sensor.dom_moc',
-  scenes: [{entity: 'scene.wieczor', name: 'Wieczór'}, {entity: 'scene.film', name: 'Film'}, {entity: 'scene.dobranoc', name: 'Dobranoc'}, {entity: 'scene.wyjscie', name: 'Wyjście'}],
+  scenes: [{entity: 'scene.wieczor', name: L('Wieczór', 'Evening')}, {entity: 'scene.film', name: L('Film', 'Movie')}, {entity: 'scene.dobranoc', name: L('Dobranoc', 'Good night')}, {entity: 'scene.wyjscie', name: L('Wyjście', 'Away')}],
   rooms: [
-    {id: 'salon', name: 'Salon', subtitle: 'Ciepłe światło. Dobry odpoczynek.', temperature: 'sensor.salon_temperatura', humidity: 'sensor.salon_wilgotnosc',
-      lights: [{entity: 'light.salon_sufit', name: 'Sufit'}, {entity: 'switch.salon_lampa', name: 'Lampa podłogowa'}, {entity: 'switch.salon_tv_swiatlo', name: 'Światło TV'}],
-      climate: [{entity: 'climate.salon', name: 'Termostat'}], media: [{entity: 'media_player.salon_tv', name: 'Telewizor'}],
-      sensors: [{entity: 'sensor.salon_pm25', name: 'Pyły PM2.5', type: 'pm'}, {entity: 'binary_sensor.salon_okno', name: 'Okno', type: 'window'}],
-      devices: [{type: 'purifier', name: 'Oczyszczacz', entity: 'fan.oczyszczacz', pm25: 'sensor.salon_pm25', filter: 'sensor.oczyszczacz_filtr'}]},
-    {id: 'kuchnia', name: 'Kuchnia', subtitle: 'Serce domu.', temperature: 'sensor.kuchnia_temperatura', humidity: 'sensor.kuchnia_wilgotnosc',
-      lights: [{entity: 'switch.kuchnia_glowne', name: 'Światło główne'}, {entity: 'light.kuchnia_led', name: 'LED blat'}, {entity: 'switch.kuchnia_okap', name: 'Okap'}],
-      climate: [{entity: 'climate.kuchnia_glowica', name: 'Głowica'}], media: [{entity: 'media_player.kuchnia_glosnik', name: 'Głośnik'}],
-      sensors: [{entity: 'binary_sensor.kuchnia_okno', name: 'Okno', type: 'window'}, {entity: 'binary_sensor.kuchnia_zalanie', name: 'Wyciek pod zlewem', type: 'leak'}]},
-    {id: 'sypialnia', name: 'Sypialnia', subtitle: 'Cisza i spokój.', temperature: 'climate.sypialnia_klima',
-      lights: [{entity: 'switch.sypialnia_glowne', name: 'Światło'}, {entity: 'light.sypialnia_nocna', name: 'Lampka nocna'}],
-      climate: [{entity: 'climate.sypialnia_klima', name: 'Klimatyzacja'}]},
-    {id: 'dziecko', name: 'Pokój dziecka', subtitle: 'Przestrzeń do zabawy.', temperature: 'sensor.dziecko_temperatura', humidity: 'sensor.dziecko_wilgotnosc',
-      lights: [{entity: 'light.dziecko_led', name: 'LED'}, {entity: 'switch.dziecko_glowne', name: 'Światło główne'}],
-      climate: [{entity: 'climate.dziecko_glowica', name: 'Głowica'}], sensors: [{entity: 'binary_sensor.dziecko_okno', name: 'Okno', type: 'window'}]},
-    {id: 'lazienka', name: 'Łazienka', subtitle: 'Świeże powietrze.', temperature: 'sensor.lazienka_temperatura', humidity: 'sensor.lazienka_wilgotnosc',
-      lights: [{entity: 'switch.lazienka_glowne', name: 'Światło'}, {entity: 'switch.lazienka_wentylator', name: 'Wentylator', type: 'fan'}],
-      sensors: [{entity: 'binary_sensor.lazienka_ruch', name: 'Obecność', type: 'motion'}, {entity: 'binary_sensor.lazienka_zalanie', name: 'Wyciek · prysznic', type: 'leak'}]},
-    {id: 'pralnia', name: 'Pralnia', subtitle: 'Pranie pod kontrolą.',
-      sensors: [{entity: 'binary_sensor.pralnia_zalanie', name: 'Wyciek · pralka', type: 'leak'}],
-      devices: [{type: 'washer', name: 'Pralka', status: 'sensor.pralka_status', remaining: 'sensor.pralka_pozostalo', temperature: 'sensor.pralka_temperatura'}, {type: 'dryer', name: 'Suszarka', status: 'sensor.suszarka_status'}]},
+    {id: 'salon', name: L('Salon', 'Living room'), subtitle: L('Ciepłe światło. Dobry odpoczynek.', 'Warm light. Good rest.'), temperature: 'sensor.salon_temperatura', humidity: 'sensor.salon_wilgotnosc',
+      lights: [{entity: 'light.salon_sufit', name: L('Sufit', 'Ceiling')}, {entity: 'switch.salon_lampa', name: L('Lampa podłogowa', 'Floor lamp')}, {entity: 'switch.salon_tv_swiatlo', name: L('Światło TV', 'TV light')}],
+      climate: [{entity: 'climate.salon', name: L('Termostat', 'Thermostat')}], media: [{entity: 'media_player.salon_tv', name: L('Telewizor', 'TV')}],
+      sensors: [{entity: 'sensor.salon_pm25', name: L('Pyły PM2.5', 'PM2.5'), type: 'pm'}, {entity: 'binary_sensor.salon_okno', name: L('Okno', 'Window'), type: 'window'}],
+      devices: [{type: 'purifier', name: L('Oczyszczacz', 'Air purifier'), entity: 'fan.oczyszczacz', pm25: 'sensor.salon_pm25', filter: 'sensor.oczyszczacz_filtr'}]},
+    {id: 'kuchnia', name: L('Kuchnia', 'Kitchen'), subtitle: L('Serce domu.', 'Heart of the home.'), temperature: 'sensor.kuchnia_temperatura', humidity: 'sensor.kuchnia_wilgotnosc',
+      lights: [{entity: 'switch.kuchnia_glowne', name: L('Światło główne', 'Main light')}, {entity: 'light.kuchnia_led', name: L('LED blat', 'Worktop LED')}, {entity: 'switch.kuchnia_okap', name: L('Okap', 'Cooker hood')}],
+      climate: [{entity: 'climate.kuchnia_glowica', name: L('Głowica', 'Radiator valve')}], media: [{entity: 'media_player.kuchnia_glosnik', name: L('Głośnik', 'Speaker')}],
+      sensors: [{entity: 'binary_sensor.kuchnia_okno', name: L('Okno', 'Window'), type: 'window'}, {entity: 'binary_sensor.kuchnia_zalanie', name: L('Wyciek pod zlewem', 'Leak under the sink'), type: 'leak'}]},
+    {id: 'sypialnia', name: L('Sypialnia', 'Bedroom'), subtitle: L('Cisza i spokój.', 'Peace and quiet.'), temperature: 'climate.sypialnia_klima',
+      lights: [{entity: 'switch.sypialnia_glowne', name: L('Światło', 'Light')}, {entity: 'light.sypialnia_nocna', name: L('Lampka nocna', 'Bedside lamp')}],
+      climate: [{entity: 'climate.sypialnia_klima', name: L('Klimatyzacja', 'Air conditioner')}]},
+    {id: 'dziecko', name: L('Pokój dziecka', "Kids' room"), subtitle: L('Przestrzeń do zabawy.', 'Room to play.'), temperature: 'sensor.dziecko_temperatura', humidity: 'sensor.dziecko_wilgotnosc',
+      lights: [{entity: 'light.dziecko_led', name: 'LED'}, {entity: 'switch.dziecko_glowne', name: L('Światło główne', 'Main light')}],
+      climate: [{entity: 'climate.dziecko_glowica', name: L('Głowica', 'Radiator valve')}], sensors: [{entity: 'binary_sensor.dziecko_okno', name: L('Okno', 'Window'), type: 'window'}]},
+    {id: 'lazienka', name: L('Łazienka', 'Bathroom'), subtitle: L('Świeże powietrze.', 'Fresh air.'), temperature: 'sensor.lazienka_temperatura', humidity: 'sensor.lazienka_wilgotnosc',
+      lights: [{entity: 'switch.lazienka_glowne', name: L('Światło', 'Light')}, {entity: 'switch.lazienka_wentylator', name: L('Wentylator', 'Extractor fan'), type: 'fan'}],
+      sensors: [{entity: 'binary_sensor.lazienka_ruch', name: L('Obecność', 'Presence'), type: 'motion'}, {entity: 'binary_sensor.lazienka_zalanie', name: L('Wyciek · prysznic', 'Leak · shower'), type: 'leak'}]},
+    {id: 'pralnia', name: L('Pralnia', 'Laundry'), subtitle: L('Pranie pod kontrolą.', 'Laundry under control.'),
+      sensors: [{entity: 'binary_sensor.pralnia_zalanie', name: L('Wyciek · pralka', 'Leak · washer'), type: 'leak'}],
+      devices: [{type: 'washer', name: L('Pralka', 'Washer'), status: 'sensor.pralka_status', remaining: 'sensor.pralka_pozostalo', temperature: 'sensor.pralka_temperatura'}, {type: 'dryer', name: L('Suszarka', 'Dryer'), status: 'sensor.suszarka_status'}]},
   ],
-  climate: [{entity: 'climate.salon', name: 'Termostat · salon'}, {entity: 'climate.sypialnia_klima', name: 'Klimatyzacja · sypialnia'}],
-  heating_page: {source: 'climate.salon', source_name: 'Termostat', boiler_name: 'Kocioł', comfort: {main: 22, rooms: 21.5}, eco: {rooms: 18}, boost: 1,
-    rooms: [{name: 'Salon', climate: 'climate.salon', sub: 'Termostat', humidity: 'sensor.salon_wilgotnosc'}, {name: 'Kuchnia', climate: 'climate.kuchnia_glowica', humidity: 'sensor.kuchnia_wilgotnosc'}, {name: 'Pokój dziecka', climate: 'climate.dziecko_glowica', humidity: 'sensor.dziecko_wilgotnosc'}]},
+  climate: [{entity: 'climate.salon', name: L('Termostat · salon', 'Thermostat · living room')}, {entity: 'climate.sypialnia_klima', name: L('Klimatyzacja · sypialnia', 'Air conditioner · bedroom')}],
+  heating_page: {source: 'climate.salon', source_name: L('Termostat', 'Thermostat'), boiler_name: L('Kocioł', 'Boiler'), comfort: {main: 22, rooms: 21.5}, eco: {rooms: 18}, boost: 1,
+    rooms: [{name: L('Salon', 'Living room'), climate: 'climate.salon', sub: L('Termostat', 'Thermostat'), humidity: 'sensor.salon_wilgotnosc'}, {name: L('Kuchnia', 'Kitchen'), climate: 'climate.kuchnia_glowica', humidity: 'sensor.kuchnia_wilgotnosc'}, {name: L('Pokój dziecka', "Kids' room"), climate: 'climate.dziecko_glowica', humidity: 'sensor.dziecko_wilgotnosc'}]},
   energy_page: {power: 'sensor.dom_moc', el_today: 'sensor.prad_dzis', gas_today_kwh: 'sensor.gaz_dzis', gas_today_m3: 'sensor.gaz_m3', water_yday: 'sensor.woda_wczoraj',
-    devices: [{name: 'Pralka', today: 'sensor.pralka_energia', power: 'sensor.pralka_moc'}, {name: 'Lodówka', today: 'sensor.lodowka_energia'}]},
-  security_page: {guard: 'select.ochrona', guard_options: {Home: {name: 'W domu', desc: 'czujniki wejścia czuwają'}, Away: {name: 'Poza domem', desc: 'pełna ochrona'}, Disarmed: {name: 'Wyłączona', desc: 'ochrona wyłączona'}},
-    windows: [{entity: 'binary_sensor.salon_okno', name: 'Okno · salon'}, {entity: 'binary_sensor.kuchnia_okno', name: 'Okno · kuchnia'}, {entity: 'binary_sensor.dziecko_okno', name: 'Okno · pokój dziecka'}],
-    leaks: [{entity: 'binary_sensor.kuchnia_zalanie', name: 'Pod zlewem'}, {entity: 'binary_sensor.pralnia_zalanie', name: 'Pralka'}, {entity: 'binary_sensor.lazienka_zalanie', name: 'Prysznic'}],
-    co: [{entity: 'binary_sensor.czujnik_czadu', name: 'Czujnik czadu'}],
-    motion: [{entity: 'binary_sensor.lazienka_ruch', name: 'Łazienka'}, {entity: 'binary_sensor.korytarz_ruch', name: 'Korytarz'}],
-    cameras: [{name: 'Wejście', motion: 'binary_sensor.wejscie_ruch', person: 'binary_sensor.wejscie_osoba'}],
-    batteries: [{entity: 'sensor.okno_kuchnia_bateria', name: 'Okno · kuchnia'}, {entity: 'sensor.okno_salon_bateria', name: 'Okno · salon'}, {entity: 'sensor.czujnik_czadu_bateria', name: 'Czujnik czadu'}, {entity: 'sensor.zalanie_pralka_bateria', name: 'Wyciek · pralka'}]},
-  bins: {types: {czarny: 'odpady zmieszane', 'brązowy': 'bio', zielony: 'recykling'}},
+    devices: [{name: L('Pralka', 'Washer'), today: 'sensor.pralka_energia', power: 'sensor.pralka_moc'}, {name: L('Lodówka', 'Fridge'), today: 'sensor.lodowka_energia'}]},
+  security_page: {guard: 'select.ochrona', guard_options: {Home: {name: L('W domu', 'Home'), desc: L('czujniki wejścia czuwają', 'entry sensors armed')}, Away: {name: L('Poza domem', 'Away'), desc: L('pełna ochrona', 'full protection')}, Disarmed: {name: L('Wyłączona', 'Off'), desc: L('ochrona wyłączona', 'protection off')}},
+    windows: [{entity: 'binary_sensor.salon_okno', name: L('Okno · salon', 'Window · living room')}, {entity: 'binary_sensor.kuchnia_okno', name: L('Okno · kuchnia', 'Window · kitchen')}, {entity: 'binary_sensor.dziecko_okno', name: L('Okno · pokój dziecka', "Window · kids' room")}],
+    leaks: [{entity: 'binary_sensor.kuchnia_zalanie', name: L('Pod zlewem', 'Under the sink')}, {entity: 'binary_sensor.pralnia_zalanie', name: L('Pralka', 'Washer')}, {entity: 'binary_sensor.lazienka_zalanie', name: L('Prysznic', 'Shower')}],
+    co: [{entity: 'binary_sensor.czujnik_czadu', name: L('Czujnik czadu', 'CO detector')}],
+    motion: [{entity: 'binary_sensor.lazienka_ruch', name: L('Łazienka', 'Bathroom')}, {entity: 'binary_sensor.korytarz_ruch', name: L('Korytarz', 'Hallway')}],
+    cameras: [{name: L('Wejście', 'Entrance'), motion: 'binary_sensor.wejscie_ruch', person: 'binary_sensor.wejscie_osoba'}],
+    batteries: [{entity: 'sensor.okno_kuchnia_bateria', name: L('Okno · kuchnia', 'Window · kitchen')}, {entity: 'sensor.okno_salon_bateria', name: L('Okno · salon', 'Window · living room')}, {entity: 'sensor.czujnik_czadu_bateria', name: L('Czujnik czadu', 'CO detector')}, {entity: 'sensor.zalanie_pralka_bateria', name: L('Wyciek · pralka', 'Leak · washer')}]},
+  bins: {types: {czarny: L('odpady zmieszane', 'general waste'), 'brązowy': L('bio', 'food & garden'), zielony: L('recykling', 'recycling')}},
 };
+
+return {S, config, hourly, daily};
+}
 
 const el = document.createElement('aura-domu');
 let hass;
 const update = changes => { const states = {...hass.states}; for (const [id, patch] of Object.entries(changes)) states[id] = {...states[id], ...patch, attributes: {...states[id].attributes, ...(patch.attributes || {})}, last_changed: iso(Date.now())}; hass = {...hass, states}; el.hass = hass; };
 const ids = v => (Array.isArray(v) ? v : [v]).filter(Boolean);
-hass = {states: S, entities: {}, devices: {}, areas: {}, user: {name: 'Ania', is_admin: true}, connected: true,
+hass = {states: {}, entities: {}, devices: {}, areas: {}, user: {name: 'Ania', is_admin: true}, connected: true,
   config: {time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone, unit_system: {temperature: '°C'}, version: 'demo'},
   callWS: async msg => {
     if (msg.type !== 'history/history_during_period') return {};
@@ -171,7 +176,7 @@ hass = {states: S, entities: {}, devices: {}, areas: {}, user: {name: 'Ania', is
     return {[msg.entity_ids[0]]: pts};
   },
   callApi: async () => [],
-  connection: {subscribeMessage: async (cb, msg) => { setTimeout(() => cb({forecast: msg.forecast_type === 'hourly' ? hourly : daily}), 30); return () => {}; }},
+  connection: {subscribeMessage: async (cb, msg) => { setTimeout(() => cb({forecast: msg.forecast_type === 'hourly' ? data.hourly : data.daily}), 30); return () => {}; }},
   callService: async (domain, service, data = {}) => {
     const c = {};
     for (const id of ids(data.entity_id)) {
@@ -187,9 +192,24 @@ hass = {states: S, entities: {}, devices: {}, areas: {}, user: {name: 'Ania', is
     }
     update(c);
   }};
-el.setConfig(config);
+let data = build('pl');
+el.setConfig(data.config);
+if (el.lang === 'en') { data = build('en'); el.setConfig(data.config); }
 if (forcedTheme) el.themeMode = forcedTheme;
+hass.states = data.S;
+hass.user.name = el.lang === 'en' ? 'Anna' : 'Ania';
+document.documentElement.lang = el.lang;
 el.hass = hass;
+// przełącznik języka w Ustawieniach: wymyślony dom też zmienia język
+let built = el.lang;
+setInterval(() => {
+  if (el.lang === built) return;
+  built = el.lang; data = build(built);
+  el.setConfig(data.config);
+  hass = {...hass, states: data.S, user: {...hass.user, name: built === 'en' ? 'Anna' : 'Ania'}};
+  el.hass = hass;
+  document.documentElement.lang = built;
+}, 400);
 document.getElementById('host').append(el);
 window.auraDemo = {el, update};
 </script>
