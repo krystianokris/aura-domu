@@ -11,8 +11,9 @@
 <script type="module">
 // Demo Aura domu: wymyślony dom, bez Home Assistanta. Przyciski zmieniają stan tylko w przeglądarce.
 const q = new URLSearchParams(location.search);
-if (q.get('theme')) localStorage.setItem('aura-domu:theme', q.get('theme'));
-if ((q.get('theme') || localStorage.getItem('aura-domu:theme')) === 'dark') document.body.classList.add('dark');
+// ?theme=light|dark ustawia motyw tylko dla tej strony (bez zapisu, żeby kilka ramek demo mogło mieć różne motywy)
+const forcedTheme = ['light', 'dark'].includes(q.get('theme')) ? q.get('theme') : null;
+if ((forcedTheme || localStorage.getItem('aura-domu:theme')) === 'dark') document.body.classList.add('dark');
 await import(q.get('src') || '../dist/aura-domu.js');
 
 const now = Date.now(), H = 3600e3, D = 864e5;
@@ -187,6 +188,7 @@ hass = {states: S, entities: {}, devices: {}, areas: {}, user: {name: 'Ania', is
     update(c);
   }};
 el.setConfig(config);
+if (forcedTheme) el.themeMode = forcedTheme;
 el.hass = hass;
 document.getElementById('host').append(el);
 window.auraDemo = {el, update};
