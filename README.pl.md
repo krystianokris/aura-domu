@@ -77,7 +77,7 @@ HACS sam doda zasób i będzie informował o nowych wersjach.
 
 ### Ręcznie
 1. Pobierz `aura-domu.js` z [najnowszego wydania](../../releases/latest) i skopiuj do `/config/www/aura-domu.js`.
-2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.12.0`, typ **Moduł JavaScript**.
+2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.12.1`, typ **Moduł JavaScript**.
 3. Przy każdej aktualizacji zmień `?v=` na nowy numer — przeglądarka trzyma pliki z `/local` nawet 31 dni.
 
 ### Dodanie pulpitu

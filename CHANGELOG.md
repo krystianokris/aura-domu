@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.1 — poprawka menu zakładek
+
+- Naprawione „zawieszanie się” menu: bez kiosk-mode, po pierwszej zmianie zakładki karta przewijała się pod pasek Home Assistanta i nie dało się kliknąć kolejnej zakładki. Teraz karta zatrzymuje się pod paskiem HA.
+- Fixed tabs getting "stuck": without kiosk-mode, switching tabs scrolled the card under the Home Assistant header, so the next tab could not be clicked.
+
 ## 0.12.0 — kamery w pokojach
 
 - Kamery w pokojach: podgląd z kamery (odświeżany co 30 s), stuknięcie otwiera obraz na żywo w HA. W trybie automatycznym kamery z obszarów pojawiają się same, w pokoju i na zakładce Ochrona; we własnej konfiguracji lista `cameras` w pokoju albo `entity` w `security_page.cameras`.
