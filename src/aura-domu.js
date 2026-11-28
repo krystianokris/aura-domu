@@ -1,8 +1,8 @@
-// Aura domu — karta Home Assistanta · v0.9.2
+// Aura domu — karta Home Assistanta · v0.9.3
 // https://github.com/krystianokris/aura-domu · licencja MIT
 // Instalacja: HACS (repozytorium niestandardowe, kategoria Dashboard) albo ręcznie:
 //   1) skopiuj dist/aura-domu.js do /config/www/aura-domu.js
-//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.9.2 (Moduł JavaScript)
+//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.9.3 (Moduł JavaScript)
 //   3) pulpit z widokiem „Panel” i kartą `type: custom:aura-domu`
 // Pełny przykład konfiguracji: examples/aura-domu.yaml i README.
 const AURA_CSS = `
@@ -623,7 +623,9 @@ function drawing(key,room=false) {
 }
 const fold = value => String(value ?? '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ł/g,'l');
 const available = row => row && !['unknown','unavailable'].includes(row.state);
-const format = (value, unit = '') => value == null || value === '' || !Number.isFinite(Number(value)) ? '—' : `${number.format(Number(value))}${unit ? (unit === '°' ? '' : ' ') + unit : ''}`;
+// liczba z jednostką; jednostka pochodzi z atrybutów HA, więc usuwamy z niej znaki HTML
+// (wynik i tak trafia do HTML przez escapeHTML — to dodatkowe zabezpieczenie)
+const format = (value, unit = '') => { const u = String(unit ?? '').replace(/[<>&"'`]/g,''); return value == null || value === '' || !Number.isFinite(Number(value)) ? '—' : `${number.format(Number(value))}${u ? (u === '°' ? '' : ' ') + u : ''}`; };
 function roomIcon(name) {
   const plain = fold(name);
   const styles = [[/salon|living|lounge|family/,'sofa'],[/kuch|kitchen|dining|jadal/,'kitchen'],[/sypial|bed|dziec|kid|child/,'bed'],[/lazien|bath|toilet|(^| )wc( |$)/,'bath'],[/pral|laundry|utility/,'wash'],[/hall|korytar|przedpok/,'door'],[/ogrod|garden|outside/,'tree'],[/garaz|garage/,'home']];
@@ -1213,7 +1215,7 @@ class AuraDomu extends HTMLElement {
     const pence = this.priceInPence(price);
     const cheap = this.config?.price_cheap ?? 15, dear = this.config?.price_expensive ?? 25;
     const priceLevel = pence != null && pence < cheap ? ['var(--good)','tanio'] : pence != null && pence < dear ? ['var(--warn)','średnio'] : ['var(--bad)','drogo'];
-    const energyBody = `<span class="value">${power || '—'}</span>${this.spark()}${price && pence != null ? `<span class="price" style="color:${priceLevel[0]}"><i></i>${escapeHTML(format(pence,'p/kWh'))} · ${priceLevel[1]}</span>` : `<small>${escapeHTML(energy?.name || 'Brak czujnika mocy')}</small>`}`;
+    const energyBody = `<span class="value">${escapeHTML(power || '—')}</span>${this.spark()}${price && pence != null ? `<span class="price" style="color:${priceLevel[0]}"><i></i>${escapeHTML(format(pence,'p/kWh'))} · ${priceLevel[1]}</span>` : `<small>${escapeHTML(energy?.name || 'Brak czujnika mocy')}</small>`}`;
 
     const missing = security.filter(row=>!available(row));
     const openingsMissing = openings.filter(row=>!available(row)).length;
@@ -1344,7 +1346,19 @@ class AuraDomu extends HTMLElement {
       default: return true;
     }
   }
-  hiddenTabs() { return Array.isArray(this.config?.hidden_tabs) ? this.config.hidden_tabs : []; }
+  // ukryte zakładki: `hidden_tabs` z konfiguracji to ustawienie domyślne, a przełączniki w Ustawieniach
+  // zapisują wybór tego urządzenia w localStorage (jak motyw) — karta nigdy nie zapisuje konfiguracji pulpitu
+  tabPrefs() { try { return JSON.parse(localStorage.getItem('aura-domu:tabs') || '{}') || {}; } catch { return {}; } }
+  hiddenTabs() {
+    const base = Array.isArray(this.config?.hidden_tabs) ? this.config.hidden_tabs : [], prefs = this.tabPrefs();
+    return Object.keys(tabNames).filter(key=>typeof prefs[key] === 'boolean' ? prefs[key] : base.includes(key));
+  }
+  toggleTab(key) {
+    const prefs = this.tabPrefs();
+    prefs[key] = !this.hiddenTabs().includes(key);
+    try { localStorage.setItem('aura-domu:tabs',JSON.stringify(prefs)); } catch {}
+    this.queue();
+  }
   tabVisible(key) { return this.tabAvailable(key) && !this.hiddenTabs().includes(key); }
 
   render() {
@@ -1895,7 +1909,7 @@ class AuraDomu extends HTMLElement {
       const d = pts.map(([x,y],i)=>`${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join('');
       const fmt = new Intl.DateTimeFormat('pl-PL',{hour:'2-digit',minute:'2-digit',timeZone:tz});
       hours = `<div class="hours"><div class="hours-track" style="width:${hourly.length * step - 10}px"><svg class="temp-curve" width="${hourly.length * step - 10}" viewBox="0 0 ${hourly.length * step - 10} 64"><path class="line" d="${d}"/>${pts.map(([x,y])=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"/>`).join('')}</svg>
-        <div class="hour-row">${hourly.map((h,i)=>`<div class="hour${i === 0 ? ' now' : ''}"><time>${i === 0 ? 'Teraz' : fmt.format(new Date(h.datetime))}</time>${icon(weatherGlyph[h.condition] || 'weather')}<b>${deg(h.temperature)}</b><small>${Number(h.precipitation) > 0 ? format(h.precipitation,'mm') : h.precipitation_probability ? `${h.precipitation_probability}%` : ''}</small></div>`).join('')}</div></div></div>`;
+        <div class="hour-row">${hourly.map((h,i)=>`<div class="hour${i === 0 ? ' now' : ''}"><time>${i === 0 ? 'Teraz' : fmt.format(new Date(h.datetime))}</time>${icon(weatherGlyph[h.condition] || 'weather')}<b>${deg(h.temperature)}</b><small>${Number(h.precipitation) > 0 ? format(h.precipitation,'mm') : Number(h.precipitation_probability) > 0 ? `${format(h.precipitation_probability)}%` : ''}</small></div>`).join('')}</div></div></div>`;
     }
     let days = '';
     if (daily.length) {
@@ -2012,7 +2026,7 @@ class AuraDomu extends HTMLElement {
       return `<article class="tile heat-room${x.flow ? ' flow active' : ''}${x.wants && !x.flow ? ' wait' : ''}"><span class="label">${icon(roomIcon(r.name))}${escapeHTML(r.name)}<small>${escapeHTML(sub)}</small></span><div class="card-body">
         ${available(x.row) ? this.climateBody(x.row) : '<span class="value">—</span>'}
         <span class="heat-note">${escapeHTML(x.note)}${hum != null ? ` · wilgotność ${format(hum)}%` : ''}</span>
-        ${ft != null || fl ? `<span class="floor${flOn ? ' on' : ''}">${icon('thermo')}Podłogówka${ft != null ? ` ${format(ft,unit)}` : ''} · ${flOn ? 'włączona' : 'wył.'}</span>` : ''}</div></article>`;
+        ${ft != null || fl ? `<span class="floor${flOn ? ' on' : ''}">${icon('thermo')}Podłogówka${ft != null ? ` ${escapeHTML(format(ft,unit))}` : ''} · ${flOn ? 'włączona' : 'wył.'}</span>` : ''}</div></article>`;
     }).join('') || '<p class="empty">Dodaj pokoje w „heating_page → rooms”.</p>';
     const gasKwh = this.row(p.gas_kwh || this.config?.energy_page?.gas_today_kwh), gasCost = this.row(p.gas_cost || this.config?.energy_page?.gas_cost);
     const cur = this.heatCurrent();
@@ -2049,17 +2063,17 @@ class AuraDomu extends HTMLElement {
     const toggles = Object.entries(tabNames).map(([key,name])=>{
       const avail = this.tabAvailable(key), on = avail && !hidden.includes(key);
       return `<div class="f1-row${on ? '' : ' done'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"><path d="${glyphs[{rooms:'rooms',climate:'thermo',heating:'fire',weather:'weather',energy:'bolt',security:'shield',bins:'bin',f1:'flag'}[key]]}"/></svg><div><b>${escapeHTML(name)}</b><small>${avail ? (on ? 'widoczna w menu' : 'ukryta') : 'brak danych w Home Assistant'}</small></div>
-        <button class="toggle" data-act="tab-toggle" data-tab="${key}" aria-pressed="${on}" aria-label="${on ? 'Ukryj' : 'Pokaż'} zakładkę ${escapeHTML(name)}" ${!admin || !avail || this.savingTabs ? 'disabled' : ''}>${icon('power')}</button></div>`;
+        <button class="toggle" data-act="tab-toggle" data-tab="${key}" aria-pressed="${on}" aria-label="${on ? 'Ukryj' : 'Pokaż'} zakładkę ${escapeHTML(name)}" ${!avail ? 'disabled' : ''}>${icon('power')}</button></div>`;
     }).join('');
-    const tabs = `<article class="tile wide-tile"><span class="label">${icon('rooms')}Zakładki w menu</span><div class="card-body"><p class="note-line">${admin ? 'Wybierz, które zakładki mają być widoczne. Zmiana zapisuje się w konfiguracji pulpitu i obowiązuje na wszystkich urządzeniach. Dom i Ustawienia są zawsze widoczne.' : 'Zakładki może zmieniać tylko administrator.'}</p><div class="tab-toggles">${toggles}</div></div></article>`;
-    // gotowa konfiguracja: to, co karta teraz pokazuje, jako YAML do skopiowania albo zapisania w pulpicie
+    const tabs = `<article class="tile wide-tile"><span class="label">${icon('rooms')}Zakładki w menu</span><div class="card-body"><p class="note-line">Wybierz, które zakładki mają być widoczne na tym urządzeniu. Wybór zapamiętuje przeglądarka, jak motyw. Dla wszystkich urządzeń ustawisz to w konfiguracji karty (<code>hidden_tabs</code>). Dom i Ustawienia są zawsze widoczne.</p><div class="tab-toggles">${toggles}</div></div></article>`;
+    // gotowa konfiguracja: to, co karta teraz pokazuje, jako YAML do skopiowania (karta nie zapisuje pulpitu sama)
     const eff = this.effective(), m = this.getModel();
     const yaml = `type: custom:aura-domu\n${toYaml(eff)}`;
     const autoParts = [m.autoRooms && 'pokoje', !this.config?.security_page && !this.config?.security && eff.security_page && 'ochrona', !this.config?.heating_page && eff.heating_page && 'ogrzewanie'].filter(Boolean);
     const count = eff.rooms.reduce((n,r)=>n + ['lights','climate','media','sensors'].reduce((k,key)=>k + listOf(r[key]).length,0),0);
     const gen = `<article class="tile wide-tile"><span class="label">${icon('spark')}Gotowa konfiguracja</span><div class="card-body">
-      <p class="note-line">${autoParts.length ? `Karta sama dobrała z obszarów Home Assistanta: ${escapeHTML(andList(autoParts))} (${plN(eff.rooms.length,'pokój','pokoje','pokoi')}, ${plN(count,'encja','encje','encji')}). Skopiuj YAML, popraw nazwy i dopisz urządzenia albo zapisz go w pulpicie jednym przyciskiem.` : 'Pulpit używa Twojej konfiguracji. Poniżej to, co karta z niej odczytała.'}</p>
-      <div class="device-actions"><button class="mini" data-act="gen-toggle" aria-pressed="${Boolean(this.showGen)}">${icon('arrow')}${this.showGen ? 'Ukryj YAML' : 'Pokaż YAML'}</button><button class="mini" data-act="gen-copy">${icon('spark')}Kopiuj</button>${admin && autoParts.length ? `<button class="mini${this.genArm ? ' arm' : ''}" data-act="gen-save" ${this.savingTabs ? 'disabled' : ''}>${icon('power')}${this.genArm ? 'Stuknij ponownie, aby zapisać' : 'Zapisz w pulpicie'}</button>` : ''}</div>
+      <p class="note-line">${autoParts.length ? `Karta sama dobrała z obszarów Home Assistanta: ${escapeHTML(andList(autoParts))} (${plN(eff.rooms.length,'pokój','pokoje','pokoi')}, ${plN(count,'encja','encje','encji')}). Skopiuj YAML, wklej go w edytorze pulpitu (⋮ → Edytuj pulpit → ⋮ → Edytor kodu) w miejsce tej karty, popraw nazwy i dopisz urządzenia.` : 'Pulpit używa Twojej konfiguracji. Poniżej to, co karta z niej odczytała.'}</p>
+      <div class="device-actions"><button class="mini" data-act="gen-toggle" aria-pressed="${Boolean(this.showGen)}">${icon('arrow')}${this.showGen ? 'Ukryj YAML' : 'Pokaż YAML'}</button><button class="mini" data-act="gen-copy">${icon('spark')}Kopiuj</button></div>
       ${this.showGen ? `<pre class="gen-yaml">${escapeHTML(yaml)}</pre>` : ''}</div></article>`;
     this.genYaml = yaml;
     this.setHTML('#settings-body',`<div class="cards">${screen}${dash}${ha}${tabs}${gen}</div>`);
@@ -2072,42 +2086,6 @@ class AuraDomu extends HTMLElement {
       this.showGen = true; this.queue();
       this.toast('Przeglądarka nie pozwala na schowek. Zaznacz YAML poniżej i skopiuj ręcznie.');
     }
-  }
-
-  // zapis dobranej automatycznie konfiguracji do karty w pulpicie (tylko brakujące sekcje)
-  saveGenerated() {
-    const eff = this.effective(), add = {};
-    if (this.getModel().autoRooms) add.rooms = eff.rooms;
-    if (!this.config?.security_page && !this.config?.security && eff.security_page) add.security_page = eff.security_page;
-    if (!this.config?.heating_page && eff.heating_page) add.heating_page = eff.heating_page;
-    this.saveCardConfig(add,'Zapisano konfigurację w pulpicie. Możesz ją teraz poprawiać w edytorze YAML.');
-  }
-
-  // ukryte zakładki zapisywane w konfiguracji pulpitu (karta custom:aura-domu), jak hidden_tabs w Home Pulse
-  saveHiddenTabs(list) { this.saveCardConfig({hidden_tabs:list.length ? list : undefined},'Zapisano w konfiguracji pulpitu'); }
-
-  // zmiana kluczy karty custom:aura-domu w konfiguracji pulpitu (undefined = usuń klucz); tylko administrator
-  saveCardConfig(patch,okMsg) {
-    const next = {...this.config};
-    for (const [k,v] of Object.entries(patch)) { if (v === undefined) delete next[k]; else next[k] = v; }
-    this.config = next;
-    this.invalidate();
-    this.queue();
-    this.saveChain = (this.saveChain || Promise.resolve()).then(async ()=>{
-      this.savingTabs = true; this.queue();
-      try {
-        const path = location.pathname.split('/')[1], urlPath = path === 'lovelace' ? null : path;
-        const cfg = await this._hass.callWS({type:'lovelace/config',url_path:urlPath});
-        let found = false;
-        const apply = c => { for (const [k,v] of Object.entries(patch)) { if (v === undefined) delete c[k]; else c[k] = JSON.parse(JSON.stringify(v)); } };
-        const walk = cards => (cards || []).forEach(c=>{ if (found || !c) return; if (c.type === 'custom:aura-domu') { apply(c); found = true; return; } walk(c.cards); });
-        (cfg.views || []).forEach(v=>{ walk(v.cards); (v.sections || []).forEach(s=>walk(s.cards)); });
-        if (!found) throw new Error('no card');
-        await this._hass.callWS({type:'lovelace/config/save',url_path:urlPath,config:cfg});
-        this.toast(okMsg);
-      } catch { this.toast('Nie udało się zapisać. Zmiana wymaga konta administratora.'); }
-      this.savingTabs = false; this.queue();
-    });
   }
 
   // pełne przejście: kiosk-mode zostawia ukryte menu HA po nawigacji bez przeładowania,
@@ -2162,11 +2140,7 @@ class AuraDomu extends HTMLElement {
     if (act === 'heat-mode') void this.heatMode(button.dataset.mode);
     if (act === 'gen-toggle') { this.showGen = !this.showGen; this.queue(); }
     if (act === 'gen-copy') void this.copyText(this.genYaml);
-    if (act === 'gen-save') {
-      if (!this.genArm) { this.genArm = true; clearTimeout(this.genArmTimer); this.genArmTimer = setTimeout(()=>{ this.genArm = false; this.queue(); },6000); this.queue(); }
-      else { this.genArm = false; clearTimeout(this.genArmTimer); this.saveGenerated(); }
-    }
-    if (act === 'tab-toggle') { const k = button.dataset.tab, h = this.hiddenTabs(); this.saveHiddenTabs(h.includes(k) ? h.filter(x=>x !== k) : [...h,k]); }
+    if (act === 'tab-toggle') this.toggleTab(button.dataset.tab);
     if (act === 'orb') this.ui.event ? this.showEvent(null) : this.showEvent(this.events[0] || {title:'Stan domu',text:this.snapshot.brief,kind:'status'});
     if (act === 'power' && this.snapshot.power) this.showEvent({text:'Chwilowy pobór mocy domu',kind:'energy',livePower:true});
     if (act === 'close-event') this.showEvent(null);
@@ -2304,7 +2278,7 @@ class AuraDomu extends HTMLElement {
   }
 }
 
-console.info('%c AURA-DOMU %c v0.9.2 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
+console.info('%c AURA-DOMU %c v0.9.3 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
 if (!customElements.get('aura-domu')) {
   customElements.define('aura-domu',AuraDomu);
   window.customCards = window.customCards || [];

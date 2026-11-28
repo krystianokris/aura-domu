@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.3 — poprawki z przeglądu HACS
+
+- Karta nie zapisuje już konfiguracji pulpitu: zniknął przycisk „Zapisz w pulpicie”. Gotową konfigurację kopiujesz przyciskiem **Kopiuj** i wklejasz w edytorze pulpitu.
+- Widoczność zakładek zapamiętuje przeglądarka na danym urządzeniu (jak motyw), dla każdego użytkownika. `hidden_tabs` w konfiguracji karty ustawia domyślne ukrycie dla wszystkich urządzeń.
+- Jednostki i wartości z encji są zawsze bezpiecznie wstawiane do HTML (moc, temperatura podłogi, opady).
+
 ## 0.9.2 — dokumentacja i demo
 
 - README po polsku i angielsku ze zrzutami każdej zakładki, opisem wszystkich opcji i FAQ.

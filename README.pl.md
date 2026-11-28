@@ -62,7 +62,7 @@ Z integracji [F1 Sensor](https://github.com/Nicxe/f1_sensor): odliczanie do wyś
 ![Formuła 1](docs/screenshots/f1.webp)
 
 ### Ustawienia
-Motyw (jasny, ciemny, jak w systemie), **włączanie i wyłączanie zakładek**, **gotowa konfiguracja** do skopiowania albo zapisania i wejście do ustawień Home Assistanta.
+Motyw (jasny, ciemny, jak w systemie), **włączanie i wyłączanie zakładek** (zapamiętuje je każde urządzenie, jak motyw; `hidden_tabs` ustawia domyślne dla wszystkich), **gotowa konfiguracja** do skopiowania i wejście do ustawień Home Assistanta.
 
 ![Ustawienia](docs/screenshots/settings.webp)
 
@@ -77,7 +77,7 @@ HACS sam doda zasób i będzie informował o nowych wersjach.
 
 ### Ręcznie
 1. Pobierz `aura-domu.js` z [najnowszego wydania](../../releases/latest) i skopiuj do `/config/www/aura-domu.js`.
-2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.9.2`, typ **Moduł JavaScript**.
+2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.9.3`, typ **Moduł JavaScript**.
 3. Przy każdej aktualizacji zmień `?v=` na nowy numer — przeglądarka trzyma pliki z `/local` nawet 31 dni.
 
 ### Dodanie pulpitu
@@ -109,8 +109,7 @@ Samo `type: custom:aura-domu` wystarczy, żeby zobaczyć cały pulpit. Karta bud
 ### Gotowa konfiguracja
 W zakładce **Ustawienia → Gotowa konfiguracja** zobaczysz wszystko, co karta dobrała, jako YAML:
 
-- **Kopiuj** — wklej do edytora pulpitu i dopasuj,
-- **Zapisz w pulpicie** — dwa stuknięcia (tylko administrator) i karta od razu korzysta z tej konfiguracji.
+- **Kopiuj** — wklej w edytorze YAML pulpitu (edycja pulpitu → ⋮) i dopasuj.
 
 Potem zostaje tylko poprawić nazwy, dopisać urządzenia (pralka, drukarka, kuweta…) i usunąć to, czego nie chcesz.
 
@@ -200,7 +199,7 @@ Do ustawień HA wchodzisz wtedy z zakładki **Ustawienia** karty. Żeby edytowa�
 
 **Pogoda pokazuje „pochmurno”, a pada.** Integracje pogody (np. met.no) to prognoza, nie pomiar. Karta bierze opady z prognozy na bieżącą godzinę, ale czujnik deszczu dałby dokładny stan.
 
-**Czy karta coś zmienia w HA sama?** Nie. Steruje tylko tym, co klikniesz. Zmiana trybu ogrzewania i zapis konfiguracji wymagają drugiego stuknięcia.
+**Czy karta coś zmienia w HA sama?** Nie. Steruje tylko tym, co klikniesz. Zmiana trybu ogrzewania wymaga drugiego stuknięcia. Karta nigdy nie zmienia konfiguracji Twojego pulpitu.
 
 ## Opinie i propozycje
 To wersja beta — każda uwaga pomaga: [zgłoś błąd albo zaproponuj zmianę](../../issues/new/choose). Przy błędzie dołącz wersję karty (konsola przeglądarki pokazuje `AURA-DOMU v…`), wersję HA i fragment konfiguracji — bez haseł i tokenów.

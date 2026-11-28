@@ -62,7 +62,7 @@ From [F1 Sensor](https://github.com/Nicxe/f1_sensor): race countdown, the weeken
 ![Formula 1](docs/screenshots/f1.webp)
 
 ### Ustawienia (Settings)
-Theme (light, dark, system), **show / hide tabs**, a **ready-made configuration** to copy or save, and a link to Home Assistant settings.
+Theme (light, dark, system), **show / hide tabs** (remembered on each device, like the theme; set `hidden_tabs` for a default everywhere), a **ready-made configuration** to copy, and a link to Home Assistant settings.
 
 ![Settings](docs/screenshots/settings.webp)
 
@@ -75,7 +75,7 @@ Theme (light, dark, system), **show / hide tabs**, a **ready-made configuration*
 
 ### Manual
 1. Download `aura-domu.js` from the [latest release](../../releases/latest) to `/config/www/aura-domu.js`.
-2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.9.2`, type **JavaScript module**.
+2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.9.3`, type **JavaScript module**.
 3. Change `?v=` after every update — browsers cache `/local` files for up to 31 days.
 
 ### Add the dashboard
@@ -102,7 +102,7 @@ views:
 
 > Assign your devices to areas (**Settings → Areas**) and the rooms build themselves.
 
-**Ustawienia → Gotowa konfiguracja** (Settings → Ready configuration) shows everything the card picked as YAML: **Kopiuj** (Copy) to paste into the dashboard editor, or **Zapisz w pulpicie** (Save to dashboard, two taps, admins only). Then just rename things, add devices (washer, printer, litter box…) and remove what you don't need.
+**Ustawienia → Gotowa konfiguracja** (Settings → Ready configuration) shows everything the card picked as YAML: **Kopiuj** (Copy) and paste it into the dashboard editor (**Edit dashboard → ⋮ → Raw configuration editor**). Then just rename things, add devices (washer, printer, litter box…) and remove what you don't need.
 
 ## Configuration
 
@@ -185,7 +185,7 @@ HA settings are then reached from the card's **Ustawienia** tab. To edit the das
 
 **Too much or too little in a room.** In zero-config mode the card uses your areas. Copy the ready configuration, remove what you don't need and add what is missing.
 
-**Does the card change anything on its own?** No. It only controls what you tap; heating modes and saving the configuration need a second tap.
+**Does the card change anything on its own?** No. It only controls what you tap, and changing a heating mode needs a second tap. It never edits your dashboard configuration.
 
 ## Feedback
 This is a beta — every comment helps: [report a bug or suggest a change](../../issues/new/choose). With a bug, please include the card version (the browser console shows `AURA-DOMU v…`), your HA version and the relevant part of your config, without passwords or tokens.
