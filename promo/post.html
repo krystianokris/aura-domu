@@ -78,6 +78,14 @@
 <script>
   const q = new URLSearchParams(location.search), wide = q.get('format') === 'wide';
   document.getElementById('stage').classList.add(wide ? 'wide' : 'post');
+  // ?lang=en — napisy grafiki po angielsku (interfejs na ekranach zostaje polski)
+  if (q.get('lang') === 'en') {
+    document.documentElement.lang = 'en';
+    document.querySelector('h1').innerHTML = 'Your home<br>on one screen';
+    document.querySelector('.sub').textContent = wide ? 'A free, full-screen dashboard for Home Assistant.' : 'A full-screen dashboard for Home Assistant. Free and open source, for wall tablets and phones.';
+    document.querySelector('.chips').innerHTML = ['Rooms', 'Climate', 'Heating', 'Weather', 'Energy', 'Security', 'Bins'].map(t => `<span class="chip">${t}</span>`).join('') + '<span class="chip"><b>F1</b> live</span>';
+    document.querySelector('.foot div').innerHTML = '<b>github.com/krystianokris/aura-domu</b>live demo: krystianokris.github.io/aura-domu/demo';
+  }
   // ekrany: żywe demo w iframe, renderowane w pełnym rozmiarze i pomniejszone
   const fit = (id, w, h, src) => { const f = document.getElementById(id), box = f.parentElement; f.width = w; f.height = h; f.src = src;
     const s = box.clientWidth / w; f.style.transform = `scale(${s})`; box.style.height = `${Math.round(h * s)}px`; };
