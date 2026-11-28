@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <defs>
+    <linearGradient id="w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8d2c8"/><stop offset="1" stop-color="#c4bdb1"/></linearGradient>
+    <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9bfd0"/><stop offset="1" stop-color="#dfe6ea"/></linearGradient>
+    <radialGradient id="lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".75"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#w)"/>
+  <path d="M0 262 L640 250 L640 360 L0 360z" fill="#9c8670"/>
+  <rect x="380" y="56" width="170" height="150" rx="4" fill="url(#win)"/><path d="M465 56v150M380 131h170" stroke="#f3f1ec" stroke-width="5"/>
+  <path d="M372 52h186" stroke="#7a6f66" stroke-width="4"/><path d="M376 52v176M554 52v176" stroke="#b9a99a" stroke-width="10" opacity=".6"/>
+  <circle cx="120" cy="150" r="90" fill="url(#lamp)"/>
+  <path d="M100 110h40l-8-34h-24z" fill="#efe2c9"/><path d="M120 110v150M104 262h32" stroke="#5b5049" stroke-width="4"/>
+  <path d="M170 214q0-26 26-26h214q26 0 26 26v40H170z" fill="#6c7f8e"/>
+  <rect x="158" y="226" width="290" height="44" rx="14" fill="#7d909e"/>
+  <rect x="196" y="200" width="70" height="34" rx="10" fill="#c9a77e"/><rect x="344" y="200" width="70" height="34" rx="10" fill="#b8c2ab"/>
+  <path d="M176 270v14M432 270v14" stroke="#4d4540" stroke-width="6"/>
+  <ellipse cx="300" cy="320" rx="120" ry="22" fill="#8a7462" opacity=".55"/>
+  <rect x="250" y="292" width="110" height="10" rx="5" fill="#5f534b"/>
+  <rect width="640" height="360" fill="url(#vig)"/>
+  <rect width="640" height="360" fill="#3b4a55" opacity=".1"/>
+  <text x="20" y="32" font-family="monospace" font-size="16" fill="#fff" opacity=".85">CAM 2</text>
+</svg>

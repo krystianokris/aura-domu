@@ -75,7 +75,7 @@ Theme (light, dark, system), **language** (same as Home Assistant, Polski, Engli
 
 ### Manual
 1. Download `aura-domu.js` from the [latest release](../../releases/latest) to `/config/www/aura-domu.js`.
-2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.11.0`, type **JavaScript module**.
+2. **Settings → Dashboards → ⋮ → Resources → Add resource**: `/local/aura-domu.js?v=0.12.0`, type **JavaScript module**.
 3. Change `?v=` after every update — browsers cache `/local` files for up to 31 days.
 
 ### Add the dashboard
@@ -95,8 +95,8 @@ views:
 
 | What | From |
 |---|---|
-| **Rooms** | Each area: lights (and switches with "light / lamp / LED" in the name), fans, thermostats, media players, window and door sensors, leak, motion and CO sensors, air purifiers; room temperature and humidity from a room sensor. Diagnostic and hidden entities are skipped. |
-| **Security** | Windows, leaks, CO, motion and alarm from all areas, plus the batteries of those sensors. |
+| **Rooms** | Each area: lights (and switches with "light / lamp / LED" in the name), fans, thermostats, media players, **cameras** (with a live snapshot), window and door sensors, leak, motion and CO sensors, air purifiers; room temperature and humidity from a room sensor. Diagnostic and hidden entities are skipped. |
+| **Security** | Windows, leaks, CO, motion, cameras and alarm from all areas, plus the batteries of those sensors. |
 | **Heating** | Heating thermostats (air conditioners excluded), one circuit per room, floor heating separately; the main thermostat is recognised by integration (Nest, Ecobee, Tado…). |
 | **Weather, Bins, F1** | When you have a weather entity, Waste Collection Schedule (or your own `bins.schedule`) or F1 Sensor. |
 
@@ -168,6 +168,7 @@ rooms:
 | `lights` | `{entity, name, type}` — `type: fan` is shown but not counted as a light. |
 | `climate` | `{entity, name, note}` — thermostats and air conditioners. |
 | `media` | `{entity, name, volume_entity, speaker}` — play / pause and volume. |
+| `cameras` | `{entity, name}` — camera snapshot (refreshed every 30 s); tap for the live view. Also in `security_page.cameras` as `entity`. |
 | `sensors` | `{entity, name, type}` — `type`: `window`, `leak`, `motion`, `co`, `battery`, `pm`, `aq`. |
 | `devices` | `{type, name, status, …}` — `type`: `washer`, `dryer`, `printer`, `purifier`, `pet_feeder`, `litter_box`; any other entity fields (`remaining`, `progress`, `filter`…) are shown as rows; `switches`, `problems` and buttons (`pause`, `resume`, `stop`, `feed`, `clean`, `power`, `light`). |
 

@@ -44,6 +44,9 @@ put('fan.oczyszczacz', 'on', {friendly_name: L('Oczyszczacz', 'Air purifier')});
 put('media_player.salon_tv', 'playing', {friendly_name: L('Telewizor', 'TV'), media_title: L('Formuła 1 · kwalifikacje', 'Formula 1 · qualifying'), supported_features: 152463});
 put('media_player.kuchnia_glosnik', 'paused', {friendly_name: L('Głośnik', 'Speaker'), media_title: L('Poranne radio', 'Morning radio'), supported_features: 152463});
 
+put('camera.wejscie', 'idle', {friendly_name: L('Wejście', 'Entrance'), entity_picture: 'cam-entrance.svg'});
+put('camera.salon', 'idle', {friendly_name: L('Kamera salon', 'Living room camera'), entity_picture: 'cam-living.svg'});
+
 // --- czujniki pokojowe ---
 sens('sensor.salon_temperatura', 21.6, '°C', 'temperature', L('Salon temperatura', 'Living room temperature'));
 sens('sensor.salon_wilgotnosc', 46, '%', 'humidity', L('Salon wilgotność', 'Living room humidity'));
@@ -125,7 +128,7 @@ const config = {
   rooms: [
     {id: 'salon', name: L('Salon', 'Living room'), subtitle: L('Ciepłe światło. Dobry odpoczynek.', 'Warm light. Good rest.'), temperature: 'sensor.salon_temperatura', humidity: 'sensor.salon_wilgotnosc',
       lights: [{entity: 'light.salon_sufit', name: L('Sufit', 'Ceiling')}, {entity: 'switch.salon_lampa', name: L('Lampa podłogowa', 'Floor lamp')}, {entity: 'switch.salon_tv_swiatlo', name: L('Światło TV', 'TV light')}],
-      climate: [{entity: 'climate.salon', name: L('Termostat', 'Thermostat')}], media: [{entity: 'media_player.salon_tv', name: L('Telewizor', 'TV')}],
+      climate: [{entity: 'climate.salon', name: L('Termostat', 'Thermostat')}], media: [{entity: 'media_player.salon_tv', name: L('Telewizor', 'TV')}], cameras: [{entity: 'camera.salon', name: L('Kamera', 'Camera')}],
       sensors: [{entity: 'sensor.salon_pm25', name: L('Pyły PM2.5', 'PM2.5'), type: 'pm'}, {entity: 'binary_sensor.salon_okno', name: L('Okno', 'Window'), type: 'window'}],
       devices: [{type: 'purifier', name: L('Oczyszczacz', 'Air purifier'), entity: 'fan.oczyszczacz', pm25: 'sensor.salon_pm25', filter: 'sensor.oczyszczacz_filtr'}]},
     {id: 'kuchnia', name: L('Kuchnia', 'Kitchen'), subtitle: L('Serce domu.', 'Heart of the home.'), temperature: 'sensor.kuchnia_temperatura', humidity: 'sensor.kuchnia_wilgotnosc',
@@ -155,7 +158,7 @@ const config = {
     leaks: [{entity: 'binary_sensor.kuchnia_zalanie', name: L('Pod zlewem', 'Under the sink')}, {entity: 'binary_sensor.pralnia_zalanie', name: L('Pralka', 'Washer')}, {entity: 'binary_sensor.lazienka_zalanie', name: L('Prysznic', 'Shower')}],
     co: [{entity: 'binary_sensor.czujnik_czadu', name: L('Czujnik czadu', 'CO detector')}],
     motion: [{entity: 'binary_sensor.lazienka_ruch', name: L('Łazienka', 'Bathroom')}, {entity: 'binary_sensor.korytarz_ruch', name: L('Korytarz', 'Hallway')}],
-    cameras: [{name: L('Wejście', 'Entrance'), motion: 'binary_sensor.wejscie_ruch', person: 'binary_sensor.wejscie_osoba'}],
+    cameras: [{name: L('Wejście', 'Entrance'), entity: 'camera.wejscie', motion: 'binary_sensor.wejscie_ruch', person: 'binary_sensor.wejscie_osoba'}],
     batteries: [{entity: 'sensor.okno_kuchnia_bateria', name: L('Okno · kuchnia', 'Window · kitchen')}, {entity: 'sensor.okno_salon_bateria', name: L('Okno · salon', 'Window · living room')}, {entity: 'sensor.czujnik_czadu_bateria', name: L('Czujnik czadu', 'CO detector')}, {entity: 'sensor.zalanie_pralka_bateria', name: L('Wyciek · pralka', 'Leak · washer')}]},
   bins: {types: {czarny: L('odpady zmieszane', 'general waste'), 'brązowy': L('bio', 'food & garden'), zielony: L('recykling', 'recycling')}},
 };

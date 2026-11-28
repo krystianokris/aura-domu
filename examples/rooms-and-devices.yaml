@@ -1,5 +1,5 @@
 # Aura domu — pokoje i urządzenia (fragment karty custom:aura-domu)
-# Każdy pokój ma sekcje: lights, climate, media, sensors, devices. Wszystkie są opcjonalne.
+# Każdy pokój ma sekcje: lights, climate, media, sensors, cameras, devices. Wszystkie są opcjonalne.
 
 rooms:
   - id: salon                      # używane w adresie: #pokoje/salon
@@ -17,6 +17,8 @@ rooms:
     media:
       - {entity: media_player.salon_tv, name: Telewizor, volume_entity: media_player.salon_soundbar}
       - {entity: media_player.salon_glosnik, name: Głośnik, speaker: true}
+    cameras:
+      - {entity: camera.salon, name: Kamera}
     sensors:                       # type: window, leak, motion, co, battery, pm, aq
       - {entity: binary_sensor.salon_okno, name: Okno, type: window}
       - {entity: sensor.salon_pm25, name: Pyły PM2.5, type: pm}

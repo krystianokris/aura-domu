@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0 — kamery w pokojach
+
+- Kamery w pokojach: podgląd z kamery (odświeżany co 30 s), stuknięcie otwiera obraz na żywo w HA. W trybie automatycznym kamery z obszarów pojawiają się same, w pokoju i na zakładce Ochrona; we własnej konfiguracji lista `cameras` w pokoju albo `entity` w `security_page.cameras`.
+- Cameras in rooms: live snapshot tiles (refreshed every 30 s), tap for the live view. In zero-config mode cameras from your areas show up automatically in their room and on Security; in your own config use `cameras` in a room or `entity` in `security_page.cameras`.
+- Demo: dwie przykładowe kamery.
+
 ## 0.11.0 — kosze bez integracji
 
 - Własny harmonogram odbioru odpadów: `bins.schedule` z kolorem, rodzajem, pierwszym odbiorem i co ile dni (`every` / `weeks`) albo listą dat. Działa bez Waste Collection Schedule i bez API gminy; można łączyć z integracją. Przykład: `examples/bins.yaml`.

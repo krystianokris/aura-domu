@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb3c4"/><stop offset="1" stop-color="#d9dfe3"/></linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9c4bb"/><stop offset="1" stop-color="#b3ada3"/></linearGradient>
+    <radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#sky)"/>
+  <path d="M0 210 L640 200 L640 360 L0 360z" fill="#8f9a86"/>
+  <rect x="210" y="40" width="300" height="190" fill="url(#wall)"/>
+  <path d="M190 48 L360 0 L530 48z" fill="#6f625a"/>
+  <rect x="320" y="92" width="74" height="138" rx="3" fill="#4a5560"/>
+  <rect x="330" y="104" width="54" height="40" rx="2" fill="#8da2b3" opacity=".7"/>
+  <circle cx="382" cy="168" r="3.5" fill="#d7c08a"/>
+  <rect x="236" y="96" width="62" height="54" rx="2" fill="#7f97aa"/><path d="M267 96v54M236 123h62" stroke="#e8e8e2" stroke-width="3"/>
+  <rect x="420" y="96" width="62" height="54" rx="2" fill="#7f97aa"/><path d="M451 96v54M420 123h62" stroke="#e8e8e2" stroke-width="3"/>
+  <path d="M300 360 L336 230 L378 230 L430 360z" fill="#b9b2a6"/>
+  <path d="M312 330h104M322 296h88M330 266h68" stroke="#a39b8e" stroke-width="2"/>
+  <ellipse cx="290" cy="226" rx="22" ry="10" fill="#5e6e52"/><path d="M290 226c-14-26-4-44 0-50 6 10 14 26 0 50z" fill="#6f8a5d"/>
+  <ellipse cx="430" cy="226" rx="22" ry="10" fill="#5e6e52"/><path d="M430 226c-14-26-4-44 0-50 6 10 14 26 0 50z" fill="#6f8a5d"/>
+  <path d="M60 220c-8-60 30-90 46-120 16 30 54 60 46 120z" fill="#6b7d5f"/><rect x="100" y="214" width="12" height="40" fill="#5a4b40"/>
+  <rect width="640" height="360" fill="url(#vig)"/>
+  <rect width="640" height="360" fill="#3b4a55" opacity=".12"/>
+  <text x="20" y="32" font-family="monospace" font-size="16" fill="#fff" opacity=".85">CAM 1</text>
+  <circle cx="612" cy="27" r="6" fill="#e5533d"/>
+</svg>

@@ -1,8 +1,8 @@
-// Aura domu — karta Home Assistanta · v0.11.0
+// Aura domu — karta Home Assistanta · v0.12.0
 // https://github.com/krystianokris/aura-domu · licencja MIT
 // Instalacja: HACS (repozytorium niestandardowe, kategoria Dashboard) albo ręcznie:
 //   1) skopiuj dist/aura-domu.js do /config/www/aura-domu.js
-//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.11.0 (Moduł JavaScript)
+//   2) Ustawienia → Pulpity → ⋮ → Zasoby → /local/aura-domu.js?v=0.12.0 (Moduł JavaScript)
 //   3) pulpit z widokiem „Panel” i kartą `type: custom:aura-domu`
 // Pełny przykład konfiguracji: examples/aura-domu.yaml i README.
 const AURA_CSS = `
@@ -222,7 +222,7 @@ button.tile:active,.tile:has(> .room-hit:active){transform:scale(.982)}
 .filters{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:16px 0}
 .search{flex:1 0 220px;max-width:100%}
 .result-count{color:var(--muted);font-size:12px;margin:0 0 12px}
-.entity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.entity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.cams{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:15px}.tile.cam{padding:0;aspect-ratio:16/9;min-height:0;justify-content:flex-end;cursor:pointer;font:inherit}.cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.cam-off{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;color:var(--muted);font-size:13px}.cam-off svg{width:26px;height:26px;opacity:.6}.cam-label{position:relative;z-index:1;width:100%;display:flex;align-items:center;gap:8px;padding:28px 16px 13px;color:#fff;font-weight:600;font-size:14px;background:linear-gradient(transparent,#000a)}.cam-label svg{width:16px;height:16px;flex:none}.cam-label small{margin-left:auto;font-weight:500;font-size:12px;color:#fff;opacity:.9}.cam[data-alert=true] .cam-label small{color:#ffb39b;opacity:1}.cam:not(:has(img)) .cam-label,.cam:not(:has(img)) .cam-label small{color:var(--ink);background:none}
 .entity{min-height:72px;border-radius:18px;display:flex;align-items:center;min-width:0;overflow:hidden;transition:background .3s,box-shadow .3s}
 .entity[data-on=true]{background:linear-gradient(90deg,var(--wash),transparent 60%),var(--convex)}
 .entity-main{display:flex;align-items:center;gap:11px;text-align:left;padding:9px 11px;flex:1;min-width:0;min-height:70px}
@@ -645,7 +645,7 @@ const EN = {
   'Nie znalazłem w Home Assistant encji wpisanych w „energy_page”.':'None of the entities in “energy_page” were found in Home Assistant.','Dodaj sekcję „energy_page” w konfiguracji karty.':'Add an “energy_page” section to the card configuration.',
   // ochrona
   'Wszystko w porządku':'All good','{n} bez odczytu':'{n} without a reading','słaba bateria':'low battery','słabe baterie':'low batteries','słabych baterii':'low batteries','Czujniki działają, nie ma alarmów':'Sensors are working, no alarms','Tryb ochrony':'Security mode','Okna':'Windows','Wycieki i czad':'Leaks and CO','Ruch i obecność':'Motion and presence',
-  'Dzwonek':'Doorbell','Osoba':'Person','Ruch':'Motion','Kamera wyłączona':'Camera off','Spokój':'Quiet','Kamery':'Cameras','Baterie czujników':'Sensor batteries','Dodaj sekcję „security_page” w konfiguracji karty.':'Add a “security_page” section to the card configuration.',
+  'Dzwonek':'Doorbell','Osoba':'Person','Ruch':'Motion','Kamera wyłączona':'Camera off','Spokój':'Quiet','Kamery':'Cameras','Brak podglądu':'No preview','Nagrywa':'Recording','Baterie czujników':'Sensor batteries','Dodaj sekcję „security_page” w konfiguracji karty.':'Add a “security_page” section to the card configuration.',
   // F1
   'stan toru':'track status','za {x}':'in {x}','dzień':'day','dni':'days','za {n} godz.':'in {n} h','za {n} min':'in {n} min','Sesja':'Session','Na żywo':'Live','{s} trwa':'{s} is on','Runda':'Round','z':'of','Tydzień wyścigowy':'Race week',
   'Pierwszy trening już blisko':'First practice is close','Pierwszy trening za {x}':'First practice in {x}','Lider {n} +{p} pkt':'Leader {n} +{p} pts','Brak danych':'No data','czekam na stan toru':'waiting for track status','lider':'leader',
@@ -705,7 +705,7 @@ const loc = () => LANG === 'en' ? 'en-GB' : 'pl-PL';
 const setLang = lang => { if (lang === LANG) return; LANG = lang; number = new Intl.NumberFormat(loc(),{maximumFractionDigits:1}); };
 const labels = {light:'Światła',switch:'Przełączniki',climate:'Termostaty i klima',sensor:'Czujniki',binary_sensor:'Czujniki dwustanowe',weather:'Pogoda',media_player:'Multimedia',cover:'Rolety i bramy',fan:'Wentylatory',vacuum:'Odkurzacze',camera:'Kamery',lock:'Zamki',alarm_control_panel:'Alarmy',automation:'Automatyzacje',script:'Skrypty',scene:'Sceny',person:'Osoby',device_tracker:'Lokalizacja',update:'Aktualizacje',button:'Przyciski',event:'Zdarzenia',input_boolean:'Przełączniki pomocnicze',number:'Pola liczbowe',select:'Listy wyboru',humidifier:'Nawilżacze',water_heater:'Podgrzewacze wody',calendar:'Kalendarze',timer:'Minutniki',sun:'Słońce',counter:'Liczniki'};
 const glyphFor = {light:'light',switch:'power',climate:'thermo',sensor:'sensor',binary_sensor:'sensor',weather:'weather',fan:'fan',lock:'door',cover:'door',camera:'shield',alarm_control_panel:'shield',automation:'bolt',event:'bell',input_boolean:'power',humidifier:'water',water_heater:'water',update:'arrow',button:'power',sun:'sun',scene:'spark'};
-const stateLabels = {unavailable:'Niedostępne',unknown:'Nieznany stan',on:'Wł.',off:'Wył.',heat:'Grzanie',cool:'Chłodzenie',heat_cool:'Grzanie i chłodzenie',auto:'Auto',idle:'Bezczynne',heating:'Grzeje',cooling:'Chłodzi',dry:'Osuszanie',fan_only:'Nawiew',open:'Otwarte',closed:'Zamknięte',locked:'Zamknięty',unlocked:'Odblokowany',disarmed:'Rozbrojony',armed_home:'Uzbrojony w domu',armed_away:'Uzbrojony poza domem',armed_night:'Tryb nocny',triggered:'Alarm',playing:'Odtwarzanie',paused:'Wstrzymane',home:'W domu',not_home:'Poza domem',cloudy:'Pochmurno',partlycloudy:'Częściowe zachmurzenie',rainy:'Deszcz',pouring:'Ulewa',sunny:'Słonecznie','clear-night':'Pogodna noc',snowy:'Śnieg',fog:'Mgła',windy:'Wietrznie',docked:'W stacji',cleaning:'Sprząta',returning:'Wraca',active:'Aktywne',finished:'Zakończone',standby:'Czuwanie',online:'Online',offline:'Offline',excellent:'Doskonała',good:'Dobra',moderate:'Umiarkowana',fair:'Umiarkowana',poor:'Słaba',very_poor:'Bardzo słaba',finish:'Zakończony',failed:'Błąd',running:'Pracuje',printing:'Drukuje',prepare:'Przygotowanie',pause:'Pauza',ready:'Gotowe'};
+const stateLabels = {unavailable:'Niedostępne',unknown:'Nieznany stan',on:'Wł.',off:'Wył.',heat:'Grzanie',cool:'Chłodzenie',heat_cool:'Grzanie i chłodzenie',auto:'Auto',idle:'Bezczynne',heating:'Grzeje',cooling:'Chłodzi',dry:'Osuszanie',fan_only:'Nawiew',open:'Otwarte',closed:'Zamknięte',locked:'Zamknięty',unlocked:'Odblokowany',disarmed:'Rozbrojony',armed_home:'Uzbrojony w domu',armed_away:'Uzbrojony poza domem',armed_night:'Tryb nocny',triggered:'Alarm',playing:'Odtwarzanie',paused:'Wstrzymane',home:'W domu',not_home:'Poza domem',cloudy:'Pochmurno',partlycloudy:'Częściowe zachmurzenie',rainy:'Deszcz',pouring:'Ulewa',sunny:'Słonecznie','clear-night':'Pogodna noc',snowy:'Śnieg',fog:'Mgła',windy:'Wietrznie',docked:'W stacji',cleaning:'Sprząta',returning:'Wraca',active:'Aktywne',finished:'Zakończone',standby:'Czuwanie',online:'Online',offline:'Offline',excellent:'Doskonała',good:'Dobra',moderate:'Umiarkowana',fair:'Umiarkowana',poor:'Słaba',very_poor:'Bardzo słaba',finish:'Zakończony',failed:'Błąd',running:'Pracuje',printing:'Drukuje',prepare:'Przygotowanie',pause:'Pauza',ready:'Gotowe',recording:'Nagrywa',streaming:'Na żywo'};
 const alarmShort = {disarmed:'Rozbrojony',armed_home:'W domu',armed_away:'Poza domem',armed_night:'Noc',armed_vacation:'Urlop',armed_custom_bypass:'Uzbrojony',arming:'Uzbrajanie',pending:'Oczekuje',triggered:'Alarm!'};
 const groups = {lights:{label:'Światła',glyph:'light'}, climate:{label:'Klimat',glyph:'thermo'}, energy:{label:'Energia',glyph:'bolt'}, security:{label:'Ochrona',glyph:'shield'}};
 const securityClasses = new Set(['door','window','opening','garage_door','lock','moisture','smoke','gas','carbon_monoxide','safety','tamper','motion','occupancy']);
@@ -1044,7 +1044,7 @@ class AuraDomu extends HTMLElement {
         const ids = new Set();
         const add = id => { if (typeof id === 'string' && /^[a-z_]+\.[^#\s]+$/.test(id)) ids.add(id); };
         for (const item of listOf(cfg.lights)) { add(item.entity); if (item.type !== 'fan') this.lightIds.add(item.entity); }
-        for (const key of ['climate','media','sensors']) for (const item of listOf(cfg[key])) add(item.entity);
+        for (const key of ['climate','media','sensors','cameras']) for (const item of listOf(cfg[key])) add(item.entity);
         for (const device of cfg.devices || []) for (const [key,value] of Object.entries(device)) {
           if (key === 'switches') listOf(value).forEach(item=>add(item.entity));
           else if (key === 'problems') listOf(value).forEach(item=>add(item.entity));
@@ -1086,9 +1086,9 @@ class AuraDomu extends HTMLElement {
     const rooms = [];
     const isAC = row => (row.attrs.hvac_modes || []).some(m=>['cool','dry','fan_only'].includes(m));
     const list = [...areas.values()].sort((a,b)=>collator.compare(a.name,b.name));
-    const temps = [], hums = [];
+    const temps = [], hums = [], cams = [];
     for (const area of list) {
-      const cfg = {id:area.id,name:area.name,lights:[],climate:[],media:[],sensors:[]};
+      const cfg = {id:area.id,name:area.name,lights:[],climate:[],media:[],sensors:[],cameras:[]};
       for (const row of area.rows.filter(usable).sort((a,b)=>collator.compare(a.name,b.name))) {
         const item = {entity:row.id,name:short(row,area.name)};
         const dc = row.attrs.device_class;
@@ -1102,6 +1102,7 @@ class AuraDomu extends HTMLElement {
           if ((row.attrs.hvac_modes || []).includes('heat') && !isAC(row)) heat.push({row,area});
         }
         else if (row.domain === 'media_player') cfg.media.push(item);
+        else if (row.domain === 'camera') { cfg.cameras.push(item); cams.push({entity:row.id,name:item.name === area.name ? area.name : `${item.name} · ${area.name}`}); }
         else if (row.domain === 'binary_sensor' && SEC[dc]) {
           cfg.sensors.push({...item,type:SEC[dc]});
           const key = {window:'windows',leak:'leaks',co:'co',motion:'motion'}[SEC[dc]];
@@ -1120,8 +1121,8 @@ class AuraDomu extends HTMLElement {
       const h = hums.find(row=>t && devOf(row) === devOf(t)) || hums[0];
       if (h) cfg.humidity = h.id;
       temps.length = 0; hums.length = 0;
-      for (const key of ['lights','climate','media','sensors']) if (!cfg[key].length) delete cfg[key];
-      if (cfg.lights || cfg.climate || cfg.media || cfg.sensors || cfg.devices || cfg.temperature) rooms.push(cfg);
+      for (const key of ['lights','climate','media','sensors','cameras']) if (!cfg[key].length) delete cfg[key];
+      if (cfg.lights || cfg.climate || cfg.media || cfg.sensors || cfg.cameras || cfg.devices || cfg.temperature) rooms.push(cfg);
     }
     // baterie czujników ochrony (te encje bywają diagnostyczne, więc bez filtra kategorii)
     for (const row of byId.values()) {
@@ -1129,8 +1130,8 @@ class AuraDomu extends HTMLElement {
       if (row.domain === 'sensor' && row.attrs.device_class === 'battery' && e?.device_id && secDevices.has(e.device_id) && !e.hidden && !e.disabled_by) sec.batteries.push({entity:row.id,name:row.name});
     }
     const alarm = [...byId.values()].find(row=>row.domain === 'alarm_control_panel' && usable(row));
-    const anySec = sec.windows.length || sec.leaks.length || sec.co.length || sec.motion.length || alarm;
-    const security = anySec ? Object.fromEntries(Object.entries({...sec,alarm:alarm?.id}).filter(([,v])=>Array.isArray(v) ? v.length : v)) : null;
+    const anySec = sec.windows.length || sec.leaks.length || sec.co.length || sec.motion.length || cams.length || alarm;
+    const security = anySec ? Object.fromEntries(Object.entries({...sec,cameras:cams,alarm:alarm?.id}).filter(([,v])=>Array.isArray(v) ? v.length : v)) : null;
     let heating = null;
     if (heat.length) {
       const floor = h => /podlog|floor|ufh/.test(fold(`${h.row.name} ${h.row.id}`));
@@ -1360,7 +1361,7 @@ class AuraDomu extends HTMLElement {
     if (!this.nameMap) {
       this.nameMap = new Map();
       const put = list => listOf(list).forEach(item=>{ if (item.name && !this.nameMap.has(item.entity)) this.nameMap.set(item.entity,item.name); });
-      for (const room of this.getModel().roomsCfg) for (const key of ['lights','climate','media','sensors']) put(room[key]);
+      for (const room of this.getModel().roomsCfg) for (const key of ['lights','climate','media','sensors','cameras']) put(room[key]);
       const sec = this.securityConfig() || {};
       for (const key of ['windows','motion','leaks','co','batteries']) put(sec[key]);
       put(this.config?.climate);
@@ -1593,6 +1594,17 @@ class AuraDomu extends HTMLElement {
       ${dimmable ? `<input class="dim" type="range" min="1" max="100" value="${Math.round(row.attrs.brightness / 2.55)}" data-id="${id}" aria-label="${T('Jasność')} · ${label}">` : ''}</article>`;
   }
 
+  // podgląd odświeżany co 30 s (token z entity_picture HA zmienia się sam); stuknięcie = okno HA z obrazem na żywo
+  cameraTile(item,note = '',alert = false) {
+    const row = this.row(item.entity);
+    if (!row) return this.entityTile(null,item);
+    const name = escapeHTML(item.name || this.labelFor(row));
+    const pic = available(row) && row.attrs.entity_picture ? `${row.attrs.entity_picture}${String(row.attrs.entity_picture).includes('?') ? '&' : '?'}t=${Math.floor(Date.now() / 30000)}` : '';
+    const off = !available(row) || row.state === 'off';
+    return `<button class="tile cam" data-act="details" data-id="${escapeHTML(row.id)}" data-alert="${alert}">${pic && !off ? `<img src="${escapeHTML(pic)}" alt="" loading="lazy" onerror="this.remove()">` : `<span class="cam-off">${icon('shield')}${escapeHTML(T(off ? 'Kamera wyłączona' : 'Brak podglądu'))}</span>`}<span class="cam-label">${icon('shield')}${name}<small>${escapeHTML(note || (row.state === 'idle' ? '' : this.stateText(row)))}</small></span></button>`;
+  }
+  cams(items) { const html = items.map(item=>this.cameraTile(item)).join(''); return html ? `<div class="cams">${html}</div>` : ''; }
+
   grid(items,map) { const html = items.map(map).join(''); return html ? `<div class="entity-grid">${html}</div>` : ''; }
 
   /* ---------- widok pokoju ---------- */
@@ -1618,6 +1630,7 @@ class AuraDomu extends HTMLElement {
       body += this.block('Klimat','thermo',this.climateCards(listOf(cfg.climate)));
       body += this.block('Multimedia','film',this.grid(listOf(cfg.media),item=>this.mediaTile(item)));
       body += this.block('Czujniki','sensor',this.grid(listOf(cfg.sensors),item=>this.entityTile(this.row(item.entity),item)));
+      body += this.block('Kamery','shield',this.cams(listOf(cfg.cameras)));
       const devices = (cfg.devices || []).map(device=>this.deviceCard(device)).join('');
       body += this.block('Urządzenia','device',devices ? `<div class="cards">${devices}</div>` : '');
       if (!body) body = `<p class="empty">${T('Ten pokój nie ma jeszcze przypisanych urządzeń w konfiguracji karty.')}</p>`;
@@ -1625,6 +1638,7 @@ class AuraDomu extends HTMLElement {
       // tryb bez konfiguracji: tylko światła i klimat z obszaru, bez tysięcy encji diagnostycznych
       body += this.block('Światła','light',this.grid(lights,row=>this.entityTile(row)));
       body += this.block('Klimat','thermo',this.climateCards(room.rows.filter(row=>row.domain === 'climate').map(row=>({entity:row.id}))));
+      body += this.block('Kamery','shield',this.cams(room.rows.filter(row=>row.domain === 'camera').map(row=>({entity:row.id}))));
       if (!body) body = `<p class="empty">${T('Dodaj listę „rooms” w konfiguracji karty, aby wybrać urządzenia tego pokoju.')}</p>`;
     }
     this.setHTML('#room-body',body);
@@ -1776,11 +1790,13 @@ class AuraDomu extends HTMLElement {
     const cams = (cfg.cameras || []).map(cam=>{
       const states = [['ring','Dzwonek'],['person','Osoba'],['motion','Ruch']].map(([key,label])=>{ const row = this.row(cam[key]); return row?.state === 'on' ? T(label) : null; }).filter(Boolean);
       const enabled = this.row(cam.enabled);
+      const note = states.length ? `${T('Wykryto')}: ${states.join(', ')}` : enabled?.state === 'off' ? T('Kamera wyłączona') : '';
+      if (this.row(cam.entity)) return this.cameraTile({entity:cam.entity,name:cam.name},note,states.length > 0);
       const row = this.row(cam.motion) || this.row(cam.person) || enabled;
       if (!row) return '';
       return this.entityTile(row,{name:cam.name,glyph:'shield',toggle:false,state:states.length ? `${T('Wykryto')}: ${states.join(', ')}` : T(enabled?.state === 'off' ? 'Kamera wyłączona' : 'Spokój')});
     }).join('');
-    body += this.block('Kamery','shield',cams ? `<div class="entity-grid">${cams}</div>` : '');
+    body += this.block('Kamery','shield',cams ? `<div class="${(cfg.cameras || []).some(c=>this.row(c.entity)) ? 'cams' : 'entity-grid'}">${cams}</div>` : '');
     body += this.block('Baterie czujników','bolt',this.grid(batteries.sort((a,b)=>Number(a.row?.state ?? 999) - Number(b.row?.state ?? 999)),({item,row})=>this.entityTile(row,{...item,type:'battery',warn:!available(row) || Number(row?.state) < (cfg.battery_low ?? 20)})));
     if (!this.securityConfig()) body += `<p class="empty">${T('Dodaj sekcję „security_page” w konfiguracji karty.')}</p>`;
     this.setHTML('#security-body',body);
@@ -2214,7 +2230,7 @@ class AuraDomu extends HTMLElement {
     const eff = this.effective(), m = this.getModel();
     const yaml = `type: custom:aura-domu\n${toYaml(eff)}`;
     const autoParts = [m.autoRooms && T('pokoje'), !this.config?.security_page && !this.config?.security && eff.security_page && T('ochrona'), !this.config?.heating_page && eff.heating_page && T('ogrzewanie')].filter(Boolean);
-    const count = eff.rooms.reduce((n,r)=>n + ['lights','climate','media','sensors'].reduce((k,key)=>k + listOf(r[key]).length,0),0);
+    const count = eff.rooms.reduce((n,r)=>n + ['lights','climate','media','sensors','cameras'].reduce((k,key)=>k + listOf(r[key]).length,0),0);
     const gen = `<article class="tile wide-tile"><span class="label">${icon('spark')}${T('Gotowa konfiguracja')}</span><div class="card-body">
       <p class="note-line">${autoParts.length ? T('Karta sama dobrała z obszarów Home Assistanta: {parts} ({rooms}, {ents}). Skopiuj YAML, wklej go w edytorze pulpitu (⋮ → Edytuj pulpit → ⋮ → Edytor kodu) w miejsce tej karty, popraw nazwy i dopisz urządzenia.',{parts:escapeHTML(andList(autoParts)),rooms:plN(eff.rooms.length,'pokój','pokoje','pokoi'),ents:plN(count,'encja','encje','encji')}) : T('Pulpit używa Twojej konfiguracji. Poniżej to, co karta z niej odczytała.')}</p>
       <div class="device-actions"><button class="mini" data-act="gen-toggle" aria-pressed="${Boolean(this.showGen)}">${icon('arrow')}${T(this.showGen ? 'Ukryj YAML' : 'Pokaż YAML')}</button><button class="mini" data-act="gen-copy">${icon('spark')}${T('Kopiuj')}</button></div>
@@ -2427,7 +2443,7 @@ class AuraDomu extends HTMLElement {
   }
 }
 
-console.info('%c AURA-DOMU %c v0.11.0 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
+console.info('%c AURA-DOMU %c v0.12.0 ','background:#e68768;color:#fff;border-radius:3px 0 0 3px','background:#20252a;color:#fff;border-radius:0 3px 3px 0');
 if (!customElements.get('aura-domu')) {
   customElements.define('aura-domu',AuraDomu);
   window.customCards = window.customCards || [];

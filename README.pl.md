@@ -77,7 +77,7 @@ HACS sam doda zasób i będzie informował o nowych wersjach.
 
 ### Ręcznie
 1. Pobierz `aura-domu.js` z [najnowszego wydania](../../releases/latest) i skopiuj do `/config/www/aura-domu.js`.
-2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.11.0`, typ **Moduł JavaScript**.
+2. **Ustawienia → Pulpity → ⋮ → Zasoby → Dodaj zasób**: `/local/aura-domu.js?v=0.12.0`, typ **Moduł JavaScript**.
 3. Przy każdej aktualizacji zmień `?v=` na nowy numer — przeglądarka trzyma pliki z `/local` nawet 31 dni.
 
 ### Dodanie pulpitu
@@ -99,8 +99,8 @@ Samo `type: custom:aura-domu` wystarczy, żeby zobaczyć cały pulpit. Karta bud
 
 | Co | Skąd |
 |---|---|
-| **Pokoje** | Każdy obszar: światła (także przełączniki z „światło / lamp / LED” w nazwie), wentylatory, termostaty, multimedia, okna i drzwi, czujniki zalania, ruchu i czadu, oczyszczacze. Temperatura i wilgotność z czujnika pokojowego. Encje diagnostyczne i ukryte są pomijane. |
-| **Ochrona** | Okna, wycieki, czad, ruch i alarm ze wszystkich obszarów oraz baterie tych czujników. |
+| **Pokoje** | Każdy obszar: światła (także przełączniki z „światło / lamp / LED” w nazwie), wentylatory, termostaty, multimedia, **kamery** (z podglądem), okna i drzwi, czujniki zalania, ruchu i czadu, oczyszczacze. Temperatura i wilgotność z czujnika pokojowego. Encje diagnostyczne i ukryte są pomijane. |
+| **Ochrona** | Okna, wycieki, czad, ruch, kamery i alarm ze wszystkich obszarów oraz baterie tych czujników. |
 | **Ogrzewanie** | Termostaty grzewcze (bez klimatyzatorów), jeden obieg na pokój, podłogówka osobno. Główny termostat rozpoznany po integracji (np. Nest, Ecobee, Tado). |
 | **Pogoda, Kosze, F1** | Gdy masz encję pogody, Waste Collection Schedule albo F1 Sensor. |
 
@@ -180,6 +180,7 @@ Więcej przykładów:
 | `lights` | `{entity, name, type}` — `type: fan` = pokazane, ale nieliczone jako światło. |
 | `climate` | `{entity, name, note}` — termostaty i klimatyzacje. |
 | `media` | `{entity, name, volume_entity, speaker}` — odtwórz / pauza i głośność. |
+| `cameras` | `{entity, name}` — podgląd z kamery (odświeżany co 30 s); stuknięcie otwiera obraz na żywo. Także w `security_page.cameras` jako `entity`. |
 | `sensors` | `{entity, name, type}` — `type`: `window`, `leak`, `motion`, `co`, `battery`, `pm`, `aq`. |
 | `devices` | `{type, name, status, …}` — `type`: `washer`, `dryer`, `printer`, `purifier`, `pet_feeder`, `litter_box`; dowolne pola z encjami (`remaining`, `progress`, `filter`…) pokazują się jako wiersze; `switches`, `problems` i przyciski (`pause`, `resume`, `stop`, `feed`, `clean`, `power`, `light`). |
 
